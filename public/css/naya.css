@@ -1,0 +1,596 @@
+/* Naya Voice Assistant Styles */
+
+.naya-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10000;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.naya-container.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.naya-container.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: all;
+}
+
+.naya-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.naya-interface {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 25px;
+    padding: 40px;
+    text-align: center;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    min-width: 350px;
+    max-width: 500px;
+}
+
+.naya-interface.visible {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.naya-avatar {
+    margin-bottom: 30px;
+}
+
+.naya-circle {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto;
+}
+
+.naya-pulse {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 2px solid rgba(255, 114, 0, 0.6);
+    border-radius: 50%;
+    animation: nayaPulse 2s infinite;
+}
+
+.naya-core {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, rgba(255, 114, 0, 0.8), rgba(255, 68, 68, 0.8));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 30px rgba(255, 114, 0, 0.5);
+    transition: all 0.3s ease;
+}
+
+.naya-core:hover {
+    transform: translate(-50%, -50%) scale(1.1);
+    box-shadow: 0 0 40px rgba(255, 114, 0, 0.7);
+}
+
+.naya-icon {
+    font-size: 40px;
+    color: white;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.naya-container.active .naya-core {
+    animation: nayaGlow 3s infinite;
+}
+
+.naya-text {
+    margin-bottom: 30px;
+}
+
+.naya-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.95);
+    margin: 0 0 10px 0;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    letter-spacing: 2px;
+}
+
+.naya-subtitle {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0 0 20px 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.naya-status {
+    padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 25px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 14px;
+    font-weight: 500;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.naya-status span {
+    display: inline-block;
+    animation: nayaStatusPulse 2s infinite;
+}
+
+.naya-controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.naya-btn {
+    width: 50px;
+    height: 50px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.naya-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.naya-btn ion-icon {
+    font-size: 24px;
+}
+
+.naya-close:hover {
+    background: rgba(255, 68, 68, 0.3);
+    border-color: rgba(255, 68, 68, 0.5);
+}
+
+.naya-settings:hover {
+    background: rgba(255, 114, 0, 0.3);
+    border-color: rgba(255, 114, 0, 0.5);
+}
+
+/* Animations */
+@keyframes nayaPulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.7;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes nayaGlow {
+    0%, 100% {
+        box-shadow: 0 0 30px rgba(255, 114, 0, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 50px rgba(255, 114, 0, 0.8), 0 0 70px rgba(255, 68, 68, 0.4);
+    }
+}
+
+@keyframes nayaStatusPulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .naya-interface {
+        min-width: 300px;
+        padding: 30px 20px;
+        margin: 20px;
+        max-width: calc(100vw - 40px);
+    }
+
+    .naya-circle {
+        width: 100px;
+        height: 100px;
+    }
+
+    .naya-core {
+        width: 70px;
+        height: 70px;
+    }
+
+    .naya-icon {
+        font-size: 32px;
+    }
+
+    .naya-title {
+        font-size: 28px;
+    }
+
+    .naya-subtitle {
+        font-size: 14px;
+    }
+
+    .naya-btn {
+        width: 45px;
+        height: 45px;
+    }
+
+    .naya-btn ion-icon {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .naya-interface {
+        min-width: 280px;
+        padding: 25px 15px;
+    }
+
+    .naya-circle {
+        width: 90px;
+        height: 90px;
+    }
+
+    .naya-core {
+        width: 60px;
+        height: 60px;
+    }
+
+    .naya-icon {
+        font-size: 28px;
+    }
+
+    .naya-title {
+        font-size: 24px;
+    }
+
+    .naya-controls {
+        gap: 10px;
+    }
+}
+
+/* Dark/Light Theme Support */
+[data-theme="light"] .naya-interface {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .naya-overlay {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+[data-theme="light"] .naya-title {
+    color: rgba(0, 0, 0, 0.9);
+    text-shadow: 0 2px 10px rgba(255, 255, 255, 0.3);
+}
+
+[data-theme="light"] .naya-subtitle {
+    color: rgba(0, 0, 0, 0.7);
+}
+
+[data-theme="light"] .naya-status {
+    background: rgba(0, 0, 0, 0.1);
+    border-color: rgba(0, 0, 0, 0.2);
+    color: rgba(0, 0, 0, 0.8);
+}
+
+[data-theme="light"] .naya-btn {
+    background: rgba(0, 0, 0, 0.1);
+    border-color: rgba(0, 0, 0, 0.2);
+    color: rgba(0, 0, 0, 0.7);
+}
+
+[data-theme="light"] .naya-btn:hover {
+    background: rgba(0, 0, 0, 0.2);
+    color: rgba(0, 0, 0, 0.9);
+}
+
+/* نافذة إعدادات الصوت */
+.naya-voice-settings-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.naya-voice-settings-modal.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.naya-settings-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+}
+
+.naya-settings-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 0;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.naya-settings-header {
+    background: linear-gradient(135deg, #ff7200, #ff9500);
+    color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.naya-settings-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.naya-settings-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: background 0.3s ease;
+}
+
+.naya-settings-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.naya-settings-body {
+    padding: 20px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.current-voice-info {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border-left: 4px solid #ff7200;
+}
+
+.current-voice-info p {
+    margin: 0;
+    color: #333;
+}
+
+.voice-list h4 {
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 16px;
+}
+
+.voice-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.voice-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.voice-option:hover {
+    background: #e9ecef;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.voice-option.selected {
+    background: rgba(255, 114, 0, 0.1);
+    border-color: #ff7200;
+}
+
+.voice-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.voice-name {
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+}
+
+.voice-lang {
+    font-size: 12px;
+    color: #666;
+}
+
+.voice-gender {
+    font-size: 12px;
+    color: #ff7200;
+    font-weight: 500;
+}
+
+.test-voice-btn {
+    background: #ff7200;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.test-voice-btn:hover {
+    background: #e65a00;
+    transform: scale(1.05);
+}
+
+.settings-actions {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    text-align: center;
+}
+
+.reset-voice {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.reset-voice:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+}
+
+/* تخصيص شريط التمرير */
+.voice-options::-webkit-scrollbar {
+    width: 6px;
+}
+
+.voice-options::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.voice-options::-webkit-scrollbar-thumb {
+    background: #ff7200;
+    border-radius: 3px;
+}
+
+.voice-options::-webkit-scrollbar-thumb:hover {
+    background: #e65a00;
+}
+
+/* تصميم متجاوب لنافذة الإعدادات */
+@media (max-width: 768px) {
+    .naya-settings-content {
+        width: 95%;
+        max-height: 85vh;
+    }
+
+    .voice-option {
+        padding: 12px;
+    }
+
+    .voice-name {
+        font-size: 13px;
+    }
+
+    .test-voice-btn {
+        padding: 6px 12px;
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 480px) {
+    .naya-settings-content {
+        width: 98%;
+        max-height: 90vh;
+    }
+
+    .naya-settings-header {
+        padding: 15px;
+    }
+
+    .naya-settings-header h3 {
+        font-size: 16px;
+    }
+
+    .naya-settings-body {
+        padding: 15px;
+    }
+
+    .voice-option {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .test-voice-btn {
+        align-self: flex-end;
+    }
+}

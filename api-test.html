@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Energy.AI - API Testing Interface">
+    <meta name="keywords" content="energy, AI, API, testing, renewable energy, artificial intelligence">
+    <title>API Testing Interface - Energy.AI</title>
+    <link rel="stylesheet" href="public/css/styles.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-dark);
+            color: var(--text-color);
+        }
+        .api-test-container {
+            max-width: 800px;
+            margin: 80px auto 40px;
+            background: rgba(10, 10, 15, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 114, 0, 0.2);
+        }
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.2rem;
+            background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+        .section h2 {
+            margin-top: 0;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            font-size: 16px;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(255, 114, 0, 0.2);
+        }
+        button {
+            background: var(--primary-color);
+            color: var(--secondary-color);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        button:hover {
+            background: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .response {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            color: var(--text-color);
+            font-family: monospace;
+            border: 1px solid rgba(255, 114, 0, 0.2);
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .tab {
+            padding: 12px 24px;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 6px 6px 0 0;
+            margin-right: 5px;
+            transition: all 0.3s ease;
+            color: var(--text-color);
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+        }
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--primary-color);
+        }
+        .tab.active {
+            background: rgba(255, 114, 0, 0.1);
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Light mode styles */
+        [data-theme="light"] .api-test-container {
+            background: rgba(245, 245, 250, 0.8);
+            border: 1px solid rgba(255, 114, 0, 0.1);
+        }
+
+        [data-theme="light"] .section {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="light"] input,
+        [data-theme="light"] textarea,
+        [data-theme="light"] select {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            color: #333;
+        }
+
+        [data-theme="light"] .response {
+            background: rgba(240, 240, 240, 0.8);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="main">
+        <div class="navbar">
+            <div class="icon">
+                <h2 class="logo">Energy.Ai</h2>
+            </div>
+
+            <div class="menu">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html#about">About</a></li>
+                    <li><a href="index.html#service">Services</a></li>
+                    <li><a href="index.html#design">Design</a></li>
+                    <li><a href="index.html#contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="theme-switch-wrapper">
+                <label class="theme-switch" for="checkbox">
+                    <input type="checkbox" id="checkbox" />
+                    <div class="slider round"></div>
+                </label>
+            </div>
+        </div>
+
+        <div class="api-test-container">
+            <h1>API Testing Interface - Energy.AI</h1>
+
+            <div class="tabs">
+                <div class="tab active" data-tab="auth">Authentication</div>
+                <div class="tab" data-tab="chat">Chat</div>
+                <div class="tab" data-tab="projects">Projects</div>
+            </div>
+
+        <div class="tab-content active" id="auth-tab">
+            <div class="section">
+                <h2>Register New User</h2>
+                <div class="form-group">
+                    <label for="register-name">Name</label>
+                    <input type="text" id="register-name" placeholder="Enter your name">
+                </div>
+                <div class="form-group">
+                    <label for="register-email">Email</label>
+                    <input type="email" id="register-email" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="register-password">Password</label>
+                    <input type="password" id="register-password" placeholder="Enter your password">
+                </div>
+                <button id="register-btn">Register</button>
+                <div class="response" id="register-response"></div>
+            </div>
+
+            <div class="section">
+                <h2>Login</h2>
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" placeholder="Enter your password">
+                </div>
+                <button id="login-btn">Login</button>
+                <div class="response" id="login-response"></div>
+            </div>
+
+            <div class="section">
+                <h2>User Information</h2>
+                <button id="get-me-btn">Get User Info</button>
+                <div class="response" id="get-me-response"></div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="chat-tab">
+            <div class="section">
+                <h2>Create New Chat</h2>
+                <div class="form-group">
+                    <label for="chat-title">Chat Title</label>
+                    <input type="text" id="chat-title" placeholder="Enter chat title">
+                </div>
+                <button id="create-chat-btn">Create Chat</button>
+                <div class="response" id="create-chat-response"></div>
+            </div>
+
+            <div class="section">
+                <h2>Send Message</h2>
+                <div class="form-group">
+                    <label for="chat-id">Chat ID</label>
+                    <input type="text" id="chat-id" placeholder="Enter chat ID">
+                </div>
+                <div class="form-group">
+                    <label for="chat-message">Message</label>
+                    <textarea id="chat-message" rows="4" placeholder="Enter your message"></textarea>
+                </div>
+                <button id="send-message-btn">Send</button>
+                <div class="response" id="send-message-response"></div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="projects-tab">
+            <div class="section">
+                <h2>Create New Project</h2>
+                <div class="form-group">
+                    <label for="project-name">Project Name</label>
+                    <input type="text" id="project-name" placeholder="Enter project name">
+                </div>
+                <div class="form-group">
+                    <label for="project-type">Project Type</label>
+                    <select id="project-type">
+                        <option value="solar">Solar Energy</option>
+                        <option value="wind">Wind Energy</option>
+                        <option value="hydro">Hydro Energy</option>
+                        <option value="geothermal">Geothermal Energy</option>
+                        <option value="biomass">Biomass Energy</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="project-location">Location</label>
+                    <input type="text" id="project-location" placeholder="Enter project location">
+                </div>
+                <div class="form-group">
+                    <label for="project-capacity">Capacity (kW)</label>
+                    <input type="number" id="project-capacity" placeholder="Enter project capacity">
+                </div>
+                <button id="create-project-btn">Create Project</button>
+                <div class="response" id="create-project-response"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API Configuration
+        const API_CONFIG = {
+            BASE_URL: "http://localhost:5000/api",
+            ENDPOINTS: {
+                REGISTER: "/auth/register",
+                LOGIN: "/auth/login",
+                GET_ME: "/auth/me",
+                CHAT: "/chat",
+                CHAT_MESSAGE: "/chat/:id/message",
+                PROJECTS: "/projects"
+            }
+        };
+
+        // Global variables
+        let authToken = localStorage.getItem('auth_token');
+
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+                this.classList.add('active');
+                document.getElementById(`${this.dataset.tab}-tab`).classList.add('active');
+            });
+        });
+
+        // Register new user
+        document.getElementById('register-btn').addEventListener('click', async function() {
+            const name = document.getElementById('register-name').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+
+            if (!name || !email || !password) {
+                document.getElementById('register-response').textContent = 'Please fill in all fields';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.REGISTER}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, email, password })
+                });
+
+                const data = await response.json();
+                document.getElementById('register-response').textContent = JSON.stringify(data, null, 2);
+
+                if (data.token) {
+                    localStorage.setItem('auth_token', data.token);
+                    authToken = data.token;
+                }
+            } catch (error) {
+                document.getElementById('register-response').textContent = `Error: ${error.message}`;
+            }
+        });
+
+        // Login
+        document.getElementById('login-btn').addEventListener('click', async function() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            if (!email || !password) {
+                document.getElementById('login-response').textContent = 'Please fill in all fields';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.LOGIN}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+                document.getElementById('login-response').textContent = JSON.stringify(data, null, 2);
+
+                if (data.token) {
+                    localStorage.setItem('auth_token', data.token);
+                    authToken = data.token;
+                }
+            } catch (error) {
+                document.getElementById('login-response').textContent = `Error: ${error.message}`;
+            }
+        });
+
+        // Get user information
+        document.getElementById('get-me-btn').addEventListener('click', async function() {
+            if (!authToken) {
+                document.getElementById('get-me-response').textContent = 'Please login first';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.GET_ME}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                const data = await response.json();
+                document.getElementById('get-me-response').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('get-me-response').textContent = `Error: ${error.message}`;
+            }
+        });
+
+        // Create new chat
+        document.getElementById('create-chat-btn').addEventListener('click', async function() {
+            if (!authToken) {
+                document.getElementById('create-chat-response').textContent = 'Please login first';
+                return;
+            }
+
+            const title = document.getElementById('chat-title').value;
+
+            try {
+                const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.CHAT}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ title })
+                });
+
+                const data = await response.json();
+                document.getElementById('create-chat-response').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('create-chat-response').textContent = `Error: ${error.message}`;
+            }
+        });
+
+        // Send message
+        document.getElementById('send-message-btn').addEventListener('click', async function() {
+            if (!authToken) {
+                document.getElementById('send-message-response').textContent = 'Please login first';
+                return;
+            }
+
+            const chatId = document.getElementById('chat-id').value;
+            const message = document.getElementById('chat-message').value;
+
+            if (!chatId || !message) {
+                document.getElementById('send-message-response').textContent = 'Please fill in all fields';
+                return;
+            }
+
+            try {
+                const endpoint = API_CONFIG.ENDPOINTS.CHAT_MESSAGE.replace(':id', chatId);
+                const response = await fetch(`${API_CONFIG.BASE_URL}${endpoint}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ message })
+                });
+
+                const data = await response.json();
+                document.getElementById('send-message-response').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('send-message-response').textContent = `Error: ${error.message}`;
+            }
+        });
+
+        // Create new project
+        document.getElementById('create-project-btn').addEventListener('click', async function() {
+            if (!authToken) {
+                document.getElementById('create-project-response').textContent = 'Please login first';
+                return;
+            }
+
+            const name = document.getElementById('project-name').value;
+            const type = document.getElementById('project-type').value;
+            const location = document.getElementById('project-location').value;
+            const capacity = document.getElementById('project-capacity').value;
+
+            if (!name || !type || !location || !capacity) {
+                document.getElementById('create-project-response').textContent = 'Please fill in all fields';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.PROJECTS}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({
+                        name,
+                        type,
+                        location,
+                        capacity: Number(capacity),
+                        estimatedCost: Number(capacity) * 1500, // تقدير بسيط للتكلفة
+                        annualProduction: Number(capacity) * 1800, // تقدير بسيط للإنتاج السنوي
+                        roi: 5, // تقدير بسيط لعائد الاستثمار
+                        co2Reduction: Number(capacity) * 0.7 // تقدير بسيط لتخفيض انبعاثات CO2
+                    })
+                });
+
+                const data = await response.json();
+                document.getElementById('create-project-response').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('create-project-response').textContent = `Error: ${error.message}`;
+            }
+        });
+
+        // Theme switching (light/dark mode)
+        const toggleSwitch = document.querySelector('#checkbox');
+
+        // Toggle theme when switch changes
+        if (toggleSwitch) {
+            toggleSwitch.addEventListener('change', switchTheme);
+
+            // Check saved settings
+            const currentTheme = localStorage.getItem('theme');
+            if (currentTheme) {
+                document.documentElement.setAttribute('data-theme', currentTheme);
+
+                if (currentTheme === 'light') {
+                    toggleSwitch.checked = true;
+                }
+            }
+        }
+
+        // Function to switch theme
+        function switchTheme(e) {
+            if (e.target.checked) {
+                document.documentElement.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+    </script>
+
+    <script src="https://unpkg.com/ionicons@5.4.0/dist/ionicons.js"></script>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <h2>Energy.Ai</h2>
+                <p>Powering the future with intelligent solutions</p>
+            </div>
+            <div class="footer-links">
+                <h3>Links</h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html#about">About</a></li>
+                    <li><a href="index.html#service">Services</a></li>
+                    <li><a href="index.html#design">Design</a></li>
+                    <li><a href="index.html#contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-social">
+                <h3>Follow Us</h3>
+                <div class="social-icons">
+                    <a href="#" aria-label="Facebook"><ion-icon name="logo-facebook"></ion-icon></a>
+                    <a href="#" aria-label="Instagram"><ion-icon name="logo-instagram"></ion-icon></a>
+                    <a href="#" aria-label="Twitter"><ion-icon name="logo-twitter"></ion-icon></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Energy.AI. All Rights Reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

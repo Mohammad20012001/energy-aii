@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Energy.AI - واجهة اختبار API">
+    <meta name="keywords" content="energy, AI, API, testing, طاقة, ذكاء اصطناعي, واجهة برمجة التطبيقات">
+    <title>Energy.AI - واجهة اختبار API</title>
+    <link rel="stylesheet" href="public/css/styles.css">
+    <link rel="stylesheet" href="public/css/api-tester.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="main">
+        <div class="navbar">
+            <div class="icon">
+                <h2 class="logo">Energy.Ai</h2>
+            </div>
+
+            <div class="menu">
+                <ul>
+                    <li><a href="index.html">الرئيسية</a></li>
+                    <li><a href="index.html#about">حول</a></li>
+                    <li><a href="index.html#service">الخدمات</a></li>
+                    <li><a href="index.html#design">التصميم</a></li>
+                    <li><a href="index.html#contact">اتصل بنا</a></li>
+                </ul>
+            </div>
+            <div class="theme-switch-wrapper">
+                <label class="theme-switch" for="checkbox">
+                    <input type="checkbox" id="checkbox" />
+                    <div class="slider round"></div>
+                </label>
+            </div>
+        </div>
+
+        <div class="api-tester-container">
+            <div class="api-tester-header">
+                <h1>واجهة اختبار API</h1>
+                <p>استخدم هذه الواجهة لاختبار واجهة برمجة التطبيقات الخاصة بـ Energy.AI</p>
+            </div>
+
+            <div class="api-tester-content">
+                <div class="api-sidebar">
+                    <div class="api-endpoints">
+                        <h3>نقاط النهاية المتاحة</h3>
+                        <ul>
+                            <li class="endpoint-group">
+                                <div class="endpoint-group-title">المصادقة</div>
+                                <ul>
+                                    <li class="endpoint" data-method="POST" data-endpoint="/api/auth/login">
+                                        <span class="method post">POST</span>
+                                        <span class="endpoint-path">/auth/login</span>
+                                    </li>
+                                    <li class="endpoint" data-method="POST" data-endpoint="/api/auth/register">
+                                        <span class="method post">POST</span>
+                                        <span class="endpoint-path">/auth/register</span>
+                                    </li>
+                                    <li class="endpoint" data-method="GET" data-endpoint="/api/auth/me">
+                                        <span class="method get">GET</span>
+                                        <span class="endpoint-path">/auth/me</span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="endpoint-group">
+                                <div class="endpoint-group-title">المشاريع</div>
+                                <ul>
+                                    <li class="endpoint" data-method="GET" data-endpoint="/api/projects">
+                                        <span class="method get">GET</span>
+                                        <span class="endpoint-path">/projects</span>
+                                    </li>
+                                    <li class="endpoint" data-method="POST" data-endpoint="/api/projects">
+                                        <span class="method post">POST</span>
+                                        <span class="endpoint-path">/projects</span>
+                                    </li>
+                                    <li class="endpoint" data-method="GET" data-endpoint="/api/projects/:id">
+                                        <span class="method get">GET</span>
+                                        <span class="endpoint-path">/projects/:id</span>
+                                    </li>
+                                    <li class="endpoint" data-method="PUT" data-endpoint="/api/projects/:id">
+                                        <span class="method put">PUT</span>
+                                        <span class="endpoint-path">/projects/:id</span>
+                                    </li>
+                                    <li class="endpoint" data-method="DELETE" data-endpoint="/api/projects/:id">
+                                        <span class="method delete">DELETE</span>
+                                        <span class="endpoint-path">/projects/:id</span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="endpoint-group">
+                                <div class="endpoint-group-title">المحادثات</div>
+                                <ul>
+                                    <li class="endpoint" data-method="GET" data-endpoint="/api/chat">
+                                        <span class="method get">GET</span>
+                                        <span class="endpoint-path">/chat</span>
+                                    </li>
+                                    <li class="endpoint" data-method="POST" data-endpoint="/api/chat">
+                                        <span class="method post">POST</span>
+                                        <span class="endpoint-path">/chat</span>
+                                    </li>
+                                    <li class="endpoint" data-method="POST" data-endpoint="/api/chat/:id/message">
+                                        <span class="method post">POST</span>
+                                        <span class="endpoint-path">/chat/:id/message</span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="endpoint-group">
+                                <div class="endpoint-group-title">الحسابات</div>
+                                <ul>
+                                    <li class="endpoint" data-method="POST" data-endpoint="/api/calculations/cost">
+                                        <span class="method post">POST</span>
+                                        <span class="endpoint-path">/calculations/cost</span>
+                                    </li>
+                                    <li class="endpoint" data-method="POST" data-endpoint="/api/calculations/energy">
+                                        <span class="method post">POST</span>
+                                        <span class="endpoint-path">/calculations/energy</span>
+                                    </li>
+                                    <li class="endpoint" data-method="POST" data-endpoint="/api/calculations/roi">
+                                        <span class="method post">POST</span>
+                                        <span class="endpoint-path">/calculations/roi</span>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="api-request-panel">
+                    <div class="request-header">
+                        <div class="request-method-url">
+                            <select id="request-method">
+                                <option value="GET">GET</option>
+                                <option value="POST">POST</option>
+                                <option value="PUT">PUT</option>
+                                <option value="DELETE">DELETE</option>
+                            </select>
+                            <input type="text" id="request-url" placeholder="URL" value="http://localhost:5000/api/auth/login">
+                            <button id="send-request" class="primary-btn">إرسال</button>
+                        </div>
+                    </div>
+
+                    <div class="request-tabs">
+                        <div class="tab active" data-tab="params">المعلمات</div>
+                        <div class="tab" data-tab="headers">الرؤوس</div>
+                        <div class="tab" data-tab="body">الجسم</div>
+                        <div class="tab" data-tab="auth">المصادقة</div>
+                    </div>
+
+                    <div class="request-content">
+                        <div class="tab-content active" id="params-content">
+                            <div class="params-list">
+                                <div class="param-row">
+                                    <input type="text" class="param-key" placeholder="المفتاح">
+                                    <input type="text" class="param-value" placeholder="القيمة">
+                                    <button class="remove-param">×</button>
+                                </div>
+                            </div>
+                            <button id="add-param" class="secondary-btn">إضافة معلمة</button>
+                        </div>
+
+                        <div class="tab-content" id="headers-content">
+                            <div class="headers-list">
+                                <div class="header-row">
+                                    <input type="text" class="header-key" placeholder="المفتاح">
+                                    <input type="text" class="header-value" placeholder="القيمة">
+                                    <button class="remove-header">×</button>
+                                </div>
+                            </div>
+                            <button id="add-header" class="secondary-btn">إضافة رأس</button>
+                        </div>
+
+                        <div class="tab-content" id="body-content">
+                            <div class="body-type-selector">
+                                <label>
+                                    <input type="radio" name="body-type" value="none" checked> لا شيء
+                                </label>
+                                <label>
+                                    <input type="radio" name="body-type" value="form-data"> بيانات النموذج
+                                </label>
+                                <label>
+                                    <input type="radio" name="body-type" value="json"> JSON
+                                </label>
+                            </div>
+                            <div class="body-content-container">
+                                <div class="body-none active">
+                                    <p>لا يوجد محتوى للجسم</p>
+                                </div>
+                                <div class="body-form-data">
+                                    <div class="form-data-list">
+                                        <div class="form-data-row">
+                                            <input type="text" class="form-data-key" placeholder="المفتاح">
+                                            <input type="text" class="form-data-value" placeholder="القيمة">
+                                            <button class="remove-form-data">×</button>
+                                        </div>
+                                    </div>
+                                    <button id="add-form-data" class="secondary-btn">إضافة حقل</button>
+                                </div>
+                                <div class="body-json">
+                                    <textarea id="json-editor" placeholder="{&#10;  &quot;key&quot;: &quot;value&quot;&#10;}"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-content" id="auth-content">
+                            <div class="auth-type-selector">
+                                <label>
+                                    <input type="radio" name="auth-type" value="none" checked> لا شيء
+                                </label>
+                                <label>
+                                    <input type="radio" name="auth-type" value="bearer"> Bearer Token
+                                </label>
+                            </div>
+                            <div class="auth-content-container">
+                                <div class="auth-none active">
+                                    <p>لا توجد مصادقة</p>
+                                </div>
+                                <div class="auth-bearer">
+                                    <div class="form-group">
+                                        <label for="bearer-token">Bearer Token</label>
+                                        <input type="text" id="bearer-token" placeholder="أدخل الرمز المميز">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="api-response-panel">
+                    <div class="response-header">
+                        <h3>الاستجابة</h3>
+                        <div class="response-status">
+                            <span id="response-status-code">---</span>
+                            <span id="response-time">--- ms</span>
+                        </div>
+                    </div>
+                    <div class="response-tabs">
+                        <div class="tab active" data-tab="response-body">الجسم</div>
+                        <div class="tab" data-tab="response-headers">الرؤوس</div>
+                    </div>
+                    <div class="response-content">
+                        <div class="tab-content active" id="response-body-content">
+                            <pre id="response-body">// هنا ستظهر استجابة الخادم</pre>
+                        </div>
+                        <div class="tab-content" id="response-headers-content">
+                            <pre id="response-headers">// هنا ستظهر رؤوس الاستجابة</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <h2>Energy.Ai</h2>
+                <p>Powering the future with intelligent solutions</p>
+            </div>
+            <div class="footer-links">
+                <h3>روابط</h3>
+                <ul>
+                    <li><a href="index.html">الرئيسية</a></li>
+                    <li><a href="index.html#about">حول</a></li>
+                    <li><a href="index.html#service">الخدمات</a></li>
+                    <li><a href="index.html#design">التصميم</a></li>
+                    <li><a href="index.html#contact">اتصل بنا</a></li>
+                </ul>
+            </div>
+            <div class="footer-social">
+                <h3>تابعنا</h3>
+                <div class="social-icons">
+                    <a href="#" aria-label="Facebook"><ion-icon name="logo-facebook"></ion-icon></a>
+                    <a href="#" aria-label="Instagram"><ion-icon name="logo-instagram"></ion-icon></a>
+                    <a href="#" aria-label="Twitter"><ion-icon name="logo-twitter"></ion-icon></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Energy.AI. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/ionicons@5.4.0/dist/ionicons.js"></script>
+    <script src="public/js/api-tester.js"></script>
+</body>
+</html>

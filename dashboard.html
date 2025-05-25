@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Energy.AI - لوحة تحكم مهندس الطاقة">
+    <meta name="keywords" content="energy, AI, dashboard, projects, طاقة, ذكاء اصطناعي, لوحة تحكم">
+    <title>Energy.AI - لوحة التحكم</title>
+    <link rel="stylesheet" href="public/css/styles.css">
+    <link rel="stylesheet" href="public/css/dashboard.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2 class="logo">Energy.AI</h2>
+                <button id="sidebar-toggle" class="sidebar-toggle">
+                    <ion-icon name="menu-outline"></ion-icon>
+                </button>
+            </div>
+            <div class="user-info">
+                <div class="user-avatar">
+                    <ion-icon name="person-circle-outline"></ion-icon>
+                </div>
+                <div class="user-details">
+                    <h3 id="user-name">مستخدم Energy.AI</h3>
+                    <p id="user-email">user@example.com</p>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active">
+                        <a href="#dashboard">
+                            <ion-icon name="home-outline"></ion-icon>
+                            <span>الرئيسية</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#projects">
+                            <ion-icon name="flash-outline"></ion-icon>
+                            <span>المشاريع</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#chat">
+                            <ion-icon name="chatbubbles-outline"></ion-icon>
+                            <span>المحادثات</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#calculations">
+                            <ion-icon name="calculator-outline"></ion-icon>
+                            <span>الحسابات</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#reports">
+                            <ion-icon name="bar-chart-outline"></ion-icon>
+                            <span>التقارير</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#settings">
+                            <ion-icon name="settings-outline"></ion-icon>
+                            <span>الإعدادات</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="logout-btn" class="logout-btn">
+                    <ion-icon name="log-out-outline"></ion-icon>
+                    <span>تسجيل الخروج</span>
+                </button>
+                <div class="theme-switch-wrapper">
+                    <label class="theme-switch" for="dashboard-checkbox">
+                        <input type="checkbox" id="dashboard-checkbox" />
+                        <div class="slider round"></div>
+                    </label>
+                    <span class="theme-label">الوضع المظلم</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="content-header">
+                <div class="header-left">
+                    <h1>لوحة التحكم</h1>
+                    <p id="current-date">الأربعاء، 23 مايو 2025</p>
+                </div>
+                <div class="header-right">
+                    <div class="search-bar">
+                        <input type="text" placeholder="بحث..." aria-label="Search">
+                        <button aria-label="Search">
+                            <ion-icon name="search-outline"></ion-icon>
+                        </button>
+                    </div>
+                    <div class="notifications">
+                        <button class="notification-btn" aria-label="Notifications">
+                            <ion-icon name="notifications-outline"></ion-icon>
+                            <span class="notification-badge">3</span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content" id="dashboard">
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <ion-icon name="flash-outline"></ion-icon>
+                        </div>
+                        <div class="stat-info">
+                            <h3>إجمالي المشاريع</h3>
+                            <p class="stat-value">12</p>
+                            <p class="stat-change positive">+2 هذا الشهر</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <ion-icon name="battery-charging-outline"></ion-icon>
+                        </div>
+                        <div class="stat-info">
+                            <h3>إجمالي الطاقة</h3>
+                            <p class="stat-value">1,250 kW</p>
+                            <p class="stat-change positive">+150 kW هذا الشهر</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <ion-icon name="cash-outline"></ion-icon>
+                        </div>
+                        <div class="stat-info">
+                            <h3>التكلفة التقديرية</h3>
+                            <p class="stat-value">$1.8M</p>
+                            <p class="stat-change negative">-5% من الميزانية</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <ion-icon name="leaf-outline"></ion-icon>
+                        </div>
+                        <div class="stat-info">
+                            <h3>تخفيض CO2</h3>
+                            <p class="stat-value">850 طن</p>
+                            <p class="stat-change positive">+12% هذا العام</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-row">
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h2>توزيع المشاريع حسب النوع</h2>
+                            <div class="chart-actions">
+                                <button class="chart-action-btn">
+                                    <ion-icon name="download-outline"></ion-icon>
+                                </button>
+                                <button class="chart-action-btn">
+                                    <ion-icon name="ellipsis-vertical-outline"></ion-icon>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="chart">
+                            <canvas id="projectTypeChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="recent-projects">
+                        <div class="section-header">
+                            <h2>أحدث المشاريع</h2>
+                            <a href="#projects" class="view-all">عرض الكل</a>
+                        </div>
+                        <div class="project-list" id="recent-projects-list">
+                            <!-- سيتم ملء هذا القسم ديناميكيًا بواسطة JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-row">
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h2>إنتاج الطاقة الشهري</h2>
+                            <div class="chart-actions">
+                                <button class="chart-action-btn">
+                                    <ion-icon name="download-outline"></ion-icon>
+                                </button>
+                                <button class="chart-action-btn">
+                                    <ion-icon name="ellipsis-vertical-outline"></ion-icon>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="chart">
+                            <canvas id="energyProductionChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="ai-insights">
+                        <div class="section-header">
+                            <h2>توصيات الذكاء الاصطناعي</h2>
+                            <button class="refresh-btn">
+                                <ion-icon name="refresh-outline"></ion-icon>
+                            </button>
+                        </div>
+                        <div class="insights-list" id="ai-insights-list">
+                            <!-- سيتم ملء هذا القسم ديناميكيًا بواسطة JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-section hidden" id="projects">
+                <div class="section-header">
+                    <h2>إدارة المشاريع</h2>
+                    <button class="primary-btn" id="new-project-btn">
+                        <ion-icon name="add-outline"></ion-icon>
+                        مشروع جديد
+                    </button>
+                </div>
+                <div class="projects-filters">
+                    <div class="filter-group">
+                        <label for="project-type-filter">نوع المشروع</label>
+                        <select id="project-type-filter">
+                            <option value="all">الكل</option>
+                            <option value="solar">طاقة شمسية</option>
+                            <option value="wind">طاقة رياح</option>
+                            <option value="hydro">طاقة مائية</option>
+                            <option value="geothermal">طاقة حرارية أرضية</option>
+                            <option value="biomass">طاقة حيوية</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="project-status-filter">الحالة</label>
+                        <select id="project-status-filter">
+                            <option value="all">الكل</option>
+                            <option value="planning">تخطيط</option>
+                            <option value="in-progress">قيد التنفيذ</option>
+                            <option value="completed">مكتمل</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="project-sort">الترتيب</label>
+                        <select id="project-sort">
+                            <option value="newest">الأحدث</option>
+                            <option value="oldest">الأقدم</option>
+                            <option value="name-asc">الاسم (أ-ي)</option>
+                            <option value="name-desc">الاسم (ي-أ)</option>
+                            <option value="capacity-high">السعة (الأعلى أولاً)</option>
+                            <option value="capacity-low">السعة (الأدنى أولاً)</option>
+                        </select>
+                    </div>
+                    <div class="search-filter">
+                        <input type="text" id="project-search" placeholder="بحث في المشاريع...">
+                    </div>
+                </div>
+                <div class="projects-grid" id="projects-grid">
+                    <!-- سيتم ملء هذا القسم ديناميكيًا بواسطة JavaScript -->
+                </div>
+                <div class="pagination" id="projects-pagination">
+                    <!-- سيتم ملء هذا القسم ديناميكيًا بواسطة JavaScript -->
+                </div>
+            </div>
+
+            <div class="content-section hidden" id="chat">
+                <!-- محتوى قسم المحادثات سيتم إضافته لاحقًا -->
+            </div>
+
+            <div class="content-section hidden" id="calculations">
+                <!-- محتوى قسم الحسابات سيتم إضافته لاحقًا -->
+            </div>
+
+            <div class="content-section hidden" id="reports">
+                <!-- محتوى قسم التقارير سيتم إضافته لاحقًا -->
+            </div>
+
+            <div class="content-section hidden" id="settings">
+                <!-- محتوى قسم الإعدادات سيتم إضافته لاحقًا -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for New Project -->
+    <div class="modal" id="new-project-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>إنشاء مشروع جديد</h2>
+                <button class="close-modal-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="new-project-form">
+                    <div class="form-group">
+                        <label for="project-name">اسم المشروع</label>
+                        <input type="text" id="project-name" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="project-type">نوع المشروع</label>
+                            <select id="project-type" required>
+                                <option value="solar">طاقة شمسية</option>
+                                <option value="wind">طاقة رياح</option>
+                                <option value="hydro">طاقة مائية</option>
+                                <option value="geothermal">طاقة حرارية أرضية</option>
+                                <option value="biomass">طاقة حيوية</option>
+                                <option value="other">أخرى</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="project-location">الموقع</label>
+                            <input type="text" id="project-location" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="project-capacity">السعة (كيلوواط)</label>
+                            <input type="number" id="project-capacity" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="project-status">الحالة</label>
+                            <select id="project-status">
+                                <option value="planning">تخطيط</option>
+                                <option value="in-progress">قيد التنفيذ</option>
+                                <option value="completed">مكتمل</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="project-notes">ملاحظات</label>
+                        <textarea id="project-notes" rows="3"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="secondary-btn" id="cancel-project-btn">إلغاء</button>
+                        <button type="submit" class="primary-btn">إنشاء المشروع</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/ionicons@5.4.0/dist/ionicons.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.js"></script>
+    <script src="public/js/dashboard.js"></script>
+</body>
+</html>

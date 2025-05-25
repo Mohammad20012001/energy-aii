@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>ENERGY.AI</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div class="main">
+        <div class="navbar">
+            <div class="icon">
+                <h2 class="logo">Energy.Ai</h2>
+            </div>
+
+            <div class="menu">
+                <ul>
+                    <li><a href="#">HOME</a></li>
+                    <li><a href="#">ABOUT</a></li>
+                    <li><a href="#" id="serviceLink">SERVICE</a></li>
+                    <li><a href="#">DESIGN</a></li>
+                    <li><a href="#">CONTACT</a></li>
+                </ul>
+            </div>
+
+            <div class="search">
+                <input class="srch" type="search" name="" placeholder="Type To text">
+                <a href="#"> <button class="btn">Search</button></a>
+            </div>
+
+        </div> 
+        <div class="content" id="home">
+            <h1>Web Design & <br><span>Development</span> <br>Energy</h1>
+            <p class="par">Ai is the spark igniting a new era of energy innovation<br> powering tomorrow with<br>intelligent solutions today</p>
+
+            <button class="cn" id="joinBtn"><a href="#">JOIN US</a></button>
+
+            <div class="form" id="loginForm">
+                <h2>Login Here</h2>
+                <input type="email" name="email" placeholder="Enter Email Here">
+                <input type="password" name="" placeholder="Enter Password Here">
+                <button class="btnn"><a href="#">Login</a></button>
+
+                <p class="link">Don't have an account<br>
+                <a href="#">Sign up </a> here</a></p>
+                <p class="liw">Log in with</p>
+
+                <div class="icons">
+                    <a href="#"><ion-icon name="logo-facebook"></ion-icon></a>
+                    <a href="#"><ion-icon name="logo-instagram"></ion-icon></a>
+                    <a href="#"><ion-icon name="logo-twitter"></ion-icon></a>
+                    <a href="#"><ion-icon name="logo-google"></ion-icon></a>
+                    <a href="#"><ion-icon name="logo-skype"></ion-icon></a>
+                </div>
+            </div>
+
+            <!-- AI Chat Interface -->
+            <div class="ai-chat-container" id="aiChatContainer">
+                <div class="chat-header">
+                    <h3>Energy.AI Assistant</h3>
+                    <button class="close-btn" id="closeChatBtn">×</button>
+                </div>
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message bot">
+                        <div class="message-content">Energy.Ai </div>
+                    </div>
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="userInput" placeholder="اكتب رسالتك هنا...">
+                    <button id="sendMessageBtn">إرسال</button>
+                </div>
+                <div class="typing-indicator" id="typingIndicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://unpkg.com/ionicons@5.4.0/dist/ionicons.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const joinBtn = document.getElementById('joinBtn');
+            const loginForm = document.getElementById('loginForm');
+            
+            // Hide login form initially
+            loginForm.style.display = 'none';
+            
+            // Show login form when JOIN US button is clicked
+            joinBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (loginForm.style.display === 'none') {
+                    loginForm.style.display = 'block';
+                    setTimeout(() => {
+                        loginForm.classList.add('visible');
+                    }, 10);
+                } else {
+                    loginForm.classList.remove('visible');
+                    setTimeout(() => {
+                        loginForm.style.display = 'none';
+                    }, 300);
+                }
+            });
+
+            // AI Chat functionality
+            const serviceLink = document.getElementById('serviceLink');
+            const aiChatContainer = document.getElementById('aiChatContainer');
+            const closeChatBtn = document.getElementById('closeChatBtn');
+            const userInput = document.getElementById('userInput');
+            const sendMessageBtn = document.getElementById('sendMessageBtn');
+            const chatMessages = document.getElementById('chatMessages');
+            const typingIndicator = document.getElementById('typingIndicator');
+
+            // RapidAPI Configuration
+            const RAPIDAPI_URL = "http://localhost:3000/api/chat";
+            const RAPIDAPI_KEY = "3ff78139e8msh57b1322a35070adp106722jsna5f8c62277f1";
+            const RAPIDAPI_HOST = "cheapest-gpt-4-turbo-gpt-4-vision-chatgpt-openai-ai-api.p.rapidapi.com";
+
+            // Hide chat and typing indicator initially
+            aiChatContainer.style.display = 'none';
+            typingIndicator.style.display = 'none';
+
+            // Show chat when SERVICE is clicked
+            serviceLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                aiChatContainer.style.display = 'flex';
+                setTimeout(() => {
+                    aiChatContainer.classList.add('visible');
+                }, 10);
+            });
+
+            // Close chat when close button is clicked
+            closeChatBtn.addEventListener('click', function() {
+                aiChatContainer.classList.remove('visible');
+                setTimeout(() => {
+                    aiChatContainer.style.display = 'none';
+                }, 300);
+            });
+
+            // Send message to RapidAPI (GPT-4o)
+            function sendMessageToAPI(message) {
+                return new Promise((resolve, reject) => {
+                    const data = JSON.stringify({
+                        messages: [
+                            {
+                                role: 'user',
+                                content: message
+                            }
+                        ],
+                        model: 'gpt-4o',
+                        max_tokens: 100,
+                        temperature: 0.9
+                    });
+
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('POST', 'http://localhost:3000/api/chat');
+                    xhr.setRequestHeader('Content-Type', 'application/json');
+
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState === XMLHttpRequest.DONE) {
+                            try {
+                                const response = JSON.parse(xhr.responseText);
+                                const botResponse = response.choices?.[0]?.message?.content || "لا يوجد رد من الذكاء الاصطناعي.";
+                                resolve(botResponse);
+                            } catch (e) {
+                                resolve("عذراً، حدث خطأ في معالجة الرد.");
+                            }
+                        }
+                    };
+
+                    xhr.send(data);
+                });
+            }
+
+            // دالة لإضافة رسالة في واجهة الدردشة
+            function addMessage(text, sender = 'user') {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message ' + sender;
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'message-content';
+                contentDiv.textContent = text;
+                messageDiv.appendChild(contentDiv);
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            // دالة لإظهار مؤشر الكتابة
+            function showTypingIndicator() {
+                typingIndicator.style.display = 'block';
+            }
+
+            // دالة لإخفاء مؤشر الكتابة
+            function hideTypingIndicator() {
+                typingIndicator.style.display = 'none';
+            }
+
+            // إرسال الرسالة عند الضغط على زر الإرسال أو Enter
+            sendMessageBtn.addEventListener('click', sendMessage);
+            userInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') sendMessage();
+            });
+
+            async function sendMessage() {
+                const message = userInput.value.trim();
+                if (!message) return;
+                addMessage(message, 'user');
+                userInput.value = '';
+                const botReply = await sendMessageToAPI(message);
+                addMessage(botReply, 'bot');
+            }
+
+            // نطق "open energy ai" عند فتح الصفحة
+            const utterance = new SpeechSynthesisUtterance("open energy ai");
+            window.speechSynthesis.speak(utterance);
+        });
+    </script>
+</body>
+</html>

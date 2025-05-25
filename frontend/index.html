@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Energy.AI - الذكاء الاصطناعي لحلول الطاقة المستدامة">
+    <meta name="keywords" content="energy, AI, artificial intelligence, sustainable energy, طاقة, ذكاء اصطناعي">
+    <title>ENERGY.AI</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="main">
+        <div class="navbar">
+            <div class="icon">
+                <h2 class="logo">Energy.Ai</h2>
+            </div>
+
+            <div class="menu">
+                <ul>
+                    <li><a href="#home">HOME</a></li>
+                    <li><a href="#about">ABOUT</a></li>
+                    <li><a href="#service" id="serviceLink">SERVICE</a></li>
+                    <li><a href="#design">DESIGN</a></li>
+                    <li><a href="#contact">CONTACT</a></li>
+                </ul>
+            </div>
+            <div class="theme-switch-wrapper">
+                <label class="theme-switch" for="checkbox">
+                    <input type="checkbox" id="checkbox" />
+                    <div class="slider round"></div>
+                </label>
+            </div>
+
+            <div class="search">
+                <input class="srch" type="search" name="search" placeholder="Type to search" aria-label="Search">
+                <button class="btn">Search</button>
+            </div>
+
+        </div>
+        <div class="content" id="home">
+            <h1>Web Design & <br><span>Development</span> <br>Energy</h1>
+            <p class="par">AI is the spark igniting a new era of energy innovation<br> powering tomorrow with<br>intelligent solutions today</p>
+
+            <button class="cn" id="joinBtn">JOIN US</button>
+
+            <div class="form" id="loginForm">
+                <h2>Login Here</h2>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Enter Email Here" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter Password Here" required>
+                </div>
+                <button class="btnn">Login</button>
+
+                <p class="link">Don't have an account?<br>
+                <a href="#" id="signupLink">Sign up here</a></p>
+                <p class="liw">Log in with</p>
+
+                <div class="icons">
+                    <a href="#" aria-label="Facebook"><ion-icon name="logo-facebook"></ion-icon></a>
+                    <a href="#" aria-label="Instagram"><ion-icon name="logo-instagram"></ion-icon></a>
+                    <a href="#" aria-label="Twitter"><ion-icon name="logo-twitter"></ion-icon></a>
+                    <a href="#" aria-label="Google"><ion-icon name="logo-google"></ion-icon></a>
+                    <a href="#" aria-label="Skype"><ion-icon name="logo-skype"></ion-icon></a>
+                </div>
+            </div>
+
+            <!-- AI Chat Interface -->
+            <div class="ai-chat-container" id="aiChatContainer">
+                <div class="chat-header">
+                    <h3>Energy.AI Assistant</h3>
+                    <div class="chat-controls">
+                        <button class="minimize-btn" id="minimizeChatBtn">-</button>
+                        <button class="close-btn" id="closeChatBtn">×</button>
+                    </div>
+                </div>
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message bot">
+                        <div class="avatar">
+                            <ion-icon name="analytics-outline"></ion-icon>
+                        </div>
+                        <div class="message-content">مرحبا انا ENERGY.AI</div>
+                    </div>
+                </div>
+                <div class="suggested-questions">
+                    <button class="question-btn">كيف يمكن للذكاء الاصطناعي تحسين كفاءة الطاقة؟</button>
+                    <button class="question-btn">ما هي الطاقة المتجددة؟</button>
+                    <button class="question-btn">كيف أقلل من فاتورة الكهرباء؟</button>
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="userInput" placeholder="اكتب رسالتك هنا..." aria-label="Message input">
+                    <button id="sendAttachmentBtn" aria-label="Send attachment">
+                        <ion-icon name="attach-outline"></ion-icon>
+                    </button>
+                    <button id="sendMessageBtn">إرسال</button>
+                </div>
+                <div class="typing-indicator" id="typingIndicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+
+        <div id="about" class="section about-section">
+            <h2>About Energy.AI</h2>
+            <div class="about-content">
+                <p>Energy.AI is at the forefront of combining artificial intelligence with energy solutions to create a sustainable future. Our innovative approaches help businesses and individuals optimize their energy usage, reduce costs, and minimize environmental impact.</p>
+                <div class="features">
+                    <div class="feature">
+                        <ion-icon name="flash-outline"></ion-icon>
+                        <h3>Smart Energy Management</h3>
+                        <p>AI-powered solutions to optimize energy consumption in real-time.</p>
+                    </div>
+                    <div class="feature">
+                        <ion-icon name="leaf-outline"></ion-icon>
+                        <h3>Sustainable Solutions</h3>
+                        <p>Eco-friendly approaches to energy production and distribution.</p>
+                    </div>
+                    <div class="feature">
+                        <ion-icon name="analytics-outline"></ion-icon>
+                        <h3>Data-Driven Insights</h3>
+                        <p>Comprehensive analytics to make informed energy decisions.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="service" class="section service-section">
+            <h2>Our Services</h2>
+            <div class="service-content">
+                <div class="service-cards">
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <ion-icon name="bulb-outline"></ion-icon>
+                        </div>
+                        <h3>Energy Optimization</h3>
+                        <p>Our AI algorithms analyze your energy consumption patterns and suggest optimizations to reduce waste and cost.</p>
+                    </div>
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <ion-icon name="trending-up-outline"></ion-icon>
+                        </div>
+                        <h3>Predictive Maintenance</h3>
+                        <p>Prevent equipment failures before they happen with our predictive maintenance solutions powered by machine learning.</p>
+                    </div>
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <ion-icon name="shield-outline"></ion-icon>
+                        </div>
+                        <h3>Energy Security</h3>
+                        <p>Protect your energy infrastructure with advanced threat detection and response systems.</p>
+                    </div>
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <ion-icon name="cloud-outline"></ion-icon>
+                        </div>
+                        <h3>Cloud Energy Management</h3>
+                        <p>Access your energy data and controls from anywhere with our secure cloud-based platform.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="design" class="section design-section">
+            <h2>Our Design Approach</h2>
+            <div class="design-gallery">
+                <div class="design-card">
+                    <div class="design-image"></div>
+                    <h3>Smart Home Integration</h3>
+                    <p>Seamless connection between your energy systems and smart home devices.</p>
+                </div>
+                <div class="design-card">
+                    <div class="design-image"></div>
+                    <h3>Renewable Focus</h3>
+                    <p>Designs that prioritize renewable energy sources and sustainability.</p>
+                </div>
+                <div class="design-card">
+                    <div class="design-image"></div>
+                    <h3>User Experience</h3>
+                    <p>Intuitive interfaces that make energy management simple and accessible.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="contact" class="section contact-section">
+            <h2>Contact Us</h2>
+            <div class="contact-container">
+                <div class="contact-form">
+                    <div class="form-group">
+                        <label for="contact-name">Name</label>
+                        <input type="text" id="contact-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-email">Email</label>
+                        <input type="email" id="contact-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-message">Message</label>
+                        <textarea id="contact-message" rows="5" required></textarea>
+                    </div>
+                    <button class="submit-btn" id="contactSubmitBtn">Send Message</button>
+                    <div id="contactFormStatus" class="form-status"></div>
+                </div>
+                <div class="contact-info">
+                    <div class="info-item">
+                        <ion-icon name="location-outline"></ion-icon>
+                        <p>Jordan_Amman</p>
+                    </div>
+                    <div class="info-item">
+                        <ion-icon name="mail-outline"></ion-icon>
+                        <p>mohammadabulehyeh96@energyai.com</p>
+                    </div>
+                    <div class="info-item">
+                        <ion-icon name="call-outline"></ion-icon>
+                        <p>+962791556430</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+
+            <div class="footer-logo">
+                <h2>Energy.Ai</h2>
+                <p>Powering the future with intelligent solutions</p>
+            </div>
+            <div class="footer-links">
+                <h3>Links</h3>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#service" id="footerServiceLink">Services</a></li>
+                    <li><a href="#design">Design</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-social">
+                <h3>Follow Us</h3>
+                <div class="social-icons">
+                    <a href="#" aria-label="Facebook"><ion-icon name="logo-facebook"></ion-icon></a>
+                    <a href="#" aria-label="Instagram"><ion-icon name="logo-instagram"></ion-icon></a>
+                    <a href="#" aria-label="Twitter"><ion-icon name="logo-twitter"></ion-icon></a>
+                </div>
+            </div>
+            <div class="footer-newsletter">
+                <h3>Newsletter</h3>
+                <p>Stay updated with our latest news</p>
+                <div class="newsletter-form">
+                    <input type="email" placeholder="Your Email Address" aria-label="Email for newsletter">
+                    <button aria-label="Subscribe">
+                        <ion-icon name="paper-plane-outline"></ion-icon>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Energy.AI. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/ionicons@5.4.0/dist/ionicons.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

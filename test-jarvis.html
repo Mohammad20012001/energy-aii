@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار Jarvis Voice Assistant</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .test-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+        
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #ff7200;
+        }
+        
+        .test-button {
+            background: #ff7200;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .test-button:hover {
+            background: #e65a00;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 114, 0, 0.3);
+        }
+        
+        .status {
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .feature-list {
+            text-align: right;
+            margin: 20px 0;
+        }
+        
+        .feature-list li {
+            margin: 10px 0;
+            padding: 5px 0;
+        }
+        
+        .voice-indicator {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #ff7200;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+        
+        .voice-indicator.listening {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 114, 0, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(255, 114, 0, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 114, 0, 0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🎤 اختبار Jarvis Voice Assistant</h1>
+        
+        <div class="test-section">
+            <h3>اختبار دعم المتصفح</h3>
+            <button class="test-button" onclick="testBrowserSupport()">فحص دعم المتصفح</button>
+            <div id="browserStatus" class="status" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>اختبار التعرف على الصوت</h3>
+            <div class="voice-indicator" id="voiceIndicator">🎤</div>
+            <button class="test-button" id="voiceTestBtn" onclick="testVoiceRecognition()">بدء اختبار الصوت</button>
+            <div id="voiceStatus" class="status" style="display: none;"></div>
+            <div id="recognizedText" style="margin-top: 15px; font-weight: bold;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>اختبار تحويل النص إلى كلام</h3>
+            <button class="test-button" onclick="testTextToSpeech()">اختبار النطق</button>
+            <div id="speechStatus" class="status" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>الميزات المدعومة</h3>
+            <ul class="feature-list">
+                <li>✅ التعرف على الصوت باللغة العربية</li>
+                <li>✅ تحويل النص إلى كلام</li>
+                <li>✅ أوامر صوتية ذكية</li>
+                <li>✅ تكامل مع AI</li>
+                <li>✅ واجهة مستخدم تفاعلية</li>
+            </ul>
+        </div>
+        
+        <div class="test-section">
+            <h3>الأوامر المدعومة للاختبار</h3>
+            <ul class="feature-list">
+                <li>"مرحبا" - للترحيب</li>
+                <li>"كم الساعة" - لمعرفة الوقت</li>
+                <li>"التاريخ" - لمعرفة التاريخ</li>
+                <li>"افتح جوجل" - لفتح جوجل</li>
+                <li>"افتح يوتيوب" - لفتح يوتيوب</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="public/js/jarvis-config.js"></script>
+    <script>
+        let recognition = null;
+        let isListening = false;
+        
+        function testBrowserSupport() {
+            const statusDiv = document.getElementById('browserStatus');
+            statusDiv.style.display = 'block';
+            
+            const speechSupport = JarvisHelpers.isSpeechRecognitionSupported();
+            const synthesisSupport = JarvisHelpers.isSpeechSynthesisSupported();
+            
+            if (speechSupport && synthesisSupport) {
+                statusDiv.className = 'status success';
+                statusDiv.textContent = '✅ المتصفح يدعم جميع ميزات Jarvis!';
+            } else if (speechSupport) {
+                statusDiv.className = 'status info';
+                statusDiv.textContent = '⚠️ المتصفح يدعم التعرف على الصوت فقط';
+            } else if (synthesisSupport) {
+                statusDiv.className = 'status info';
+                statusDiv.textContent = '⚠️ المتصفح يدعم تحويل النص إلى كلام فقط';
+            } else {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ المتصفح لا يدعم ميزات Jarvis';
+            }
+        }
+        
+        function testVoiceRecognition() {
+            const statusDiv = document.getElementById('voiceStatus');
+            const indicator = document.getElementById('voiceIndicator');
+            const button = document.getElementById('voiceTestBtn');
+            const textDiv = document.getElementById('recognizedText');
+            
+            if (!JarvisHelpers.isSpeechRecognitionSupported()) {
+                statusDiv.style.display = 'block';
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ المتصفح لا يدعم التعرف على الصوت';
+                return;
+            }
+            
+            if (isListening) {
+                recognition.stop();
+                return;
+            }
+            
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'ar-SA';
+            
+            recognition.onstart = function() {
+                isListening = true;
+                indicator.classList.add('listening');
+                button.textContent = 'إيقاف الاستماع';
+                statusDiv.style.display = 'block';
+                statusDiv.className = 'status info';
+                statusDiv.textContent = '🎤 أستمع إليك الآن...';
+                textDiv.textContent = '';
+            };
+            
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                textDiv.textContent = `النص المُتعرف عليه: "${transcript}"`;
+                statusDiv.className = 'status success';
+                statusDiv.textContent = '✅ تم التعرف على الصوت بنجاح!';
+            };
+            
+            recognition.onerror = function(event) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = `❌ خطأ في التعرف على الصوت: ${event.error}`;
+            };
+            
+            recognition.onend = function() {
+                isListening = false;
+                indicator.classList.remove('listening');
+                button.textContent = 'بدء اختبار الصوت';
+            };
+            
+            recognition.start();
+        }
+        
+        function testTextToSpeech() {
+            const statusDiv = document.getElementById('speechStatus');
+            statusDiv.style.display = 'block';
+            
+            if (!JarvisHelpers.isSpeechSynthesisSupported()) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ المتصفح لا يدعم تحويل النص إلى كلام';
+                return;
+            }
+            
+            const utterance = new SpeechSynthesisUtterance('مرحباً! هذا اختبار لتحويل النص إلى كلام في Jarvis Voice Assistant');
+            utterance.lang = 'ar-SA';
+            utterance.rate = 1;
+            utterance.volume = 1;
+            utterance.pitch = 1;
+            
+            utterance.onstart = function() {
+                statusDiv.className = 'status info';
+                statusDiv.textContent = '🔊 جاري تشغيل الصوت...';
+            };
+            
+            utterance.onend = function() {
+                statusDiv.className = 'status success';
+                statusDiv.textContent = '✅ تم تشغيل الصوت بنجاح!';
+            };
+            
+            utterance.onerror = function() {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ خطأ في تشغيل الصوت';
+            };
+            
+            window.speechSynthesis.speak(utterance);
+        }
+        
+        // اختبار تلقائي عند تحميل الصفحة
+        window.onload = function() {
+            testBrowserSupport();
+        };
+    </script>
+</body>
+</html>

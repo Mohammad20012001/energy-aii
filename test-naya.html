@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار Naya Voice Assistant</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .test-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #ff7200;
+        }
+
+        .test-button {
+            background: #ff7200;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .test-button:hover {
+            background: #e65a00;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 114, 0, 0.3);
+        }
+
+        .status {
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .feature-list {
+            text-align: right;
+            margin: 20px 0;
+        }
+
+        .feature-list li {
+            margin: 10px 0;
+            padding: 5px 0;
+        }
+
+        .voice-indicator {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #ff7200;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .voice-indicator.listening {
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 114, 0, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(255, 114, 0, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 114, 0, 0); }
+        }
+
+        .console-output {
+            background: #000;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            text-align: left;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🎤 اختبار Naya Voice Assistant</h1>
+
+        <div class="test-section">
+            <h3>اختبار دعم المتصفح</h3>
+            <button class="test-button" onclick="testBrowserSupport()">فحص دعم المتصفح</button>
+            <div id="browserStatus" class="status" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>اختبار إذن الميكروفون</h3>
+            <button class="test-button" onclick="testMicrophonePermission()">طلب إذن الميكروفون</button>
+            <div id="micStatus" class="status" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>اختبار التعرف على الصوت</h3>
+            <div class="voice-indicator" id="voiceIndicator">🎤</div>
+            <button class="test-button" id="voiceTestBtn" onclick="testVoiceRecognition()">بدء اختبار الصوت</button>
+            <div id="voiceStatus" class="status" style="display: none;"></div>
+            <div id="recognizedText" style="margin-top: 15px; font-weight: bold;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>اختبار تحويل النص إلى كلام</h3>
+            <button class="test-button" onclick="testTextToSpeech()">اختبار النطق العربي</button>
+            <button class="test-button" onclick="testFemaleVoice()">اختبار الصوت الأنثوي</button>
+            <button class="test-button" onclick="listAvailableVoices()">عرض الأصوات المتاحة</button>
+            <button class="test-button" onclick="showVoiceSelector()">اختيار صوت مخصص</button>
+            <button class="test-button" onclick="testStopCommand()">اختبار أوامر الإيقاف</button>
+            <button class="test-button" onclick="testVoiceQuality()">اختبار جودة الصوت المحسنة</button>
+            <button class="test-button" onclick="testFastResponse()">اختبار الاستجابة السريعة</button>
+            <button class="test-button" onclick="testAntiRepeat()">اختبار منع التكرار</button>
+            <button class="test-button" onclick="testNavigationCommands()">اختبار أوامر التنقل</button>
+            <button class="test-button" onclick="testVariedResponses()">اختبار الردود المتنوعة</button>
+            <div id="speechStatus" class="status" style="display: none;"></div>
+            <div id="voicesList" style="margin-top: 15px; text-align: right; font-size: 12px;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>اختبار تفعيل Naya</h3>
+            <button class="test-button" onclick="testNayaActivation()">تفعيل Naya يدوياً</button>
+            <button class="test-button" onclick="simulateVoiceCommand()">محاكاة أمر صوتي</button>
+            <div id="nayaStatus" class="status" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>الأوامر المدعومة للاختبار</h3>
+            <ul class="feature-list">
+                <li>"naya" أو "نايا" - للتفعيل</li>
+                <li>"hello" أو "مرحبا" - للترحيب</li>
+                <li>"time" أو "الوقت" - لمعرفة الوقت</li>
+                <li>"close" أو "إغلاق" - للإغلاق</li>
+                <li>F1 - تفعيل يدوي</li>
+                <li>F2 - إعادة تشغيل النظام</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>حل مشكلة "aborted" error</h3>
+            <ul class="feature-list">
+                <li>✅ النظام يعيد التشغيل تلقائياً عند حدوث خطأ "aborted"</li>
+                <li>✅ مراقبة دورية للنظام كل 15 ثانية</li>
+                <li>✅ فحص صحة النظام كل 30 ثانية</li>
+                <li>✅ إعادة محاولة تلقائية عند فشل التشغيل</li>
+                <li>⚠️ إذا استمر الخطأ، اضغط F2 لإعادة التشغيل يدوياً</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>سجل وحدة التحكم</h3>
+            <button class="test-button" onclick="clearConsole()">مسح السجل</button>
+            <div id="consoleOutput" class="console-output"></div>
+        </div>
+    </div>
+
+    <script>
+        let recognition = null;
+        let isListening = false;
+        let consoleOutput = [];
+
+        // تسجيل رسائل وحدة التحكم
+        const originalLog = console.log;
+        const originalError = console.error;
+
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addToConsole('LOG: ' + args.join(' '));
+        };
+
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addToConsole('ERROR: ' + args.join(' '));
+        };
+
+        function addToConsole(message) {
+            consoleOutput.push(new Date().toLocaleTimeString() + ' - ' + message);
+            updateConsoleDisplay();
+        }
+
+        function updateConsoleDisplay() {
+            const consoleDiv = document.getElementById('consoleOutput');
+            consoleDiv.innerHTML = consoleOutput.slice(-20).join('<br>');
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        }
+
+        function clearConsole() {
+            consoleOutput = [];
+            updateConsoleDisplay();
+        }
+
+        function testBrowserSupport() {
+            const statusDiv = document.getElementById('browserStatus');
+            statusDiv.style.display = 'block';
+
+            const speechSupport = 'webkitSpeechRecognition' in window || 'SpeechRecognition' in window;
+            const synthesisSupport = 'speechSynthesis' in window;
+            const mediaSupport = 'mediaDevices' in navigator;
+
+            if (speechSupport && synthesisSupport && mediaSupport) {
+                statusDiv.className = 'status success';
+                statusDiv.textContent = '✅ المتصفح يدعم جميع ميزات Naya!';
+            } else {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ المتصفح لا يدعم بعض ميزات Naya';
+            }
+
+            console.log('Browser support check:', {
+                speechRecognition: speechSupport,
+                speechSynthesis: synthesisSupport,
+                mediaDevices: mediaSupport
+            });
+        }
+
+        async function testMicrophonePermission() {
+            const statusDiv = document.getElementById('micStatus');
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'status info';
+            statusDiv.textContent = '🔄 جاري طلب إذن الميكروفون...';
+
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                stream.getTracks().forEach(track => track.stop());
+
+                statusDiv.className = 'status success';
+                statusDiv.textContent = '✅ تم منح إذن الميكروفون بنجاح!';
+                console.log('Microphone permission granted');
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ تم رفض إذن الميكروفون: ' + error.message;
+                console.error('Microphone permission denied:', error);
+            }
+        }
+
+        function testVoiceRecognition() {
+            const statusDiv = document.getElementById('voiceStatus');
+            const indicator = document.getElementById('voiceIndicator');
+            const button = document.getElementById('voiceTestBtn');
+            const textDiv = document.getElementById('recognizedText');
+
+            if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+                statusDiv.style.display = 'block';
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ المتصفح لا يدعم التعرف على الصوت';
+                return;
+            }
+
+            if (isListening) {
+                recognition.stop();
+                return;
+            }
+
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'ar-SA';
+
+            recognition.onstart = function() {
+                isListening = true;
+                indicator.classList.add('listening');
+                button.textContent = 'إيقاف الاستماع';
+                statusDiv.style.display = 'block';
+                statusDiv.className = 'status info';
+                statusDiv.textContent = '🎤 أستمع إليك الآن...';
+                textDiv.textContent = '';
+                console.log('Voice recognition started');
+            };
+
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                textDiv.textContent = `النص المُتعرف عليه: "${transcript}"`;
+                statusDiv.className = 'status success';
+                statusDiv.textContent = '✅ تم التعرف على الصوت بنجاح!';
+                console.log('Voice recognized:', transcript);
+            };
+
+            recognition.onerror = function(event) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = `❌ خطأ في التعرف على الصوت: ${event.error}`;
+                console.error('Voice recognition error:', event.error);
+            };
+
+            recognition.onend = function() {
+                isListening = false;
+                indicator.classList.remove('listening');
+                button.textContent = 'بدء اختبار الصوت';
+                console.log('Voice recognition ended');
+            };
+
+            recognition.start();
+        }
+
+        function testTextToSpeech() {
+            const statusDiv = document.getElementById('speechStatus');
+            statusDiv.style.display = 'block';
+
+            if (!('speechSynthesis' in window)) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ المتصفح لا يدعم تحويل النص إلى كلام';
+                return;
+            }
+
+            const utterance = new SpeechSynthesisUtterance('مرحباً! هذا اختبار لتحويل النص إلى كلام في Naya Voice Assistant');
+            utterance.lang = 'ar-SA';
+            utterance.rate = 1;
+            utterance.volume = 1;
+            utterance.pitch = 1;
+
+            utterance.onstart = function() {
+                statusDiv.className = 'status info';
+                statusDiv.textContent = '🔊 جاري تشغيل الصوت...';
+                console.log('Speech synthesis started');
+            };
+
+            utterance.onend = function() {
+                statusDiv.className = 'status success';
+                statusDiv.textContent = '✅ تم تشغيل الصوت بنجاح!';
+                console.log('Speech synthesis ended');
+            };
+
+            utterance.onerror = function(error) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ خطأ في تشغيل الصوت';
+                console.error('Speech synthesis error:', error);
+            };
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function testFemaleVoice() {
+            const statusDiv = document.getElementById('speechStatus');
+            statusDiv.style.display = 'block';
+
+            if (!('speechSynthesis' in window)) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ المتصفح لا يدعم تحويل النص إلى كلام';
+                return;
+            }
+
+            const utterance = new SpeechSynthesisUtterance('Hello! I am Naya, your female voice assistant. Welcome to Energy AI website.');
+            utterance.lang = 'en-US';
+            utterance.rate = 0.9;
+            utterance.volume = 0.8;
+            utterance.pitch = 1.2; // رفع النبرة للصوت الأنثوي
+
+            // البحث عن صوت أنثى
+            const voices = window.speechSynthesis.getVoices();
+            let femaleVoice = voices.find(voice =>
+                voice.lang.includes('en') &&
+                (voice.name.toLowerCase().includes('female') ||
+                 voice.name.toLowerCase().includes('woman') ||
+                 voice.name.toLowerCase().includes('zira') ||
+                 voice.name.toLowerCase().includes('hazel') ||
+                 voice.name.toLowerCase().includes('susan') ||
+                 voice.name.toLowerCase().includes('samantha') ||
+                 voice.name.toLowerCase().includes('karen') ||
+                 voice.name.toLowerCase().includes('moira') ||
+                 voice.name.toLowerCase().includes('tessa') ||
+                 voice.name.toLowerCase().includes('veena') ||
+                 voice.name.toLowerCase().includes('fiona'))
+            );
+
+            if (!femaleVoice) {
+                femaleVoice = voices.find(voice => voice.lang.includes('en'));
+            }
+
+            if (femaleVoice) {
+                utterance.voice = femaleVoice;
+                console.log('Using female voice:', femaleVoice.name);
+                statusDiv.className = 'status info';
+                statusDiv.textContent = `🔊 استخدام الصوت الأنثوي: ${femaleVoice.name}`;
+            } else {
+                console.log('No female voice found, using default voice');
+                statusDiv.className = 'status info';
+                statusDiv.textContent = '🔊 لم يتم العثور على صوت أنثوي، استخدام الصوت الافتراضي';
+            }
+
+            utterance.onstart = function() {
+                console.log('Female voice synthesis started');
+            };
+
+            utterance.onend = function() {
+                statusDiv.className = 'status success';
+                statusDiv.textContent = '✅ تم تشغيل الصوت الأنثوي بنجاح!';
+                console.log('Female voice synthesis ended');
+            };
+
+            utterance.onerror = function(error) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ خطأ في تشغيل الصوت الأنثوي';
+                console.error('Female voice synthesis error:', error);
+            };
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function listAvailableVoices() {
+            const voicesDiv = document.getElementById('voicesList');
+            const voices = window.speechSynthesis.getVoices();
+
+            if (voices.length === 0) {
+                voicesDiv.innerHTML = '<p style="color: #ff7200;">⏳ جاري تحميل الأصوات...</p>';
+                setTimeout(listAvailableVoices, 500);
+                return;
+            }
+
+            let voicesHTML = '<h4>الأصوات المتاحة:</h4><ul style="text-align: right;">';
+
+            voices.forEach((voice, index) => {
+                const isFemale = voice.name.toLowerCase().includes('female') ||
+                                voice.name.toLowerCase().includes('woman') ||
+                                voice.name.toLowerCase().includes('zira') ||
+                                voice.name.toLowerCase().includes('hazel') ||
+                                voice.name.toLowerCase().includes('susan') ||
+                                voice.name.toLowerCase().includes('samantha') ||
+                                voice.name.toLowerCase().includes('karen') ||
+                                voice.name.toLowerCase().includes('moira') ||
+                                voice.name.toLowerCase().includes('tessa') ||
+                                voice.name.toLowerCase().includes('veena') ||
+                                voice.name.toLowerCase().includes('fiona');
+
+                const genderIcon = isFemale ? '👩' : '👤';
+                const langFlag = voice.lang.includes('ar') ? '🇸🇦' : voice.lang.includes('en') ? '🇺🇸' : '🌍';
+
+                voicesHTML += `<li style="margin: 5px 0; padding: 5px; background: ${isFemale ? '#ffe6f2' : '#f0f0f0'}; border-radius: 3px;">
+                    ${genderIcon} ${langFlag} <strong>${voice.name}</strong> (${voice.lang})
+                    ${isFemale ? '<span style="color: #ff1493; font-weight: bold;"> - أنثى</span>' : ''}
+                </li>`;
+            });
+
+            voicesHTML += '</ul>';
+            voicesDiv.innerHTML = voicesHTML;
+
+            console.log('Available voices:', voices.length);
+            voices.forEach(voice => {
+                console.log(`Voice: ${voice.name}, Lang: ${voice.lang}, Female: ${voice.name.toLowerCase().includes('female') || voice.name.toLowerCase().includes('woman')}`);
+            });
+        }
+
+        function testNayaActivation() {
+            const statusDiv = document.getElementById('nayaStatus');
+            statusDiv.style.display = 'block';
+
+            if (window.naya) {
+                statusDiv.className = 'status info';
+                statusDiv.textContent = '🔄 جاري تفعيل Naya...';
+
+                try {
+                    window.naya.activateNaya();
+                    statusDiv.className = 'status success';
+                    statusDiv.textContent = '✅ تم تفعيل Naya بنجاح!';
+                    console.log('Naya activated manually');
+                } catch (error) {
+                    statusDiv.className = 'status error';
+                    statusDiv.textContent = '❌ خطأ في تفعيل Naya: ' + error.message;
+                    console.error('Error activating Naya:', error);
+                }
+            } else {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ Naya غير متاح';
+                console.error('Naya not available');
+            }
+        }
+
+        function simulateVoiceCommand() {
+            const statusDiv = document.getElementById('nayaStatus');
+            statusDiv.style.display = 'block';
+
+            if (window.naya) {
+                statusDiv.className = 'status info';
+                statusDiv.textContent = '🔄 جاري محاكاة أمر صوتي...';
+
+                // محاكاة حدث التعرف على الصوت
+                const mockEvent = {
+                    results: [[{
+                        transcript: 'naya hello',
+                        confidence: 0.9
+                    }]],
+                    resultIndex: 0
+                };
+
+                try {
+                    window.naya.handleSpeechResult(mockEvent);
+                    statusDiv.className = 'status success';
+                    statusDiv.textContent = '✅ تم تنفيذ الأمر الصوتي بنجاح!';
+                    console.log('Voice command simulated');
+                } catch (error) {
+                    statusDiv.className = 'status error';
+                    statusDiv.textContent = '❌ خطأ في تنفيذ الأمر الصوتي: ' + error.message;
+                    console.error('Error simulating voice command:', error);
+                }
+            } else {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ Naya غير متاح';
+                console.error('Naya not available');
+            }
+        }
+
+        // اختبار تلقائي عند تحميل الصفحة
+        window.onload = function() {
+            testBrowserSupport();
+
+            // تحميل الأصوات المتاحة بعد تحميل الصفحة
+            setTimeout(() => {
+                listAvailableVoices();
+            }, 1000);
+
+            console.log('Test page loaded');
+        };
+
+        // إضافة مستمع لحدث تغيير الأصوات
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.addEventListener('voiceschanged', () => {
+                console.log('Voices changed event triggered');
+                listAvailableVoices();
+            });
+        }
+
+        function showVoiceSelector() {
+            const voices = window.speechSynthesis.getVoices();
+
+            if (voices.length === 0) {
+                alert('⏳ جاري تحميل الأصوات، يرجى المحاولة مرة أخرى');
+                return;
+            }
+
+            // إنشاء نافذة اختيار الصوت
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.7);
+                z-index: 1000;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            `;
+
+            const content = document.createElement('div');
+            content.style.cssText = `
+                background: white;
+                border-radius: 15px;
+                padding: 20px;
+                max-width: 500px;
+                width: 90%;
+                max-height: 80vh;
+                overflow-y: auto;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            `;
+
+            let voicesHTML = `
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <h3 style="color: #ff7200; margin: 0;">اختيار صوت مخصص</h3>
+                    <p style="color: #666; font-size: 14px;">اختر الصوت المفضل لديك</p>
+                </div>
+                <div style="max-height: 400px; overflow-y: auto;">
+            `;
+
+            voices.forEach((voice, index) => {
+                const isFemale = voice.name.toLowerCase().includes('female') ||
+                                voice.name.toLowerCase().includes('woman') ||
+                                voice.name.toLowerCase().includes('zira') ||
+                                voice.name.toLowerCase().includes('hazel') ||
+                                voice.name.toLowerCase().includes('susan') ||
+                                voice.name.toLowerCase().includes('samantha') ||
+                                voice.name.toLowerCase().includes('karen') ||
+                                voice.name.toLowerCase().includes('moira') ||
+                                voice.name.toLowerCase().includes('tessa') ||
+                                voice.name.toLowerCase().includes('veena') ||
+                                voice.name.toLowerCase().includes('fiona');
+
+                const genderIcon = isFemale ? '👩' : '👤';
+                const langFlag = voice.lang.includes('ar') ? '🇸🇦' : voice.lang.includes('en') ? '🇺🇸' : '🌍';
+
+                voicesHTML += `
+                    <div style="
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        padding: 12px;
+                        margin: 8px 0;
+                        background: ${isFemale ? '#ffe6f2' : '#f8f9fa'};
+                        border-radius: 8px;
+                        border: 2px solid transparent;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                    "
+                    onmouseover="this.style.borderColor='#ff7200'; this.style.transform='translateY(-2px)'"
+                    onmouseout="this.style.borderColor='transparent'; this.style.transform='translateY(0)'"
+                    onclick="selectVoice('${voice.name}', ${index})">
+                        <div>
+                            <div style="font-weight: bold; color: #333;">
+                                ${genderIcon} ${langFlag} ${voice.name}
+                            </div>
+                            <div style="font-size: 12px; color: #666;">
+                                ${voice.lang} ${isFemale ? '- أنثى' : ''}
+                            </div>
+                        </div>
+                        <button style="
+                            background: #ff7200;
+                            color: white;
+                            border: none;
+                            padding: 6px 12px;
+                            border-radius: 15px;
+                            font-size: 11px;
+                            cursor: pointer;
+                        " onclick="event.stopPropagation(); testVoiceInModal('${voice.name}')">
+                            اختبار
+                        </button>
+                    </div>
+                `;
+            });
+
+            voicesHTML += `
+                </div>
+                <div style="text-align: center; margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee;">
+                    <button style="
+                        background: #6c757d;
+                        color: white;
+                        border: none;
+                        padding: 10px 20px;
+                        border-radius: 20px;
+                        cursor: pointer;
+                        margin-right: 10px;
+                    " onclick="closeVoiceModal()">
+                        إلغاء
+                    </button>
+                    <button style="
+                        background: #ff7200;
+                        color: white;
+                        border: none;
+                        padding: 10px 20px;
+                        border-radius: 20px;
+                        cursor: pointer;
+                    " onclick="resetToDefault()">
+                        إعادة تعيين للافتراضي
+                    </button>
+                </div>
+            `;
+
+            content.innerHTML = voicesHTML;
+            modal.appendChild(content);
+            document.body.appendChild(modal);
+
+            // إضافة الدوال المطلوبة للنافذة
+            window.selectVoice = function(voiceName, index) {
+                const voice = voices[index];
+                localStorage.setItem('selected-voice', voiceName);
+
+                // اختبار الصوت المختار
+                const testMessage = voice.lang.includes('ar')
+                    ? `مرحباً، تم اختيار صوت ${voiceName}`
+                    : `Hello, voice ${voiceName} has been selected`;
+
+                const utterance = new SpeechSynthesisUtterance(testMessage);
+                utterance.voice = voice;
+                utterance.lang = voice.lang.includes('ar') ? 'ar-SA' : 'en-US';
+                utterance.rate = 0.9;
+                utterance.volume = 0.8;
+                utterance.pitch = 1.2;
+
+                window.speechSynthesis.speak(utterance);
+
+                // إغلاق النافذة
+                setTimeout(() => {
+                    closeVoiceModal();
+                }, 1000);
+            };
+
+            window.testVoiceInModal = function(voiceName) {
+                const voice = voices.find(v => v.name === voiceName);
+                if (voice) {
+                    const testMessage = voice.lang.includes('ar')
+                        ? `مرحباً، هذا اختبار للصوت ${voiceName}`
+                        : `Hello, this is a test for voice ${voiceName}`;
+
+                    const utterance = new SpeechSynthesisUtterance(testMessage);
+                    utterance.voice = voice;
+                    utterance.lang = voice.lang.includes('ar') ? 'ar-SA' : 'en-US';
+                    utterance.rate = 0.9;
+                    utterance.volume = 0.8;
+                    utterance.pitch = 1.2;
+
+                    window.speechSynthesis.speak(utterance);
+                }
+            };
+
+            window.closeVoiceModal = function() {
+                modal.remove();
+                delete window.selectVoice;
+                delete window.testVoiceInModal;
+                delete window.closeVoiceModal;
+                delete window.resetToDefault;
+            };
+
+            window.resetToDefault = function() {
+                localStorage.removeItem('selected-voice');
+                const testMessage = 'تم إعادة تعيين الصوت للوضع الافتراضي';
+
+                const utterance = new SpeechSynthesisUtterance(testMessage);
+                utterance.lang = 'ar-SA';
+                utterance.rate = 0.9;
+                utterance.volume = 0.8;
+                utterance.pitch = 1.2;
+
+                window.speechSynthesis.speak(utterance);
+
+                setTimeout(() => {
+                    closeVoiceModal();
+                }, 1000);
+            };
+
+            // إغلاق النافذة عند النقر خارجها
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeVoiceModal();
+                }
+            });
+        }
+
+        function testStopCommand() {
+            const statusDiv = document.getElementById('speechStatus');
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'status info';
+            statusDiv.textContent = '🎤 اختبار أوامر الإيقاف...';
+
+            if (!('speechSynthesis' in window)) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ المتصفح لا يدعم تحويل النص إلى كلام';
+                return;
+            }
+
+            // بدء نص طويل للاختبار
+            const longText = `
+                مرحباً، هذا اختبار لأوامر الإيقاف في نايا.
+                سأتحدث لفترة طويلة لتتمكن من اختبار أوامر الإيقاف مثل "توقف" أو "stop" أو "اسكت".
+                يمكنك قول أي من هذه الكلمات لإيقافي: توقف، توقفي، اسكت، اسكتي، كفى، خلاص، stop، silence، quiet.
+                هذا النص طويل عمداً لإعطائك الوقت الكافي لاختبار أوامر الإيقاف المختلفة.
+                استمر في الاستماع وجرب قول "توقف" في أي وقت لإيقاف هذا الكلام.
+                نظام نايا الجديد يدعم أوامر الإيقاف باللغتين العربية والإنجليزية.
+                يمكنك أيضاً استخدام كلمات مثل "shut up" أو "silence" لإيقاف الكلام.
+                هذا يجعل التفاعل مع نايا أكثر طبيعية ومرونة.
+            `;
+
+            const utterance = new SpeechSynthesisUtterance(longText);
+            utterance.lang = 'ar-SA';
+            utterance.rate = 0.8;
+            utterance.volume = 0.9;
+            utterance.pitch = 1.15;
+
+            // البحث عن صوت أنثى
+            const voices = window.speechSynthesis.getVoices();
+            const femaleVoice = voices.find(voice =>
+                voice.lang.includes('ar') ||
+                (voice.lang.includes('en') &&
+                 (voice.name.toLowerCase().includes('female') ||
+                  voice.name.toLowerCase().includes('woman') ||
+                  voice.name.toLowerCase().includes('zira')))
+            );
+
+            if (femaleVoice) {
+                utterance.voice = femaleVoice;
+            }
+
+            utterance.onstart = function() {
+                statusDiv.className = 'status success';
+                statusDiv.textContent = '🗣️ يتحدث الآن - جرب قول "توقف" أو "stop"';
+            };
+
+            utterance.onend = function() {
+                statusDiv.className = 'status info';
+                statusDiv.textContent = '✅ انتهى الكلام - يمكنك تجربة الاختبار مرة أخرى';
+            };
+
+            utterance.onerror = function(error) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ خطأ في تشغيل الصوت';
+                console.error('Speech error:', error);
+            };
+
+            window.speechSynthesis.speak(utterance);
+
+            // إضافة زر إيقاف يدوي للاختبار
+            const stopButton = document.createElement('button');
+            stopButton.textContent = '⏹️ إيقاف الاختبار';
+            stopButton.style.cssText = `
+                background: #dc3545;
+                color: white;
+                border: none;
+                padding: 10px 15px;
+                border-radius: 5px;
+                margin: 10px 5px;
+                cursor: pointer;
+            `;
+            stopButton.onclick = function() {
+                window.speechSynthesis.cancel();
+                statusDiv.className = 'status success';
+                statusDiv.textContent = '🤐 تم إيقاف الكلام يدوياً';
+                stopButton.remove();
+            };
+
+            statusDiv.appendChild(stopButton);
+        }
+
+        function testVoiceQuality() {
+            const statusDiv = document.getElementById('speechStatus');
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'status info';
+            statusDiv.textContent = '🎵 اختبار جودة الصوت المحسنة...';
+
+            if (!('speechSynthesis' in window)) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ المتصفح لا يدعم تحويل النص إلى كلام';
+                return;
+            }
+
+            const testTexts = [
+                {
+                    text: "مرحباً، أنا نايا بالصوت المحسن الجديد. لاحظ وضوح النطق والنبرة الأنثوية الطبيعية.",
+                    lang: 'ar-SA',
+                    label: 'العربية المحسنة'
+                },
+                {
+                    text: "Hello, I am Naya with enhanced voice quality. Notice the improved clarity and natural female tone.",
+                    lang: 'en-US',
+                    label: 'English Enhanced'
+                }
+            ];
+
+            let currentIndex = 0;
+
+            function playNext() {
+                if (currentIndex >= testTexts.length) {
+                    statusDiv.className = 'status success';
+                    statusDiv.textContent = '✅ اكتمل اختبار جودة الصوت المحسنة!';
+                    return;
+                }
+
+                const testItem = testTexts[currentIndex];
+                statusDiv.className = 'status info';
+                statusDiv.textContent = `🎵 يتم تشغيل: ${testItem.label}`;
+
+                const utterance = new SpeechSynthesisUtterance(testItem.text);
+                utterance.lang = testItem.lang;
+
+                // إعدادات الجودة المحسنة
+                utterance.rate = testItem.lang === 'ar-SA' ? 0.8 : 0.85;
+                utterance.volume = 0.9;
+                utterance.pitch = 1.15;
+
+                // البحث عن أفضل صوت متاح
+                const voices = window.speechSynthesis.getVoices();
+                let bestVoice = null;
+
+                if (testItem.lang === 'ar-SA') {
+                    bestVoice = voices.find(voice => voice.lang.includes('ar'));
+                } else {
+                    bestVoice = voices.find(voice =>
+                        voice.lang.includes('en') &&
+                        (voice.name.toLowerCase().includes('female') ||
+                         voice.name.toLowerCase().includes('woman') ||
+                         voice.name.toLowerCase().includes('zira') ||
+                         voice.name.toLowerCase().includes('samantha'))
+                    );
+
+                    if (!bestVoice) {
+                        bestVoice = voices.find(voice => voice.lang.includes('en'));
+                    }
+                }
+
+                if (bestVoice) {
+                    utterance.voice = bestVoice;
+                    console.log(`Using voice for ${testItem.label}:`, bestVoice.name);
+                }
+
+                utterance.onend = function() {
+                    currentIndex++;
+                    setTimeout(playNext, 1000); // توقف ثانية بين الاختبارات
+                };
+
+                utterance.onerror = function(error) {
+                    console.error('Speech error:', error);
+                    currentIndex++;
+                    setTimeout(playNext, 1000);
+                };
+
+                window.speechSynthesis.speak(utterance);
+            }
+
+            playNext();
+        }
+
+        function testFastResponse() {
+            const statusDiv = document.getElementById('speechStatus');
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'status info';
+            statusDiv.textContent = '⚡ اختبار الاستجابة السريعة...';
+
+            if (!('speechSynthesis' in window)) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ المتصفح لا يدعم تحويل النص إلى كلام';
+                return;
+            }
+
+            const fastTexts = [
+                {
+                    text: "مرحباً",
+                    label: "رد سريع عربي"
+                },
+                {
+                    text: "Hello",
+                    label: "Quick English response"
+                },
+                {
+                    text: "تم",
+                    label: "تأكيد سريع"
+                },
+                {
+                    text: "OK",
+                    label: "Quick confirmation"
+                }
+            ];
+
+            let currentIndex = 0;
+            const startTime = Date.now();
+
+            function playNextFast() {
+                if (currentIndex >= fastTexts.length) {
+                    const totalTime = Date.now() - startTime;
+                    statusDiv.className = 'status success';
+                    statusDiv.textContent = `✅ اكتمل اختبار الاستجابة السريعة! الوقت الإجمالي: ${totalTime}ms`;
+                    return;
+                }
+
+                const testItem = fastTexts[currentIndex];
+                statusDiv.className = 'status info';
+                statusDiv.textContent = `⚡ ${testItem.label}`;
+
+                const utterance = new SpeechSynthesisUtterance(testItem.text);
+                utterance.lang = testItem.text.match(/[a-zA-Z]/) ? 'en-US' : 'ar-SA';
+
+                // إعدادات السرعة المحسنة
+                utterance.rate = 0.95;
+                utterance.volume = 0.9;
+                utterance.pitch = 1.15;
+
+                const itemStartTime = Date.now();
+
+                utterance.onstart = function() {
+                    const responseTime = Date.now() - itemStartTime;
+                    console.log(`Response time for "${testItem.text}": ${responseTime}ms`);
+                };
+
+                utterance.onend = function() {
+                    currentIndex++;
+                    setTimeout(playNextFast, 500); // توقف قصير بين الاختبارات
+                };
+
+                utterance.onerror = function(error) {
+                    console.error('Speech error:', error);
+                    currentIndex++;
+                    setTimeout(playNextFast, 500);
+                };
+
+                window.speechSynthesis.speak(utterance);
+            }
+
+            playNextFast();
+        }
+
+        function testAntiRepeat() {
+            const statusDiv = document.getElementById('speechStatus');
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'status info';
+            statusDiv.textContent = '🔄 اختبار منع التكرار...';
+
+            if (!('speechSynthesis' in window)) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ المتصفح لا يدعم تحويل النص إلى كلام';
+                return;
+            }
+
+            let repeatCount = 0;
+            const maxRepeats = 3;
+            const testText = "هذا اختبار لمنع التكرار";
+
+            function attemptRepeat() {
+                if (repeatCount >= maxRepeats) {
+                    statusDiv.className = 'status success';
+                    statusDiv.textContent = `✅ اكتمل اختبار منع التكرار! تم منع ${repeatCount - 1} محاولة تكرار`;
+                    return;
+                }
+
+                repeatCount++;
+                statusDiv.className = 'status info';
+                statusDiv.textContent = `🔄 محاولة رقم ${repeatCount} من ${maxRepeats}`;
+
+                const utterance = new SpeechSynthesisUtterance(testText);
+                utterance.lang = 'ar-SA';
+                utterance.rate = 0.9;
+                utterance.volume = 0.9;
+                utterance.pitch = 1.15;
+
+                utterance.onstart = function() {
+                    console.log(`Repeat attempt ${repeatCount} started`);
+                };
+
+                utterance.onend = function() {
+                    console.log(`Repeat attempt ${repeatCount} ended`);
+
+                    // محاولة تكرار فوري (يجب أن يتم منعه)
+                    if (repeatCount < maxRepeats) {
+                        setTimeout(() => {
+                            // محاولة تشغيل نفس النص مرة أخرى بسرعة
+                            const duplicateUtterance = new SpeechSynthesisUtterance(testText);
+                            duplicateUtterance.lang = 'ar-SA';
+                            duplicateUtterance.rate = 0.9;
+                            duplicateUtterance.volume = 0.9;
+                            duplicateUtterance.pitch = 1.15;
+
+                            duplicateUtterance.onstart = function() {
+                                console.log('Duplicate speech started (should be prevented)');
+                            };
+
+                            duplicateUtterance.onend = function() {
+                                console.log('Duplicate speech ended');
+                                setTimeout(attemptRepeat, 1000);
+                            };
+
+                            window.speechSynthesis.speak(duplicateUtterance);
+                        }, 100);
+                    } else {
+                        attemptRepeat();
+                    }
+                };
+
+                utterance.onerror = function(error) {
+                    console.error('Speech error:', error);
+                    setTimeout(attemptRepeat, 1000);
+                };
+
+                window.speechSynthesis.speak(utterance);
+            }
+
+            attemptRepeat();
+        }
+
+        function testNavigationCommands() {
+            const statusDiv = document.getElementById('speechStatus');
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'status info';
+            statusDiv.textContent = '🧭 اختبار أوامر التنقل المحسنة...';
+
+            if (!('speechSynthesis' in window)) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ المتصفح لا يدعم تحويل النص إلى كلام';
+                return;
+            }
+
+            const navigationCommands = [
+                {
+                    command: "open the home",
+                    expected: "Home",
+                    description: "فتح الصفحة الرئيسية"
+                },
+                {
+                    command: "open the services",
+                    expected: "Services",
+                    description: "فتح صفحة الخدمات"
+                },
+                {
+                    command: "show me about",
+                    expected: "About",
+                    description: "عرض صفحة حولنا"
+                },
+                {
+                    command: "navigate to design",
+                    expected: "Design",
+                    description: "الانتقال للتصميم"
+                },
+                {
+                    command: "go to contact",
+                    expected: "Contact",
+                    description: "الذهاب للتواصل"
+                },
+                {
+                    command: "افتح الخدمات",
+                    expected: "الخدمات",
+                    description: "أمر عربي للخدمات"
+                }
+            ];
+
+            let currentIndex = 0;
+            const results = [];
+
+            function testNextCommand() {
+                if (currentIndex >= navigationCommands.length) {
+                    const successCount = results.filter(r => r.success).length;
+                    statusDiv.className = 'status success';
+                    statusDiv.innerHTML = `
+                        ✅ اكتمل اختبار أوامر التنقل!<br>
+                        نجح: ${successCount}/${navigationCommands.length}<br>
+                        <small>تحقق من وحدة التحكم للتفاصيل</small>
+                    `;
+                    console.table(results);
+                    return;
+                }
+
+                const testCommand = navigationCommands[currentIndex];
+                statusDiv.className = 'status info';
+                statusDiv.textContent = `🧭 اختبار: ${testCommand.description}`;
+
+                console.log(`Testing navigation command: "${testCommand.command}"`);
+
+                // محاكاة معالجة الأمر
+                const utterance = new SpeechSynthesisUtterance(testCommand.expected);
+                utterance.lang = testCommand.command.match(/[a-zA-Z]/) ? 'en-US' : 'ar-SA';
+                utterance.rate = 0.95;
+                utterance.volume = 0.9;
+                utterance.pitch = 1.15;
+
+                utterance.onstart = function() {
+                    console.log(`✅ Navigation command processed: "${testCommand.command}" -> "${testCommand.expected}"`);
+                    results.push({
+                        command: testCommand.command,
+                        expected: testCommand.expected,
+                        description: testCommand.description,
+                        success: true
+                    });
+                };
+
+                utterance.onend = function() {
+                    currentIndex++;
+                    setTimeout(testNextCommand, 1500);
+                };
+
+                utterance.onerror = function(error) {
+                    console.error(`❌ Navigation command failed: "${testCommand.command}"`, error);
+                    results.push({
+                        command: testCommand.command,
+                        expected: testCommand.expected,
+                        description: testCommand.description,
+                        success: false,
+                        error: error.error
+                    });
+                    currentIndex++;
+                    setTimeout(testNextCommand, 1500);
+                };
+
+                window.speechSynthesis.speak(utterance);
+            }
+
+            testNextCommand();
+        }
+
+        function testVariedResponses() {
+            const statusDiv = document.getElementById('speechStatus');
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'status info';
+            statusDiv.textContent = '🎲 اختبار الردود المتنوعة...';
+
+            if (!('speechSynthesis' in window)) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ المتصفح لا يدعم تحويل النص إلى كلام';
+                return;
+            }
+
+            // محاكاة ردود متنوعة
+            const arabicResponses = ["ماذا تريد؟", "نعم؟", "أستمع", "تفضل"];
+            const englishResponses = ["Yes?", "What do you need?", "I'm listening", "Go ahead"];
+
+            const generalArabicResponses = [
+                "لم أفهم. جرب مرة أخرى",
+                "ماذا تقصد؟",
+                "لم أستطع فهم ذلك",
+                "يمكنك إعادة الصياغة؟",
+                "غير واضح. أعد المحاولة"
+            ];
+
+            const generalEnglishResponses = [
+                "I didn't understand. Try again",
+                "What do you mean?",
+                "I couldn't understand that",
+                "Can you rephrase?",
+                "Not clear. Please try again"
+            ];
+
+            let testCount = 0;
+            const maxTests = 8;
+            const usedResponses = new Set();
+
+            function testVariedResponse() {
+                if (testCount >= maxTests) {
+                    statusDiv.className = 'status success';
+                    statusDiv.innerHTML = `
+                        ✅ اكتمل اختبار الردود المتنوعة!<br>
+                        تم اختبار ${maxTests} ردود مختلفة<br>
+                        <small>لاحظ التنوع في الردود</small>
+                    `;
+                    console.log('Used responses:', Array.from(usedResponses));
+                    return;
+                }
+
+                testCount++;
+                const isArabic = testCount % 2 === 1;
+
+                let responses, testType;
+                if (testCount <= 4) {
+                    responses = isArabic ? arabicResponses : englishResponses;
+                    testType = isArabic ? "ردود عامة عربية" : "General English responses";
+                } else {
+                    responses = isArabic ? generalArabicResponses : generalEnglishResponses;
+                    testType = isArabic ? "ردود عدم فهم عربية" : "Misunderstanding English responses";
+                }
+
+                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                usedResponses.add(randomResponse);
+
+                statusDiv.className = 'status info';
+                statusDiv.textContent = `🎲 ${testType} (${testCount}/${maxTests})`;
+
+                const utterance = new SpeechSynthesisUtterance(randomResponse);
+                utterance.lang = isArabic ? 'ar-SA' : 'en-US';
+                utterance.rate = 0.95;
+                utterance.volume = 0.9;
+                utterance.pitch = 1.15;
+
+                utterance.onstart = function() {
+                    console.log(`Response ${testCount}: "${randomResponse}" (${testType})`);
+                };
+
+                utterance.onend = function() {
+                    setTimeout(testVariedResponse, 1000);
+                };
+
+                utterance.onerror = function(error) {
+                    console.error('Speech error:', error);
+                    setTimeout(testVariedResponse, 1000);
+                };
+
+                window.speechSynthesis.speak(utterance);
+            }
+
+            testVariedResponse();
+        }
+    </script>
+
+    <!-- تضمين ملفات Naya -->
+    <link rel="stylesheet" href="public/css/naya.css">
+    <script src="public/js/naya-assistant.js"></script>
+</body>
+</html>

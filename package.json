@@ -1,0 +1,45 @@
+{
+  "name": "energy-ai-frontend",
+  "version": "1.0.0",
+  "description": "Frontend for Energy.AI website",
+  "type": "module",
+  "scripts": {
+    "start": "cd backend && npm start",
+    "dev": "cd backend && npm run dev",
+    "backend": "cd backend && npm run dev",
+    "frontend": "node server.js",
+    "install-backend": "cd backend && npm install",
+    "deploy-backend": "cd backend && vercel --prod",
+    "build": "echo 'Frontend build completed'",
+    "test": "echo 'No tests specified'"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "judini": "^2.0.5",
+    "mongodb": "4.1"
+  },
+  "devDependencies": {
+    "judini": "^2.0.5",
+    "vercel": "^32.0.0"
+  },
+  "keywords": [
+    "energy",
+    "ai",
+    "engineering",
+    "website",
+    "arabic",
+    "nodejs",
+    "mongodb"
+  ],
+  "author": "Energy.AI Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/energy-ai.git"
+  },
+  "homepage": "https://yourusername.github.io/energy-ai",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
