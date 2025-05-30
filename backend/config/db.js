@@ -2,12 +2,14 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
   try {
-    // Check if MONGODB_URI exists
-    const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI;
-    if (!mongoUri) {
-      console.error('MONGODB_URI environment variable is not set');
+    // Skip database connection in test environment
+    if (process.env.NODE_ENV === 'test') {
+      console.log('Skipping database connection in test environment');
       return;
     }
+
+    // Check if MONGODB_URI exists
+    const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI || 'mongodb://localhost:27017/energy-ai';
 
     const conn = await mongoose.connect(mongoUri, {
       useNewUrlParser: true,
@@ -19,9 +21,17 @@ const connectDB = async () => {
     console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
     console.error(`Database connection error: ${error.message}`);
+
+    // In test environment, don't exit - just log the error
+    if (process.env.NODE_ENV === 'test') {
+      console.log('Continuing without database in test mode');
+      return;
+    }
+
     // Don't exit in production, just log the error
     if (process.env.NODE_ENV !== 'production') {
-      process.exit(1);
+      console.log('Retrying database connection in 5 seconds...');
+      setTimeout(connectDB, 5000);
     }
   }
 };

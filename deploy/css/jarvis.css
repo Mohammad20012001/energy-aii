@@ -1,0 +1,335 @@
+/* Naya Voice Assistant Styles */
+
+.naya-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10000;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.naya-container.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.naya-container.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: all;
+}
+
+.naya-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.jarvis-interface {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 25px;
+    padding: 40px;
+    text-align: center;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    min-width: 350px;
+    max-width: 500px;
+}
+
+.jarvis-interface.visible {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.jarvis-avatar {
+    margin-bottom: 30px;
+}
+
+.jarvis-circle {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto;
+}
+
+.jarvis-pulse {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 2px solid rgba(255, 114, 0, 0.6);
+    border-radius: 50%;
+    animation: jarvisPulse 2s infinite;
+}
+
+.jarvis-core {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, rgba(255, 114, 0, 0.8), rgba(255, 68, 68, 0.8));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 30px rgba(255, 114, 0, 0.5);
+    transition: all 0.3s ease;
+}
+
+.jarvis-core:hover {
+    transform: translate(-50%, -50%) scale(1.1);
+    box-shadow: 0 0 40px rgba(255, 114, 0, 0.7);
+}
+
+.jarvis-icon {
+    font-size: 40px;
+    color: white;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.jarvis-container.active .jarvis-core {
+    animation: jarvisGlow 3s infinite;
+}
+
+.jarvis-text {
+    margin-bottom: 30px;
+}
+
+.jarvis-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.95);
+    margin: 0 0 10px 0;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    letter-spacing: 2px;
+}
+
+.jarvis-subtitle {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0 0 20px 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.jarvis-status {
+    padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 25px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 14px;
+    font-weight: 500;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.jarvis-status span {
+    display: inline-block;
+    animation: jarvisStatusPulse 2s infinite;
+}
+
+.jarvis-controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.jarvis-btn {
+    width: 50px;
+    height: 50px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.jarvis-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.jarvis-btn ion-icon {
+    font-size: 24px;
+}
+
+.jarvis-close:hover {
+    background: rgba(255, 68, 68, 0.3);
+    border-color: rgba(255, 68, 68, 0.5);
+}
+
+.jarvis-settings:hover {
+    background: rgba(255, 114, 0, 0.3);
+    border-color: rgba(255, 114, 0, 0.5);
+}
+
+/* Animations */
+@keyframes jarvisPulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.7;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes jarvisGlow {
+    0%, 100% {
+        box-shadow: 0 0 30px rgba(255, 114, 0, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 50px rgba(255, 114, 0, 0.8), 0 0 70px rgba(255, 68, 68, 0.4);
+    }
+}
+
+@keyframes jarvisStatusPulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .jarvis-interface {
+        min-width: 300px;
+        padding: 30px 20px;
+        margin: 20px;
+        max-width: calc(100vw - 40px);
+    }
+
+    .jarvis-circle {
+        width: 100px;
+        height: 100px;
+    }
+
+    .jarvis-core {
+        width: 70px;
+        height: 70px;
+    }
+
+    .jarvis-icon {
+        font-size: 32px;
+    }
+
+    .jarvis-title {
+        font-size: 28px;
+    }
+
+    .jarvis-subtitle {
+        font-size: 14px;
+    }
+
+    .jarvis-btn {
+        width: 45px;
+        height: 45px;
+    }
+
+    .jarvis-btn ion-icon {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .jarvis-interface {
+        min-width: 280px;
+        padding: 25px 15px;
+    }
+
+    .jarvis-circle {
+        width: 90px;
+        height: 90px;
+    }
+
+    .jarvis-core {
+        width: 60px;
+        height: 60px;
+    }
+
+    .jarvis-icon {
+        font-size: 28px;
+    }
+
+    .jarvis-title {
+        font-size: 24px;
+    }
+
+    .jarvis-controls {
+        gap: 10px;
+    }
+}
+
+/* Dark/Light Theme Support */
+[data-theme="light"] .jarvis-interface {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .jarvis-overlay {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+[data-theme="light"] .jarvis-title {
+    color: rgba(0, 0, 0, 0.9);
+    text-shadow: 0 2px 10px rgba(255, 255, 255, 0.3);
+}
+
+[data-theme="light"] .jarvis-subtitle {
+    color: rgba(0, 0, 0, 0.7);
+}
+
+[data-theme="light"] .jarvis-status {
+    background: rgba(0, 0, 0, 0.1);
+    border-color: rgba(0, 0, 0, 0.2);
+    color: rgba(0, 0, 0, 0.8);
+}
+
+[data-theme="light"] .jarvis-btn {
+    background: rgba(0, 0, 0, 0.1);
+    border-color: rgba(0, 0, 0, 0.2);
+    color: rgba(0, 0, 0, 0.7);
+}
+
+[data-theme="light"] .jarvis-btn:hover {
+    background: rgba(0, 0, 0, 0.2);
+    color: rgba(0, 0, 0, 0.9);
+}

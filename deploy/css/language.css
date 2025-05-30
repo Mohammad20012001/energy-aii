@@ -1,0 +1,308 @@
+/* Language System Styles */
+
+/* Language Toggle */
+.language-toggle {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-left: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 25px;
+    padding: 5px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.lang-btn {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 20px;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.lang-btn:hover {
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.lang-btn.active {
+    background: var(--primary-color);
+    color: white;
+    box-shadow: 0 2px 10px rgba(255, 114, 0, 0.3);
+}
+
+/* RTL Support */
+[dir="rtl"] {
+    text-align: right;
+}
+
+[dir="rtl"] .navbar {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .language-toggle {
+    margin-left: 0;
+    margin-right: 20px;
+}
+
+[dir="rtl"] ul {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .content {
+    text-align: right;
+}
+
+[dir="rtl"] .form {
+    right: auto;
+    left: 50px;
+}
+
+[dir="rtl"] .features {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .service-cards {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .design-gallery {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .contact-container {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .footer-content {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .info-item {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .info-item ion-icon {
+    margin-right: 0;
+    margin-left: 15px;
+}
+
+[dir="rtl"] .newsletter-form {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .newsletter-form input {
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    border-left: none;
+    border-radius: 0 5px 5px 0;
+}
+
+[dir="rtl"] .newsletter-form button {
+    border-radius: 5px 0 0 5px;
+}
+
+/* Arabic Font Support */
+[lang="ar"] {
+    font-family: 'Tajawal', 'Cairo', 'Segoe UI', sans-serif;
+}
+
+[lang="ar"] .content h1 {
+    font-family: 'Tajawal', 'Cairo', sans-serif;
+    font-weight: 700;
+}
+
+[lang="ar"] .section h2 {
+    font-family: 'Tajawal', 'Cairo', sans-serif;
+    font-weight: 600;
+}
+
+[lang="ar"] .jarvis-title {
+    font-family: 'Tajawal', 'Cairo', sans-serif;
+}
+
+/* English Font Support */
+[lang="en"] {
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+[lang="en"] .content h1 {
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    font-weight: 700;
+}
+
+[lang="en"] .section h2 {
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    font-weight: 600;
+}
+
+/* Light Theme Language Support */
+[data-theme="light"] .language-toggle {
+    background: rgba(0, 0, 0, 0.1);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .lang-btn {
+    color: rgba(0, 0, 0, 0.7);
+}
+
+[data-theme="light"] .lang-btn:hover {
+    color: rgba(0, 0, 0, 0.9);
+    background: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .lang-btn.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* Responsive Language Toggle */
+@media (max-width: 768px) {
+    .language-toggle {
+        margin-left: 10px;
+        margin-right: 10px;
+        order: -1;
+    }
+    
+    [dir="rtl"] .language-toggle {
+        margin-right: 10px;
+        margin-left: 10px;
+    }
+    
+    .lang-btn {
+        padding: 6px 12px;
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 576px) {
+    .language-toggle {
+        margin: 10px 0;
+        align-self: center;
+    }
+    
+    .lang-btn {
+        padding: 5px 10px;
+        font-size: 10px;
+    }
+}
+
+/* Animation for Language Switch */
+.language-transition {
+    transition: all 0.3s ease;
+}
+
+/* Text Direction Animations */
+[dir="rtl"] .fade-in-right {
+    animation: fadeInRight 0.6s ease-out;
+}
+
+[dir="ltr"] .fade-in-left {
+    animation: fadeInLeft 0.6s ease-out;
+}
+
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Form Direction Support */
+[dir="rtl"] .form {
+    text-align: right;
+}
+
+[dir="rtl"] .form input,
+[dir="rtl"] .form button {
+    text-align: right;
+}
+
+[dir="rtl"] .contact-form input,
+[dir="rtl"] .contact-form textarea {
+    text-align: right;
+}
+
+/* Chat Direction Support */
+[dir="rtl"] .ai-chat-container {
+    right: auto;
+    left: 20px;
+}
+
+[dir="rtl"] .chat-messages {
+    text-align: right;
+}
+
+[dir="rtl"] .message.user {
+    margin-left: 0;
+    margin-right: 50px;
+    text-align: right;
+}
+
+[dir="rtl"] .message.bot {
+    margin-right: 0;
+    margin-left: 50px;
+    text-align: left;
+}
+
+[dir="rtl"] .chat-input {
+    flex-direction: row-reverse;
+}
+
+/* Jarvis Direction Support */
+[dir="rtl"] .jarvis-interface {
+    text-align: center; /* Keep centered for both languages */
+}
+
+[dir="rtl"] .jarvis-controls {
+    flex-direction: row-reverse;
+}
+
+/* Loading and Status Messages */
+.language-loading {
+    opacity: 0.5;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.language-loaded {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* Print Styles for Different Languages */
+@media print {
+    .language-toggle {
+        display: none;
+    }
+    
+    [lang="ar"] {
+        font-family: 'Arial', sans-serif;
+    }
+    
+    [lang="en"] {
+        font-family: 'Arial', sans-serif;
+    }
+}

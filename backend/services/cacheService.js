@@ -1,35 +1,140 @@
-const redis = require('redis');
-const { promisify } = require('util');
+// Memory cache fallback
+const memoryCache = new Map();
+let isRedisAvailable = false;
+let client = null;
 
-// إنشاء عميل Redis
-const client = redis.createClient({
-  host: process.env.REDIS_HOST || 'localhost',
-  port: process.env.REDIS_PORT || 6379,
-  password: process.env.REDIS_PASSWORD || '',
-  retry_strategy: function(options) {
-    if (options.error && options.error.code === 'ECONNREFUSED') {
-      // إذا فشل الاتصال، حاول مرة أخرى بعد 5 ثوانٍ
-      return 5000;
+// محاولة الاتصال بـ Redis
+try {
+  const redis = require('redis');
+
+  client = redis.createClient({
+    host: process.env.REDIS_HOST || 'localhost',
+    port: process.env.REDIS_PORT || 6379,
+    password: process.env.REDIS_PASSWORD || '',
+    retry_strategy: function(options) {
+      if (options.error && options.error.code === 'ECONNREFUSED') {
+        console.log('Redis connection refused - using memory cache');
+        return false; // لا تعيد المحاولة
+      }
+      if (options.attempt > 3) {
+        console.log('Redis max attempts reached - using memory cache');
+        return false;
+      }
+      return Math.min(options.attempt * 100, 3000);
     }
-    // إعادة المحاولة بعد فترة متزايدة
-    return Math.min(options.attempt * 100, 3000);
+  });
+
+  // معالجة أحداث Redis
+  client.on('error', (error) => {
+    console.log('Redis error - falling back to memory cache:', error.message);
+    isRedisAvailable = false;
+  });
+
+  client.on('connect', () => {
+    console.log('Connected to Redis successfully');
+    isRedisAvailable = true;
+  });
+
+  client.on('ready', () => {
+    console.log('Redis client ready');
+    isRedisAvailable = true;
+  });
+
+  client.on('end', () => {
+    console.log('Redis connection ended - using memory cache');
+    isRedisAvailable = false;
+  });
+
+} catch (error) {
+  console.log('Redis module not available - using memory cache:', error.message);
+  isRedisAvailable = false;
+}
+
+// وظائف مساعدة للتعامل مع Cache
+const getAsync = async (key) => {
+  if (isRedisAvailable && client) {
+    try {
+      return await new Promise((resolve, reject) => {
+        client.get(key, (err, result) => {
+          if (err) reject(err);
+          else resolve(result);
+        });
+      });
+    } catch (error) {
+      console.log('Redis get error - using memory cache:', error.message);
+      return memoryCache.get(key) || null;
+    }
   }
-});
+  return memoryCache.get(key) || null;
+};
 
-// تحويل وظائف Redis إلى وعود
-const getAsync = promisify(client.get).bind(client);
-const setAsync = promisify(client.set).bind(client);
-const delAsync = promisify(client.del).bind(client);
-const flushAsync = promisify(client.flushall).bind(client);
+const setAsync = async (key, value, mode, expiry) => {
+  if (isRedisAvailable && client) {
+    try {
+      return await new Promise((resolve, reject) => {
+        if (mode === 'EX' && expiry) {
+          client.setex(key, expiry, value, (err, result) => {
+            if (err) reject(err);
+            else resolve(result);
+          });
+        } else {
+          client.set(key, value, (err, result) => {
+            if (err) reject(err);
+            else resolve(result);
+          });
+        }
+      });
+    } catch (error) {
+      console.log('Redis set error - using memory cache:', error.message);
+      memoryCache.set(key, value);
+      if (mode === 'EX' && expiry) {
+        setTimeout(() => memoryCache.delete(key), expiry * 1000);
+      }
+      return 'OK';
+    }
+  }
+  memoryCache.set(key, value);
+  if (mode === 'EX' && expiry) {
+    setTimeout(() => memoryCache.delete(key), expiry * 1000);
+  }
+  return 'OK';
+};
 
-// معالجة أحداث Redis
-client.on('error', (error) => {
-  console.error('Redis error:', error);
-});
+const delAsync = async (key) => {
+  if (isRedisAvailable && client) {
+    try {
+      return await new Promise((resolve, reject) => {
+        client.del(key, (err, result) => {
+          if (err) reject(err);
+          else resolve(result);
+        });
+      });
+    } catch (error) {
+      console.log('Redis del error - using memory cache:', error.message);
+      return memoryCache.delete(key) ? 1 : 0;
+    }
+  }
+  return memoryCache.delete(key) ? 1 : 0;
+};
 
-client.on('connect', () => {
-  console.log('Connected to Redis');
-});
+const flushAsync = async () => {
+  if (isRedisAvailable && client) {
+    try {
+      return await new Promise((resolve, reject) => {
+        client.flushall((err, result) => {
+          if (err) reject(err);
+          else resolve(result);
+        });
+      });
+    } catch (error) {
+      console.log('Redis flush error - using memory cache:', error.message);
+      memoryCache.clear();
+      return 'OK';
+    }
+  }
+  memoryCache.clear();
+  return 'OK';
+};
 
 /**
  * الحصول على قيمة من التخزين المؤقت
@@ -109,34 +214,34 @@ const cacheMiddleware = (prefix, expiry = 3600) => {
     if (req.method !== 'GET') {
       return next();
     }
-    
+
     // إنشاء مفتاح التخزين المؤقت
     const key = `${prefix}:${req.originalUrl}`;
-    
+
     try {
       // محاولة الحصول على البيانات من التخزين المؤقت
       const cachedData = await get(key);
-      
+
       if (cachedData) {
         // إذا وجدت البيانات في التخزين المؤقت، أعدها
         return res.json(cachedData);
       }
-      
+
       // تخزين وظيفة res.json الأصلية
       const originalJson = res.json;
-      
+
       // استبدال وظيفة res.json لتخزين النتيجة في التخزين المؤقت
       res.json = function(data) {
         // استعادة وظيفة res.json الأصلية
         res.json = originalJson;
-        
+
         // تخزين البيانات في التخزين المؤقت
         set(key, data, expiry);
-        
+
         // استدعاء وظيفة res.json الأصلية
         return res.json(data);
       };
-      
+
       next();
     } catch (error) {
       console.error('Cache middleware error:', error);
@@ -156,7 +261,7 @@ const createKey = (prefix, params) => {
     .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
     .map(([key, value]) => `${key}=${value}`)
     .join('&');
-  
+
   return `${prefix}:${paramsString}`;
 };
 

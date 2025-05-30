@@ -1,0 +1,360 @@
+/* ===== ENERGY.AI BRAND ICONS ===== */
+
+/* أيقونة العلامة التجارية الرئيسية */
+.energy-ai-brand {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #ff7200 0%, #ff9500 50%, #ffb700 100%);
+    border-radius: 15px;
+    box-shadow: 
+        0 8px 25px rgba(255, 114, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden;
+}
+
+.energy-ai-brand::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+}
+
+.energy-ai-brand:hover::before {
+    transform: translateX(100%);
+}
+
+.energy-ai-brand::after {
+    content: "⚡";
+    font-size: 28px;
+    color: white;
+    font-weight: bold;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    z-index: 2;
+    position: relative;
+}
+
+.energy-ai-brand:hover {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 
+        0 12px 35px rgba(255, 114, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* أيقونة مصغرة للعلامة التجارية */
+.energy-ai-mini {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #ff7200 0%, #ff9500 100%);
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(255, 114, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.energy-ai-mini::after {
+    content: "⚡";
+    font-size: 16px;
+    color: white;
+    font-weight: bold;
+}
+
+.energy-ai-mini:hover {
+    transform: scale(1.15);
+    box-shadow: 0 6px 18px rgba(255, 114, 0, 0.4);
+}
+
+/* أيقونة الطاقة المتجددة */
+.renewable-energy-icon {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
+    transition: all 0.3s ease;
+}
+
+.renewable-energy-icon::before {
+    content: "🌱";
+    font-size: 24px;
+    animation: float 3s ease-in-out infinite;
+}
+
+.renewable-energy-icon:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+}
+
+/* أيقونة الطاقة الشمسية */
+.solar-energy-icon {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #ffeb3b 0%, #ffc107 100%);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 20px rgba(255, 235, 59, 0.3);
+    transition: all 0.3s ease;
+}
+
+.solar-energy-icon::before {
+    content: "☀️";
+    font-size: 24px;
+    animation: rotate 4s linear infinite;
+}
+
+.solar-energy-icon:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 25px rgba(255, 235, 59, 0.4);
+}
+
+/* أيقونة طاقة الرياح */
+.wind-energy-icon {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #2196f3 0%, #03a9f4 100%);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 20px rgba(33, 150, 243, 0.3);
+    transition: all 0.3s ease;
+}
+
+.wind-energy-icon::before {
+    content: "💨";
+    font-size: 24px;
+    animation: sway 2s ease-in-out infinite;
+}
+
+.wind-energy-icon:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 25px rgba(33, 150, 243, 0.4);
+}
+
+/* أيقونة الذكاء الاصطناعي */
+.ai-brain-icon {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #9c27b0 0%, #e91e63 100%);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 20px rgba(156, 39, 176, 0.3);
+    transition: all 0.3s ease;
+}
+
+.ai-brain-icon::before {
+    content: "🧠";
+    font-size: 24px;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.ai-brain-icon:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 25px rgba(156, 39, 176, 0.4);
+}
+
+/* أيقونة الشبكة الذكية */
+.smart-grid-icon {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #607d8b 0%, #455a64 100%);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 20px rgba(96, 125, 139, 0.3);
+    transition: all 0.3s ease;
+}
+
+.smart-grid-icon::before {
+    content: "🔌";
+    font-size: 24px;
+    animation: flicker 1.5s ease-in-out infinite;
+}
+
+.smart-grid-icon:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 25px rgba(96, 125, 139, 0.4);
+}
+
+/* أيقونة البطارية */
+.battery-icon {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%);
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
+    transition: all 0.3s ease;
+}
+
+.battery-icon::before {
+    content: "🔋";
+    font-size: 24px;
+    animation: charge 2s ease-in-out infinite;
+}
+
+.battery-icon:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+}
+
+/* الرسوم المتحركة */
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-5px); }
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes sway {
+    0%, 100% { transform: translateX(0px); }
+    50% { transform: translateX(3px); }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+@keyframes flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+@keyframes charge {
+    0% { filter: brightness(1); }
+    50% { filter: brightness(1.3); }
+    100% { filter: brightness(1); }
+}
+
+/* مجموعة أيقونات العلامة التجارية */
+.brand-icon-group {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 20px 0;
+}
+
+.brand-icon-group .brand-icon {
+    transition: all 0.3s ease;
+}
+
+.brand-icon-group:hover .brand-icon:not(:hover) {
+    opacity: 0.6;
+    transform: scale(0.95);
+}
+
+/* أيقونة الحالة المتقدمة */
+.status-indicator {
+    position: relative;
+    display: inline-block;
+}
+
+.status-indicator::after {
+    content: "";
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 12px;
+    height: 12px;
+    background: #4caf50;
+    border: 2px solid white;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+.status-indicator.offline::after {
+    background: #f44336;
+    animation: none;
+}
+
+.status-indicator.busy::after {
+    background: #ff9800;
+}
+
+/* استجابة للشاشات المختلفة */
+@media (max-width: 768px) {
+    .energy-ai-brand {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .energy-ai-brand::after {
+        font-size: 24px;
+    }
+    
+    .brand-icon-group {
+        gap: 10px;
+    }
+    
+    .renewable-energy-icon,
+    .solar-energy-icon,
+    .wind-energy-icon,
+    .ai-brain-icon,
+    .smart-grid-icon,
+    .battery-icon {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .renewable-energy-icon::before,
+    .solar-energy-icon::before,
+    .wind-energy-icon::before,
+    .ai-brain-icon::before,
+    .smart-grid-icon::before,
+    .battery-icon::before {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .energy-ai-brand {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .energy-ai-brand::after {
+        font-size: 20px;
+    }
+    
+    .energy-ai-mini {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .energy-ai-mini::after {
+        font-size: 14px;
+    }
+}

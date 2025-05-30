@@ -164,6 +164,9 @@ const calculateCost = (projectType, capacity, location) => {
     cost: totalCost,
     costPerKw,
     installationFactor,
+    capacity,
+    projectType,
+    location
   };
 };
 
@@ -207,6 +210,9 @@ const calculateEnergyProduction = (projectType, capacity, location) => {
     capacityFactor,
     hoursPerYear,
     homesEquivalent,
+    capacity,
+    projectType,
+    location
   };
 };
 
@@ -237,6 +243,9 @@ const calculateROI = (projectType, capacity, location) => {
     totalCost: costResult.cost,
     annualProduction: energyResult.annualProduction,
     electricityPrice,
+    capacity,
+    projectType,
+    location
   };
 };
 

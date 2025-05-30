@@ -1,0 +1,8 @@
+# Netlify redirects file
+/*    /index.html   200
+
+# API redirects
+/api/*    https://energy-ai-backend-gemini-i30n5wt6k-mohammad-basims-projects.vercel.app/api/:splat    200
+
+# Force HTTPS
+http://energyaii.netlify.app/*    https://energyaii.netlify.app/:splat    301!

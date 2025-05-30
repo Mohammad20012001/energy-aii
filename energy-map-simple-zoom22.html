@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy.map - Zoom 22 Test</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #1a1a1a;
+            color: white;
+            overflow: hidden;
+        }
+        
+        #map {
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        .zoom-info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #ff7200;
+            padding: 10px;
+            border-radius: 8px;
+            z-index: 1000;
+            font-size: 14px;
+            border: 2px solid #ff7200;
+        }
+        
+        .test-buttons {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .test-btn {
+            padding: 8px 12px;
+            background: #ff7200;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .test-btn:hover {
+            background: #ff9500;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    
+    <div class="zoom-info">
+        <div>Current Zoom: <span id="currentZoom">-</span></div>
+        <div>Max Zoom: <span id="maxZoom">-</span></div>
+        <div>Status: <span id="zoomStatus">Loading...</span></div>
+    </div>
+    
+    <div class="test-buttons">
+        <button class="test-btn" onclick="testZoom(18)">Zoom 18</button>
+        <button class="test-btn" onclick="testZoom(19)">Zoom 19</button>
+        <button class="test-btn" onclick="testZoom(20)">Zoom 20</button>
+        <button class="test-btn" onclick="testZoom(21)">Zoom 21</button>
+        <button class="test-btn" onclick="testZoom(22)" style="background: #ff0000;">Zoom 22</button>
+        <button class="test-btn" onclick="resetView()">Reset</button>
+    </div>
+
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <script>
+        let map;
+        
+        // Initialize map with zoom 22 support
+        function initMap() {
+            console.log('🚀 Initializing simple map with zoom 22 support...');
+            
+            // Jordan coordinates (Amman)
+            const ammanCoords = [31.9539, 35.9106];
+            
+            // Create map with maximum zoom 22
+            map = L.map('map', {
+                center: ammanCoords,
+                zoom: 18,
+                minZoom: 1,
+                maxZoom: 22, // Maximum zoom level 22
+                zoomControl: true,
+                scrollWheelZoom: true,
+                doubleClickZoom: true,
+                dragging: true,
+                touchZoom: true,
+                boxZoom: true,
+                keyboard: true
+            });
+            
+            console.log('✅ Map created with maxZoom:', map.getMaxZoom());
+            
+            // Add OpenStreetMap layer with zoom 22 support
+            const osmLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 22, // Support zoom level 22
+                crossOrigin: true
+            });
+            
+            osmLayer.addTo(map);
+            console.log('✅ OpenStreetMap layer added with maxZoom: 22');
+            
+            // Add Esri satellite layer with zoom 22 support
+            const esriLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: '© Esri, Maxar, GeoEye, Earthstar Geographics',
+                maxZoom: 22 // Support zoom level 22
+            });
+            
+            // Layer control
+            const baseLayers = {
+                "🗺️ OpenStreetMap": osmLayer,
+                "🛰️ Satellite": esriLayer
+            };
+            
+            L.control.layers(baseLayers).addTo(map);
+            
+            // Add marker
+            const marker = L.marker(ammanCoords).addTo(map);
+            marker.bindPopup(`
+                <div style="text-align: center;">
+                    <h4 style="color: #ff7200;">📍 Amman, Jordan</h4>
+                    <p>Coordinates: ${ammanCoords[0]}, ${ammanCoords[1]}</p>
+                    <p>Test location for zoom 22</p>
+                </div>
+            `);
+            
+            // Update zoom info
+            updateZoomInfo();
+            
+            // Listen for zoom changes
+            map.on('zoom', function() {
+                updateZoomInfo();
+                console.log('🔍 Zoom changed to:', map.getZoom());
+            });
+            
+            console.log('✅ Map initialization completed');
+            console.log('📏 Current zoom:', map.getZoom());
+            console.log('📏 Max zoom:', map.getMaxZoom());
+            
+            // Test zoom 22 after 2 seconds
+            setTimeout(() => {
+                console.log('🧪 Auto-testing zoom 22...');
+                testZoom(22);
+            }, 2000);
+        }
+        
+        // Update zoom information display
+        function updateZoomInfo() {
+            document.getElementById('currentZoom').textContent = map.getZoom().toFixed(1);
+            document.getElementById('maxZoom').textContent = map.getMaxZoom();
+            
+            if (map.getZoom() >= 22) {
+                document.getElementById('zoomStatus').textContent = '✅ Zoom 22 Active!';
+                document.getElementById('zoomStatus').style.color = '#00ff00';
+            } else if (map.getZoom() >= 20) {
+                document.getElementById('zoomStatus').textContent = '🔍 High Zoom';
+                document.getElementById('zoomStatus').style.color = '#ffff00';
+            } else {
+                document.getElementById('zoomStatus').textContent = '📍 Normal Zoom';
+                document.getElementById('zoomStatus').style.color = '#ffffff';
+            }
+        }
+        
+        // Test zoom function
+        function testZoom(level) {
+            console.log(`🧪 Testing zoom level ${level}...`);
+            console.log('📏 Before:', map.getZoom());
+            
+            map.setZoom(level);
+            
+            setTimeout(() => {
+                console.log('📏 After:', map.getZoom());
+                console.log(`✅ Zoom ${level} test completed`);
+                updateZoomInfo();
+            }, 500);
+        }
+        
+        // Reset view
+        function resetView() {
+            map.setView([31.9539, 35.9106], 18);
+            console.log('🔄 View reset');
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Page loaded, initializing map...');
+            initMap();
+        });
+    </script>
+</body>
+</html>

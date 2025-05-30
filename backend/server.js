@@ -78,7 +78,7 @@ app.use('/api/projects', require('./routes/projectRoutes'));
 require('./services/socketService')(io);
 
 // مسار الصحة للتحقق من حالة الخادم
-app.get('/health', (req, res) => {
+app.get('/health', (_, res) => {
   res.status(200).json({
     status: 'ok',
     timestamp: new Date().toISOString(),
@@ -87,7 +87,7 @@ app.get('/health', (req, res) => {
   });
 });
 
-app.get('/api/health', (req, res) => {
+app.get('/api/health', (_, res) => {
   res.status(200).json({
     status: 'ok',
     message: 'Energy.AI Backend is running',
@@ -96,11 +96,18 @@ app.get('/api/health', (req, res) => {
 });
 
 // Default route
-app.get('/', (req, res) => {
+app.get('/', (_, res) => {
   res.json({
     message: 'Welcome to Energy.AI API',
     version: '1.0.0',
-    documentation: '/api-docs'
+    documentation: '/api-docs',
+    features: [
+      'Groq AI Integration (Llama 3.1)',
+      'Energy Calculations',
+      'User Authentication',
+      'Real-time Chat',
+      'PVGIS Integration'
+    ]
   });
 });
 

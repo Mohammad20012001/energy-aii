@@ -1,0 +1,16 @@
+# Netlify redirects file
+/*    /index.html   200
+
+# Handle SPA routing
+/api-test    /api-test.html    200
+/energy-map-professional    /energy-map-professional.html    200
+/dashboard    /dashboard.html    200
+/admin    /admin.html    200
+
+# Force HTTPS
+http://energyaii.netlify.app/*    https://energyaii.netlify.app/:splat    301!
+
+# Cache static assets
+/public/css/*    /public/css/:splat    200
+/public/js/*     /public/js/:splat     200
+/public/images/* /public/images/:splat 200

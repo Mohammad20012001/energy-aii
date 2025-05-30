@@ -1,0 +1,376 @@
+/* ===== ENERGY.MAP PROFESSIONAL FEATURES ===== */
+
+/* بطاقة Energy.map المتقدمة */
+.xmap-card {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+    border: 2px solid rgba(255, 114, 0, 0.2);
+    border-radius: 20px;
+    padding: 25px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 
+        0 15px 35px rgba(0, 0, 0, 0.2),
+        0 0 0 1px rgba(255, 114, 0, 0.1);
+}
+
+.xmap-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #ff7200 0%, #ff9500 50%, #ffb700 100%);
+    border-radius: 20px 20px 0 0;
+}
+
+.xmap-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(255, 114, 0, 0.4);
+    box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.3),
+        0 0 30px rgba(255, 114, 0, 0.2);
+}
+
+/* أيقونة Energy.map الرئيسية */
+.xmap-icon {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.xmap-icon-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #ff7200 0%, #ff9500 50%, #ffb700 100%);
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 
+        0 15px 35px rgba(255, 114, 0, 0.3),
+        inset 0 2px 0 rgba(255, 255, 255, 0.2);
+    transition: all 0.4s ease;
+    overflow: hidden;
+}
+
+.xmap-icon-wrapper::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+    transform: translateX(-100%);
+    transition: transform 0.8s ease;
+}
+
+.xmap-card:hover .xmap-icon-wrapper::before {
+    transform: translateX(100%);
+}
+
+.xmap-card:hover .xmap-icon-wrapper {
+    transform: scale(1.05) rotate(2deg);
+    box-shadow: 
+        0 20px 45px rgba(255, 114, 0, 0.4),
+        inset 0 2px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* الأيقونة الرئيسية */
+.xmap-main-icon {
+    font-size: 48px;
+    color: white;
+    z-index: 2;
+    position: relative;
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.xmap-card:hover .xmap-main-icon {
+    transform: scale(1.1);
+    text-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* ميزات Energy.map */
+.xmap-features {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 8px;
+    padding: 15px;
+    opacity: 0;
+    transition: all 0.4s ease;
+}
+
+.xmap-card:hover .xmap-features {
+    opacity: 1;
+}
+
+.xmap-feature-icon {
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: white;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+}
+
+.xmap-feature-icon:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: scale(1.1);
+}
+
+/* أيقونات الميزات المخصصة */
+.pvgis-icon {
+    background: rgba(255, 235, 59, 0.2) !important;
+    border-color: rgba(255, 235, 59, 0.4) !important;
+    color: #ffeb3b !important;
+}
+
+.pvgis-icon:hover {
+    background: rgba(255, 235, 59, 0.3) !important;
+    box-shadow: 0 0 15px rgba(255, 235, 59, 0.3);
+}
+
+/* تراكب الصورة */
+.xmap-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        135deg,
+        rgba(255, 114, 0, 0.1) 0%,
+        rgba(255, 149, 0, 0.05) 50%,
+        rgba(255, 183, 0, 0.1) 100%
+    );
+    border-radius: 25px;
+    opacity: 0;
+    transition: all 0.4s ease;
+}
+
+.xmap-card:hover .xmap-overlay {
+    opacity: 1;
+}
+
+/* عنوان Energy.map */
+.xmap-card h3 {
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 10px;
+    background: linear-gradient(135deg, #ff7200 0%, #ff9500 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    transition: all 0.3s ease;
+}
+
+.xmap-card:hover h3 {
+    transform: scale(1.05);
+}
+
+/* وصف Energy.map */
+.xmap-card p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 16px;
+    text-align: center;
+    line-height: 1.6;
+    margin: 0;
+    transition: all 0.3s ease;
+}
+
+.xmap-card:hover p {
+    color: rgba(255, 255, 255, 0.95);
+}
+
+/* شارة الميزات */
+.feature-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    animation: pulse 2s infinite;
+}
+
+.feature-badge.pro {
+    background: linear-gradient(135deg, #9c27b0 0%, #e91e63 100%);
+    box-shadow: 0 4px 12px rgba(156, 39, 176, 0.3);
+}
+
+.feature-badge.new {
+    background: linear-gradient(135deg, #2196f3 0%, #03a9f4 100%);
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+}
+
+/* مؤشر التقدم */
+.progress-indicator {
+    position: absolute;
+    bottom: 15px;
+    left: 15px;
+    right: 15px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #ff7200 0%, #ff9500 100%);
+    border-radius: 2px;
+    width: 0%;
+    transition: width 2s ease;
+}
+
+.xmap-card:hover .progress-bar {
+    width: 100%;
+}
+
+/* تأثيرات الرسوم المتحركة */
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-5px); }
+}
+
+@keyframes glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(255, 114, 0, 0.3); }
+    50% { box-shadow: 0 0 30px rgba(255, 114, 0, 0.5); }
+}
+
+/* حالة التحميل */
+.xmap-loading {
+    position: relative;
+    overflow: hidden;
+}
+
+.xmap-loading::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 114, 0, 0.2),
+        transparent
+    );
+    animation: loading 2s infinite;
+}
+
+@keyframes loading {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* استجابة للشاشات المختلفة */
+@media (max-width: 768px) {
+    .xmap-card {
+        padding: 20px;
+        border-radius: 15px;
+    }
+    
+    .xmap-icon {
+        width: 100px;
+        height: 100px;
+        margin-bottom: 15px;
+    }
+    
+    .xmap-icon-wrapper {
+        border-radius: 20px;
+    }
+    
+    .xmap-main-icon {
+        font-size: 40px;
+    }
+    
+    .xmap-features {
+        padding: 12px;
+        gap: 6px;
+    }
+    
+    .xmap-feature-icon {
+        font-size: 14px;
+        border-radius: 6px;
+    }
+    
+    .xmap-card h3 {
+        font-size: 20px;
+    }
+    
+    .xmap-card p {
+        font-size: 14px;
+    }
+    
+    .feature-badge {
+        top: 10px;
+        right: 10px;
+        font-size: 10px;
+        padding: 4px 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .xmap-card {
+        padding: 15px;
+    }
+    
+    .xmap-icon {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .xmap-main-icon {
+        font-size: 32px;
+    }
+    
+    .xmap-card h3 {
+        font-size: 18px;
+    }
+    
+    .xmap-card p {
+        font-size: 13px;
+    }
+    
+    .xmap-features {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+    }
+}

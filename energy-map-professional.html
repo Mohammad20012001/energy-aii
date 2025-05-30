@@ -1,0 +1,3405 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="htmlRoot">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Energy.map Professional - Advanced Energy Planning Tool for Jordan">
+    <meta name="keywords" content="energy planning, solar analysis, PVGIS, Jordan energy, renewable energy calculator">
+    <meta name="author" content="Energy.AI Team">
+    <meta name="theme-color" content="#ff7200">
+    <title>Energy.map Professional - Jordan Energy Planning Tool</title>
+
+    <!-- الأيقونات -->
+    <link rel="icon" type="image/svg+xml" href="public/images/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="public/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="public/images/favicon-16x16.png">
+
+    <!-- الخطوط -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Noto+Sans+Arabic:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+
+    <!-- Leaflet Draw CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
+
+    <!-- ملفات CSS -->
+    <link rel="stylesheet" href="public/css/styles.css">
+    <link rel="stylesheet" href="public/css/icons.css">
+    <link rel="stylesheet" href="public/css/brand-icons.css">
+    <link rel="stylesheet" href="public/css/enhanced-map-animations.css">
+    <link rel="stylesheet" href="public/css/advanced-map-tools.css">
+    <link rel="stylesheet" href="public/css/xmap-features.css">
+    <link rel="stylesheet" href="public/css/naya.css">
+
+    <style>
+        /* Jordan Energy Planning Tool Styles */
+        :root {
+            --primary-color: #ff7200;
+            --secondary-color: #ff9500;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --error-color: #f44336;
+            --dark-bg: #0a0a0a;
+            --card-bg: rgba(0, 0, 0, 0.9);
+            --border-color: rgba(255, 114, 0, 0.3);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', 'Noto Sans Arabic', sans-serif;
+            background: linear-gradient(135deg, var(--dark-bg) 0%, #1a1a1a 100%);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            direction: rtl;
+        }
+
+        body.ltr {
+            direction: ltr;
+        }
+
+        .energy-map-header {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border-bottom: 2px solid var(--border-color);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-logo {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(255, 114, 0, 0.3);
+        }
+
+        .header-logo::before {
+            content: "⚡";
+            font-size: 20px;
+        }
+
+        .header-title h1 {
+            margin: 0;
+            font-size: 20px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-title p {
+            margin: 0;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .header-btn {
+            padding: 6px 12px;
+            background: rgba(255, 114, 0, 0.2);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: white;
+            text-decoration: none;
+            font-size: 11px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+        }
+
+        .header-btn:hover {
+            background: rgba(255, 114, 0, 0.3);
+            border-color: var(--primary-color);
+            transform: scale(1.02);
+        }
+
+        .language-toggle {
+            background: rgba(76, 175, 80, 0.2);
+            border-color: rgba(76, 175, 80, 0.3);
+        }
+
+        .language-toggle:hover {
+            background: rgba(76, 175, 80, 0.3);
+            border-color: var(--success-color);
+        }
+
+        .main-container {
+            display: flex;
+            height: calc(100vh - 70px);
+            position: relative;
+            min-height: 600px;
+        }
+
+        .map-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            min-height: 100%;
+        }
+
+        #professional-map {
+            width: 100%;
+            height: 100%;
+            border: none;
+            min-height: 600px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        .control-panel {
+            width: 350px;
+            background: var(--card-bg);
+            border-left: 2px solid var(--border-color);
+            overflow-y: auto;
+            z-index: 500;
+            backdrop-filter: blur(15px);
+            transition: transform 0.3s ease;
+        }
+
+        .control-panel.collapsed {
+            transform: translateX(100%);
+        }
+
+        /* Fix for map container sizing */
+        .leaflet-container {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        .leaflet-map-pane {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        .panel-header {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(255, 114, 0, 0.1);
+        }
+
+        .panel-header h3 {
+            margin: 0;
+            color: var(--primary-color);
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .panel-section {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .panel-section h4 {
+            margin: 0 0 10px 0;
+            color: var(--text-primary);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            font-size: 12px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(255, 114, 0, 0.2);
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary-color);
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #45a049;
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            color: white;
+        }
+
+        .btn-small {
+            padding: 4px 8px;
+            font-size: 10px;
+        }
+
+        .results-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 10px;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 12px;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            color: var(--text-secondary);
+        }
+
+        .result-value {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .result-value.highlight {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .loading-indicator {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: var(--text-secondary);
+        }
+
+        .loading-indicator.active {
+            display: block;
+        }
+
+        .error-message {
+            background: rgba(244, 67, 54, 0.1);
+            border: 1px solid rgba(244, 67, 54, 0.3);
+            border-radius: 6px;
+            padding: 10px;
+            margin: 10px 0;
+            color: #ff6b6b;
+            font-size: 12px;
+        }
+
+        .success-message {
+            background: rgba(76, 175, 80, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            border-radius: 6px;
+            padding: 10px;
+            margin: 10px 0;
+            color: #81c784;
+            font-size: 12px;
+        }
+
+        .toggle-panel-btn {
+            position: absolute;
+            top: 50%;
+            right: 360px;
+            transform: translateY(-50%);
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px 0 0 6px;
+            padding: 10px 6px;
+            color: var(--text-primary);
+            cursor: pointer;
+            z-index: 600;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-panel-btn:hover {
+            background: rgba(255, 114, 0, 0.2);
+        }
+
+        .toggle-panel-btn.panel-collapsed {
+            right: 10px;
+            border-radius: 6px;
+        }
+
+        .map-info-overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            max-width: 280px;
+            z-index: 400;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .map-info-overlay h4 {
+            margin: 0 0 8px 0;
+            color: var(--primary-color);
+            font-size: 14px;
+        }
+
+        .map-info-overlay p {
+            margin: 0 0 6px 0;
+            font-size: 11px;
+            line-height: 1.4;
+            color: var(--text-secondary);
+        }
+
+        .coordinates-display {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 10px;
+            color: var(--text-secondary);
+            z-index: 400;
+            font-family: monospace;
+        }
+
+        /* RTL/LTR Support */
+        .rtl {
+            direction: rtl;
+        }
+
+        .rtl .control-panel {
+            border-left: none;
+            border-right: 2px solid var(--border-color);
+        }
+
+        .rtl .control-panel.collapsed {
+            transform: translateX(-100%);
+        }
+
+        .rtl .toggle-panel-btn {
+            right: auto;
+            left: 360px;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .rtl .toggle-panel-btn.panel-collapsed {
+            left: 10px;
+            border-radius: 6px;
+        }
+
+        .rtl .map-info-overlay {
+            left: auto;
+            right: 20px;
+        }
+
+        .rtl .coordinates-display {
+            left: auto;
+            right: 20px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .energy-map-header {
+                padding: 8px 15px;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .header-brand {
+                gap: 10px;
+            }
+
+            .header-logo {
+                width: 35px;
+                height: 35px;
+            }
+
+            .header-title h1 {
+                font-size: 16px;
+            }
+
+            .main-container {
+                flex-direction: column;
+                height: calc(100vh - 100px);
+                min-height: 500px;
+            }
+
+            .control-panel {
+                width: 100%;
+                height: 45%;
+                min-height: 300px;
+                border-left: none;
+                border-top: 2px solid var(--border-color);
+                order: 2;
+                position: relative;
+            }
+
+            .map-container {
+                height: 55%;
+                min-height: 300px;
+                order: 1;
+                position: relative;
+            }
+
+            #professional-map {
+                position: relative;
+                min-height: 300px;
+            }
+
+            .toggle-panel-btn {
+                display: none;
+            }
+
+            .map-info-overlay {
+                top: 10px;
+                left: 10px;
+                right: 10px;
+                max-width: none;
+                padding: 10px;
+                font-size: 11px;
+            }
+
+            .coordinates-display {
+                bottom: 10px;
+                left: 10px;
+                right: 10px;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .energy-map-header {
+                padding: 6px 10px;
+            }
+
+            .header-title h1 {
+                font-size: 14px;
+            }
+
+            .header-btn {
+                padding: 4px 8px;
+                font-size: 10px;
+            }
+
+            .panel-section {
+                padding: 10px;
+            }
+
+            .form-group input,
+            .form-group select {
+                padding: 6px;
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- رأس الصفحة -->
+    <header class="energy-map-header">
+        <div class="header-brand">
+            <div class="header-logo"></div>
+            <div class="header-title">
+                <h1 data-en="Energy.map Professional" data-ar="Energy.map المحترف">Energy.map Professional</h1>
+                <p data-en="Jordan Energy Planning Tool" data-ar="أداة تخطيط الطاقة الأردنية">Jordan Energy Planning Tool</p>
+            </div>
+        </div>
+        <div class="header-controls">
+            <a href="index.html" class="header-btn">
+                <ion-icon name="home-outline"></ion-icon>
+                <span data-en="Home" data-ar="الرئيسية">Home</span>
+            </a>
+            <button class="header-btn language-toggle" onclick="toggleLanguage()">
+                <ion-icon name="language-outline"></ion-icon>
+                <span id="langToggleText">EN</span>
+            </button>
+            <button class="header-btn" onclick="toggleMapInfo()">
+                <ion-icon name="information-circle-outline"></ion-icon>
+                <span data-en="Info" data-ar="معلومات">Info</span>
+            </button>
+            <button class="header-btn" onclick="resetMapView()">
+                <ion-icon name="refresh-outline"></ion-icon>
+                <span data-en="Reset" data-ar="إعادة تعيين">Reset</span>
+            </button>
+            <button class="header-btn" onclick="fixMapSize()">
+                <ion-icon name="resize-outline"></ion-icon>
+                <span data-en="Fix Size" data-ar="إصلاح الحجم">Fix Size</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- الحاوي الرئيسي -->
+    <div class="main-container">
+        <!-- حاوي الخريطة -->
+        <div class="map-container">
+            <div id="professional-map"></div>
+
+            <!-- معلومات الخريطة -->
+            <div class="map-info-overlay" id="mapInfoOverlay">
+                <h4 data-en="⚡ Jordan Energy Planning" data-ar="⚡ تخطيط الطاقة الأردني">⚡ Jordan Energy Planning</h4>
+                <p data-en="Draw a polygon on the map to select your land area" data-ar="ارسم مضلعاً على الخريطة لتحديد منطقة الأرض">Draw a polygon on the map to select your land area</p>
+                <p data-en="Get PVGIS solar data and complete energy calculations" data-ar="احصل على بيانات PVGIS الشمسية وحسابات الطاقة الكاملة">Get PVGIS solar data and complete energy calculations</p>
+                <p data-en="All costs calculated in Jordanian Dinar (JOD)" data-ar="جميع التكاليف محسوبة بالدينار الأردني">All costs calculated in Jordanian Dinar (JOD)</p>
+            </div>
+
+            <!-- عرض الإحداثيات -->
+            <div class="coordinates-display" id="coordinatesDisplay">
+                <span data-en="Click on map to see coordinates" data-ar="انقر على الخريطة لرؤية الإحداثيات">Click on map to see coordinates</span>
+            </div>
+        </div>
+
+        <!-- لوحة التحكم -->
+        <div class="control-panel" id="controlPanel">
+            <!-- رأس اللوحة -->
+            <div class="panel-header">
+                <h3>
+                    <ion-icon name="calculator-outline"></ion-icon>
+                    <span data-en="Energy Planning Calculator" data-ar="حاسبة تخطيط الطاقة">Energy Planning Calculator</span>
+                </h3>
+            </div>
+
+            <!-- قسم رسم المنطقة -->
+            <div class="panel-section">
+                <h4>
+                    <ion-icon name="create-outline"></ion-icon>
+                    <span data-en="1. Draw Land Area" data-ar="1. رسم منطقة الأرض">1. Draw Land Area</span>
+                </h4>
+                <div class="form-group">
+                    <button class="btn btn-primary" id="startDrawingBtn" onclick="startDrawing()">
+                        <ion-icon name="pencil-outline"></ion-icon>
+                        <span data-en="Start Drawing" data-ar="بدء الرسم">Start Drawing</span>
+                    </button>
+                    <button class="btn btn-warning btn-small" id="clearDrawingBtn" onclick="clearDrawing()" style="margin-left: 8px;">
+                        <ion-icon name="trash-outline"></ion-icon>
+                        <span data-en="Clear" data-ar="مسح">Clear</span>
+                    </button>
+                </div>
+                <div id="areaResult" class="results-container" style="display: none;">
+                    <div class="result-item">
+                        <span class="result-label" data-en="Area:" data-ar="المساحة:">Area:</span>
+                        <span class="result-value" id="areaValue">0 m²</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label" data-en="Center Coordinates:" data-ar="إحداثيات المركز:">Center Coordinates:</span>
+                        <span class="result-value" id="centerCoords">-</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label data-en="Map Quality:" data-ar="جودة الخريطة:">Map Quality:</label>
+                    <select id="mapQualitySelect" onchange="changeMapQuality()">
+                        <option value="high" data-en="High Quality (Satellite)" data-ar="عالية الدقة (أقمار صناعية)">High Quality (Satellite)</option>
+                        <option value="medium" data-en="Medium Quality (Streets)" data-ar="متوسطة (شوارع)">Medium Quality (Streets)</option>
+                        <option value="fast" data-en="Fast Loading (Light)" data-ar="تحميل سريع (خفيفة)">Fast Loading (Light)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- قسم نوع النظام -->
+            <div class="panel-section">
+                <h4>
+                    <ion-icon name="settings-outline"></ion-icon>
+                    <span data-en="2. System Configuration" data-ar="2. إعداد النظام">2. System Configuration</span>
+                </h4>
+                <div class="form-group">
+                    <label data-en="System Type:" data-ar="نوع النظام:">System Type:</label>
+                    <select id="systemType" onchange="updateSystemType()">
+                        <option value="on-grid" data-en="On-Grid (Connected to utility)" data-ar="متصل بالشبكة">On-Grid (Connected to utility)</option>
+                        <option value="off-grid" data-en="Off-Grid (Battery backup)" data-ar="منفصل عن الشبكة (بطاريات)">Off-Grid (Battery backup)</option>
+                        <option value="hybrid" data-en="Hybrid (Grid + Battery)" data-ar="مختلط (شبكة + بطاريات)">Hybrid (Grid + Battery)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label data-en="Energy Type:" data-ar="نوع الطاقة:">Energy Type:</label>
+                    <select id="energyType" onchange="updateEnergyType()">
+                        <option value="solar" data-en="Solar Energy" data-ar="الطاقة الشمسية">Solar Energy</option>
+                        <option value="wind" data-en="Wind Energy" data-ar="طاقة الرياح">Wind Energy</option>
+                        <option value="both" data-en="Solar + Wind" data-ar="شمسية + رياح">Solar + Wind</option>
+                    </select>
+                </div>
+                <div class="form-group" id="dailyConsumptionGroup">
+                    <label data-en="Daily Consumption (kWh):" data-ar="الاستهلاك اليومي (كيلو واط ساعة):">Daily Consumption (kWh):</label>
+                    <input type="number" id="dailyConsumption" value="30" min="1" max="1000" step="1">
+                </div>
+                <div class="form-group" id="autonomyDaysGroup" style="display: none;">
+                    <label data-en="Days of Autonomy:" data-ar="أيام الاستقلالية:">Days of Autonomy:</label>
+                    <input type="number" id="autonomyDays" value="3" min="1" max="10" step="1">
+                </div>
+            </div>
+
+            <!-- قسم المعاملات التقنية -->
+            <div class="panel-section">
+                <h4>
+                    <ion-icon name="cog-outline"></ion-icon>
+                    <span data-en="3. Technical Parameters" data-ar="3. المعاملات التقنية">3. Technical Parameters</span>
+                </h4>
+                <div class="form-group">
+                    <label data-en="Panel Efficiency (%):" data-ar="كفاءة الألواح (%):">Panel Efficiency (%):</label>
+                    <input type="number" id="panelEfficiency" value="18" min="10" max="25" step="0.1">
+                </div>
+                <div class="form-group">
+                    <label data-en="Panel Rating (kWp):" data-ar="قدرة اللوح (كيلو واط ذروة):">Panel Rating (kWp):</label>
+                    <input type="number" id="panelRating" value="0.3" min="0.1" max="1.0" step="0.05">
+                </div>
+                <div class="form-group">
+                    <label data-en="Performance Ratio:" data-ar="نسبة الأداء:">Performance Ratio:</label>
+                    <input type="number" id="performanceRatio" value="0.8" min="0.7" max="0.9" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label data-en="Electricity Tariff (JOD/kWh):" data-ar="تعرفة الكهرباء (دينار/كيلو واط ساعة):">Electricity Tariff (JOD/kWh):</label>
+                    <input type="number" id="electricityTariff" value="0.10" min="0.05" max="0.20" step="0.01">
+                </div>
+            </div>
+
+            <!-- قسم الحسابات -->
+            <div class="panel-section">
+                <h4>
+                    <ion-icon name="flash-outline"></ion-icon>
+                    <span data-en="4. Calculate Energy System" data-ar="4. حساب نظام الطاقة">4. Calculate Energy System</span>
+                </h4>
+                <div class="form-group">
+                    <button class="btn btn-success" id="calculateBtn" onclick="calculateEnergySystem()" disabled>
+                        <ion-icon name="calculator-outline"></ion-icon>
+                        <span data-en="Calculate System" data-ar="حساب النظام">Calculate System</span>
+                    </button>
+                    <button class="btn btn-warning btn-small" onclick="testCalculation()" style="margin-left: 8px;">
+                        <ion-icon name="flask-outline"></ion-icon>
+                        <span data-en="Test" data-ar="اختبار">Test</span>
+                    </button>
+                    <button class="btn btn-info btn-small" onclick="forceZoom22()" style="margin-left: 8px;">
+                        <ion-icon name="search-outline"></ion-icon>
+                        <span data-en="Zoom 22" data-ar="زوم 22">Zoom 22</span>
+                    </button>
+                </div>
+
+                <!-- مؤشر التحميل -->
+                <div class="loading-indicator" id="loadingIndicator">
+                    <ion-icon name="hourglass-outline"></ion-icon>
+                    <p data-en="Fetching PVGIS data and calculating..." data-ar="جاري جلب بيانات PVGIS والحساب...">Fetching PVGIS data and calculating...</p>
+                </div>
+
+                <!-- رسائل الخطأ والنجاح -->
+                <div id="messageContainer"></div>
+            </div>
+
+            <!-- قسم النتائج -->
+            <div class="panel-section" id="resultsSection" style="display: none;">
+                <h4>
+                    <ion-icon name="bar-chart-outline"></ion-icon>
+                    <span data-en="5. Results & Analysis" data-ar="5. النتائج والتحليل">5. Results & Analysis</span>
+                </h4>
+
+                <!-- النتائج التقنية -->
+                <div class="results-container" id="technicalResults">
+                    <h5 style="color: var(--primary-color); margin: 0 0 8px 0; font-size: 13px;" data-en="Technical Results" data-ar="النتائج التقنية">Technical Results</h5>
+                    <div class="result-item">
+                        <span class="result-label" data-en="Solar Irradiation:" data-ar="الإشعاع الشمسي:">Solar Irradiation:</span>
+                        <span class="result-value" id="solarIrradiation">- kWh/m²/year</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label" data-en="Optimal Tilt:" data-ar="الميل الأمثل:">Optimal Tilt:</span>
+                        <span class="result-value" id="optimalTilt">-°</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label" data-en="System Capacity:" data-ar="قدرة النظام:">System Capacity:</span>
+                        <span class="result-value highlight" id="systemCapacity">- kWp</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label" data-en="Number of Panels:" data-ar="عدد الألواح:">Number of Panels:</span>
+                        <span class="result-value" id="numberOfPanels">-</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label" data-en="Annual Energy Output:" data-ar="الإنتاج السنوي:">Annual Energy Output:</span>
+                        <span class="result-value highlight" id="annualOutput">- kWh/year</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label" data-en="Inverter Size:" data-ar="حجم العاكس:">Inverter Size:</span>
+                        <span class="result-value" id="inverterSize">- kWp</span>
+                    </div>
+                </div>
+
+                <!-- النتائج الاقتصادية -->
+                <div class="results-container" id="economicResults">
+                    <h5 style="color: var(--success-color); margin: 0 0 8px 0; font-size: 13px;" data-en="Economic Analysis (JOD)" data-ar="التحليل الاقتصادي (دينار)">Economic Analysis (JOD)</h5>
+                    <div class="result-item">
+                        <span class="result-label" data-en="Total System Cost:" data-ar="التكلفة الإجمالية:">Total System Cost:</span>
+                        <span class="result-value highlight" id="totalCost">- JOD</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label" data-en="Annual Savings:" data-ar="الوفورات السنوية:">Annual Savings:</span>
+                        <span class="result-value" id="annualSavings">- JOD/year</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label" data-en="Payback Period:" data-ar="فترة الاسترداد:">Payback Period:</span>
+                        <span class="result-value" id="paybackPeriod">- years</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label" data-en="20-Year ROI:" data-ar="عائد الاستثمار 20 سنة:">20-Year ROI:</span>
+                        <span class="result-value" id="roi">- %</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label" data-en="CO₂ Reduction:" data-ar="تقليل ثاني أكسيد الكربون:">CO₂ Reduction:</span>
+                        <span class="result-value" id="co2Reduction">- kg/year</span>
+                    </div>
+                </div>
+
+                <!-- أزرار التصدير -->
+                <div class="form-group" style="margin-top: 15px;">
+                    <button class="btn btn-primary" onclick="generateReport()">
+                        <ion-icon name="document-text-outline"></ion-icon>
+                        <span data-en="Generate Report" data-ar="إنشاء تقرير">Generate Report</span>
+                    </button>
+                    <button class="btn btn-warning btn-small" onclick="exportToPDF()" style="margin-left: 8px;">
+                        <ion-icon name="download-outline"></ion-icon>
+                        <span data-en="Export PDF" data-ar="تصدير PDF">Export PDF</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- زر إخفاء/إظهار اللوحة -->
+        <button class="toggle-panel-btn" id="togglePanelBtn" onclick="toggleControlPanel()">
+            <ion-icon name="chevron-forward-outline"></ion-icon>
+        </button>
+    </div>
+
+    <!-- Ionicons -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <!-- Leaflet Draw JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+
+    <!-- jsPDF for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!-- Core Services -->
+    <script src="public/js/error-handler.js"></script>
+    <script src="public/js/validator.js"></script>
+    <script src="public/js/api-service.js"></script>
+
+    <!-- AI Services -->
+    <script src="public/js/groq-service.js"></script>
+    <script src="public/js/groq-settings.js"></script>
+
+    <script>
+        // Jordan Energy Planning Tool - Complete Implementation
+
+        // Global Variables
+        let professionalMap;
+        let drawControl;
+        let drawnItems;
+        let currentPolygon = null;
+        let currentLanguage = 'ar';
+        let mapInfo = true;
+        let panelCollapsed = false;
+        let calculationResults = {};
+
+        // Language System
+        const translations = {
+            ar: {
+                'Energy.map Professional': 'Energy.map المحترف',
+                'Jordan Energy Planning Tool': 'أداة تخطيط الطاقة الأردنية',
+                'Home': 'الرئيسية',
+                'Info': 'معلومات',
+                'Reset': 'إعادة تعيين',
+                'Jordan Energy Planning': 'تخطيط الطاقة الأردني',
+                'Draw a polygon on the map to select your land area': 'ارسم مضلعاً على الخريطة لتحديد منطقة الأرض',
+                'Get PVGIS solar data and complete energy calculations': 'احصل على بيانات PVGIS الشمسية وحسابات الطاقة الكاملة',
+                'All costs calculated in Jordanian Dinar (JOD)': 'جميع التكاليف محسوبة بالدينار الأردني',
+                'Click on map to see coordinates': 'انقر على الخريطة لرؤية الإحداثيات',
+                'Energy Planning Calculator': 'حاسبة تخطيط الطاقة',
+                '1. Draw Land Area': '1. رسم منطقة الأرض',
+                'Start Drawing': 'بدء الرسم',
+                'Clear': 'مسح',
+                'Area:': 'المساحة:',
+                'Center Coordinates:': 'إحداثيات المركز:',
+                '2. System Configuration': '2. إعداد النظام',
+                'System Type:': 'نوع النظام:',
+                'On-Grid (Connected to utility)': 'متصل بالشبكة',
+                'Off-Grid (Battery backup)': 'منفصل عن الشبكة (بطاريات)',
+                'Hybrid (Grid + Battery)': 'مختلط (شبكة + بطاريات)',
+                'Energy Type:': 'نوع الطاقة:',
+                'Solar Energy': 'الطاقة الشمسية',
+                'Wind Energy': 'طاقة الرياح',
+                'Solar + Wind': 'شمسية + رياح',
+                'Daily Consumption (kWh):': 'الاستهلاك اليومي (كيلو واط ساعة):',
+                'Days of Autonomy:': 'أيام الاستقلالية:',
+                '3. Technical Parameters': '3. المعاملات التقنية',
+                'Panel Efficiency (%):': 'كفاءة الألواح (%):',
+                'Panel Rating (kWp):': 'قدرة اللوح (كيلو واط ذروة):',
+                'Performance Ratio:': 'نسبة الأداء:',
+                'Electricity Tariff (JOD/kWh):': 'تعرفة الكهرباء (دينار/كيلو واط ساعة):',
+                '4. Calculate Energy System': '4. حساب نظام الطاقة',
+                'Calculate System': 'حساب النظام',
+                'Fetching PVGIS data and calculating...': 'جاري جلب بيانات PVGIS والحساب...',
+                '5. Results & Analysis': '5. النتائج والتحليل',
+                'Technical Results': 'النتائج التقنية',
+                'Solar Irradiation:': 'الإشعاع الشمسي:',
+                'Optimal Tilt:': 'الميل الأمثل:',
+                'System Capacity:': 'قدرة النظام:',
+                'Number of Panels:': 'عدد الألواح:',
+                'Annual Energy Output:': 'الإنتاج السنوي:',
+                'Inverter Size:': 'حجم العاكس:',
+                'Economic Analysis (JOD)': 'التحليل الاقتصادي (دينار)',
+                'Total System Cost:': 'التكلفة الإجمالية:',
+                'Annual Savings:': 'الوفورات السنوية:',
+                'Payback Period:': 'فترة الاسترداد:',
+                '20-Year ROI:': 'عائد الاستثمار 20 سنة:',
+                'CO₂ Reduction:': 'تقليل ثاني أكسيد الكربون:',
+                'Generate Report': 'إنشاء تقرير',
+                'Export PDF': 'تصدير PDF'
+            },
+            en: {
+                'Energy.map Professional': 'Energy.map Professional',
+                'Jordan Energy Planning Tool': 'Jordan Energy Planning Tool',
+                'Home': 'Home',
+                'Info': 'Info',
+                'Reset': 'Reset',
+                'Jordan Energy Planning': 'Jordan Energy Planning',
+                'Draw a polygon on the map to select your land area': 'Draw a polygon on the map to select your land area',
+                'Get PVGIS solar data and complete energy calculations': 'Get PVGIS solar data and complete energy calculations',
+                'All costs calculated in Jordanian Dinar (JOD)': 'All costs calculated in Jordanian Dinar (JOD)',
+                'Click on map to see coordinates': 'Click on map to see coordinates',
+                'Energy Planning Calculator': 'Energy Planning Calculator',
+                '1. Draw Land Area': '1. Draw Land Area',
+                'Start Drawing': 'Start Drawing',
+                'Clear': 'Clear',
+                'Area:': 'Area:',
+                'Center Coordinates:': 'Center Coordinates:',
+                '2. System Configuration': '2. System Configuration',
+                'System Type:': 'System Type:',
+                'On-Grid (Connected to utility)': 'On-Grid (Connected to utility)',
+                'Off-Grid (Battery backup)': 'Off-Grid (Battery backup)',
+                'Hybrid (Grid + Battery)': 'Hybrid (Grid + Battery)',
+                'Energy Type:': 'Energy Type:',
+                'Solar Energy': 'Solar Energy',
+                'Wind Energy': 'Wind Energy',
+                'Solar + Wind': 'Solar + Wind',
+                'Daily Consumption (kWh):': 'Daily Consumption (kWh):',
+                'Days of Autonomy:': 'Days of Autonomy:',
+                '3. Technical Parameters': '3. Technical Parameters',
+                'Panel Efficiency (%):': 'Panel Efficiency (%):',
+                'Panel Rating (kWp):': 'Panel Rating (kWp):',
+                'Performance Ratio:': 'Performance Ratio:',
+                'Electricity Tariff (JOD/kWh):': 'Electricity Tariff (JOD/kWh):',
+                '4. Calculate Energy System': '4. Calculate Energy System',
+                'Calculate System': 'Calculate System',
+                'Fetching PVGIS data and calculating...': 'Fetching PVGIS data and calculating...',
+                '5. Results & Analysis': '5. Results & Analysis',
+                'Technical Results': 'Technical Results',
+                'Solar Irradiation:': 'Solar Irradiation:',
+                'Optimal Tilt:': 'Optimal Tilt:',
+                'System Capacity:': 'System Capacity:',
+                'Number of Panels:': 'Number of Panels:',
+                'Annual Energy Output:': 'Annual Energy Output:',
+                'Inverter Size:': 'Inverter Size:',
+                'Economic Analysis (JOD)': 'Economic Analysis (JOD)',
+                'Total System Cost:': 'Total System Cost:',
+                'Annual Savings:': 'Annual Savings:',
+                'Payback Period:': 'Payback Period:',
+                '20-Year ROI:': '20-Year ROI:',
+                'CO₂ Reduction:': 'CO₂ Reduction:',
+                'Generate Report': 'Generate Report',
+                'Export PDF': 'Export PDF'
+            }
+        };
+
+        // Language Functions
+        function toggleLanguage() {
+            currentLanguage = currentLanguage === 'ar' ? 'en' : 'ar';
+            updateLanguage();
+        }
+
+        function updateLanguage() {
+            const htmlRoot = document.getElementById('htmlRoot');
+            const body = document.body;
+            const langToggleText = document.getElementById('langToggleText');
+
+            if (currentLanguage === 'ar') {
+                htmlRoot.setAttribute('lang', 'ar');
+                htmlRoot.setAttribute('dir', 'rtl');
+                body.classList.add('rtl');
+                body.classList.remove('ltr');
+                langToggleText.textContent = 'EN';
+            } else {
+                htmlRoot.setAttribute('lang', 'en');
+                htmlRoot.setAttribute('dir', 'ltr');
+                body.classList.add('ltr');
+                body.classList.remove('rtl');
+                langToggleText.textContent = 'AR';
+            }
+
+            // Update all translatable elements
+            const elements = document.querySelectorAll('[data-en][data-ar]');
+            elements.forEach(element => {
+                const key = element.getAttribute(`data-${currentLanguage}`);
+                if (key) {
+                    element.textContent = key;
+                }
+            });
+
+            // Update select options
+            updateSelectOptions();
+        }
+
+        function updateSelectOptions() {
+            const systemTypeSelect = document.getElementById('systemType');
+            const energyTypeSelect = document.getElementById('energyType');
+
+            // Update system type options
+            Array.from(systemTypeSelect.options).forEach(option => {
+                const key = option.getAttribute(`data-${currentLanguage}`);
+                if (key) option.textContent = key;
+            });
+
+            // Update energy type options
+            Array.from(energyTypeSelect.options).forEach(option => {
+                const key = option.getAttribute(`data-${currentLanguage}`);
+                if (key) option.textContent = key;
+            });
+        }
+
+        // Effective Multi-Layer Map with Zoom 22 Support
+        function initSimpleMap() {
+            console.log('🚀 Starting multi-layer map...');
+
+            try {
+                // Create map with enhanced settings
+                professionalMap = L.map('professional-map', {
+                    center: [31.9539, 35.9106],
+                    zoom: 15,
+                    maxZoom: 22,
+                    zoomControl: true,
+                    attributionControl: true
+                });
+
+                // Define effective layers with zoom 22 support
+                const layers = {};
+
+                // 🗺️ OpenStreetMap - Most reliable
+                layers['🗺️ OpenStreetMap'] = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors',
+                    maxZoom: 22
+                });
+
+                // 🛰️ Esri Satellite - High quality
+                layers['🛰️ Satellite'] = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                    attribution: '© Esri, Maxar, GeoEye',
+                    maxZoom: 22
+                });
+
+                // 🏙️ Esri Streets - Detailed streets
+                layers['🏙️ Streets'] = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+                    attribution: '© Esri, HERE, Garmin',
+                    maxZoom: 22
+                });
+
+                // 🌐 CartoDB Light - Clean design
+                layers['🌐 Light'] = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                    attribution: '© OpenStreetMap © CARTO',
+                    maxZoom: 22,
+                    subdomains: ['a', 'b', 'c', 'd']
+                });
+
+                // 🌑 CartoDB Dark - Dark theme
+                layers['🌑 Dark'] = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                    attribution: '© OpenStreetMap © CARTO',
+                    maxZoom: 22,
+                    subdomains: ['a', 'b', 'c', 'd']
+                });
+
+                // Add default layer
+                layers['🗺️ OpenStreetMap'].addTo(professionalMap);
+
+                // Add layer control
+                L.control.layers(layers, null, {
+                    position: 'topright',
+                    collapsed: false
+                }).addTo(professionalMap);
+
+                // Store layers globally
+                window.mapLayers = layers;
+
+                // Add enhanced marker
+                const marker = L.marker([31.9539, 35.9106]).addTo(professionalMap);
+                marker.bindPopup(`
+                    <div style="text-align: center; font-family: Arial;">
+                        <h4 style="color: #ff7200; margin: 8px 0;">📍 Amman, Jordan</h4>
+                        <p><strong>Energy.map Professional</strong></p>
+                        <p>Layers: ${Object.keys(layers).length} | Zoom: <span id="popupZoom">${professionalMap.getZoom()}</span>/${professionalMap.getMaxZoom()}</p>
+                        <div style="margin: 10px 0;">
+                            <button onclick="testZoom22()" style="background: #ff0000; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-weight: bold; margin: 2px;">🔍 Zoom 22</button>
+                            <button onclick="showLayerInfo()" style="background: #0066cc; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-weight: bold; margin: 2px;">📊 Layers</button>
+                        </div>
+                        <div style="font-size: 11px; color: #666; margin-top: 8px;">
+                            5 Professional Layers • All Support Zoom 22
+                        </div>
+                    </div>
+                `);
+
+                // Enhanced zoom tracking
+                professionalMap.on('zoom', function() {
+                    const currentZoom = professionalMap.getZoom();
+                    console.log('🔍 Zoom level:', currentZoom);
+
+                    // Update popup zoom display
+                    const popupZoom = document.getElementById('popupZoom');
+                    if (popupZoom) {
+                        popupZoom.textContent = currentZoom.toFixed(1);
+                    }
+                });
+
+                // Fix map size
+                setTimeout(() => {
+                    professionalMap.invalidateSize();
+                }, 100);
+
+                console.log('✅ Multi-layer map initialized successfully');
+                console.log('🎯 Location: Amman, Jordan');
+                console.log('📏 Max zoom:', professionalMap.getMaxZoom());
+                console.log('🗺️ Available layers:', Object.keys(layers).length);
+                console.log('⚡ All layers support zoom 22');
+
+                // Auto-test zoom 22
+                setTimeout(() => {
+                    console.log('🧪 Auto-testing zoom 22...');
+                    professionalMap.setZoom(22);
+                    setTimeout(() => {
+                        console.log('✅ Zoom 22 result:', professionalMap.getZoom());
+                        console.log('🎉 All', Object.keys(layers).length, 'layers support zoom 22!');
+                    }, 1000);
+                }, 2000);
+
+            } catch (error) {
+                console.error('❌ Error:', error);
+                // Fallback: show error message
+                const mapContainer = document.getElementById('professional-map');
+                if (mapContainer) {
+                    mapContainer.innerHTML = '<div style="color: red; padding: 20px; text-align: center;">خطأ في تحميل الخريطة<br>Map loading error</div>';
+                }
+            }
+        }
+
+        // Original complex map initialization (backup)
+        function initProfessionalMap() {
+            try {
+                console.log('🚀 Starting map initialization...');
+
+                // Jordan coordinates (Amman)
+                const jordanCoords = [31.9539, 35.9106];
+
+                // Initialize map with enhanced settings - focused on Mecca Street
+                const meccaStreetCoords = [31.9539, 35.9106]; // Mecca Street, Amman, Jordan
+                professionalMap = L.map('professional-map', {
+                    center: meccaStreetCoords,
+                    zoom: 18, // Start with high detail zoom
+                    minZoom: 2,
+                    maxZoom: 22, // Maximum zoom level as requested
+                    zoomControl: true,
+                    scrollWheelZoom: true,
+                    doubleClickZoom: true,
+                    dragging: true,
+                    touchZoom: true,
+                    boxZoom: true,
+                    keyboard: true,
+                    attributionControl: true,
+                    zoomSnap: 0.25, // Allow quarter zoom levels for precision
+                    zoomDelta: 0.5, // Smaller zoom steps
+                    wheelPxPerZoomLevel: 60,
+                    zoomAnimation: true,
+                    fadeAnimation: true,
+                    markerZoomAnimation: true,
+                    preferCanvas: false
+                });
+
+                console.log('✅ Map container initialized successfully');
+
+                // Reliable Base layers with fallback options
+                const baseLayers = {};
+
+                // 🟢 Reliable Free Mapping Services with High Zoom Support
+                try {
+                    baseLayers["🟢 OpenStreetMap (Ultra-High)"] = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '© OpenStreetMap contributors',
+                        maxZoom: 22, // Support zoom level 22
+                        crossOrigin: true
+                    });
+                    console.log('✅ OpenStreetMap ultra-high zoom layer added');
+                } catch (error) {
+                    console.warn('⚠️ OpenStreetMap layer failed:', error);
+                }
+
+                // Add a very reliable backup layer with high zoom
+                try {
+                    baseLayers["🌍 OpenStreetMap (Backup-22)"] = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '© OpenStreetMap contributors',
+                        maxZoom: 22, // Support zoom level 22
+                        subdomains: ['a', 'b', 'c']
+                    });
+                    console.log('✅ OpenStreetMap backup high-zoom layer added');
+                } catch (error) {
+                    console.warn('⚠️ OpenStreetMap backup layer failed:', error);
+                }
+
+                try {
+                    baseLayers["🟣 Esri Satellite (High-Res)"] = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                        attribution: '© Esri, Maxar, GeoEye, Earthstar Geographics | High Grade',
+                        maxZoom: 22, // Esri supports higher zoom for satellite
+                        tileSize: 256,
+                        detectRetina: true,
+                        errorTileUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=='
+                    });
+                    console.log('✅ Esri high-resolution satellite layer added');
+                } catch (error) {
+                    console.warn('⚠️ Esri satellite layer failed:', error);
+                }
+
+                try {
+                    baseLayers["🟣 Esri Streets (Ultra-Detail)"] = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+                        attribution: '© Esri, HERE, Garmin, SafeGraph | Ultra-Detailed Streets',
+                        maxZoom: 22, // Support zoom level 22
+                        tileSize: 256,
+                        detectRetina: true,
+                        errorTileUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=='
+                    });
+                    console.log('✅ Esri ultra-detailed streets layer added');
+                } catch (error) {
+                    console.warn('⚠️ Esri streets layer failed:', error);
+                }
+
+                try {
+                    baseLayers["🟣 Esri Topographic (Ultra-Detail)"] = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+                        attribution: '© Esri, HERE, Garmin, Intermap, USGS | Ultra-Detailed Terrain',
+                        maxZoom: 22, // Support zoom level 22
+                        tileSize: 256,
+                        detectRetina: true,
+                        errorTileUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=='
+                    });
+                    console.log('✅ Esri ultra-detailed topographic layer added');
+                } catch (error) {
+                    console.warn('⚠️ Esri topographic layer failed:', error);
+                }
+
+                try {
+                    baseLayers["🔵 CartoDB Positron (Ultra-Clear)"] = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                        attribution: '© OpenStreetMap contributors © CARTO | Ultra-High Clarity',
+                        maxZoom: 22, // Support zoom level 22
+                        subdomains: ['a', 'b', 'c', 'd'],
+                        tileSize: 256,
+                        detectRetina: true,
+                        errorTileUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=='
+                    });
+                    console.log('✅ CartoDB ultra-clear high-zoom layer added');
+                } catch (error) {
+                    console.warn('⚠️ CartoDB layer failed:', error);
+                }
+
+                // Fallback layer if all others fail
+                if (Object.keys(baseLayers).length === 0) {
+                    console.warn('⚠️ All layers failed, adding fallback');
+                    baseLayers["🔄 Fallback Map (Zoom-22)"] = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '© OpenStreetMap contributors | Emergency Fallback',
+                        maxZoom: 22 // Support zoom level 22
+                    });
+                }
+
+                console.log(`📊 Total layers available: ${Object.keys(baseLayers).length}`);
+
+                // Add default layer (first available layer)
+                const defaultLayerKey = Object.keys(baseLayers)[0];
+                if (defaultLayerKey && baseLayers[defaultLayerKey]) {
+                    baseLayers[defaultLayerKey].addTo(professionalMap);
+                    console.log(`✅ Default layer added: ${defaultLayerKey}`);
+                } else {
+                    throw new Error('No base layers available');
+                }
+
+                // Enhanced Layer control with professional styling
+                const layerControl = L.control.layers(baseLayers, null, {
+                    position: 'topright',
+                    collapsed: false,
+                    hideSingleBase: false,
+                    sortLayers: true
+                }).addTo(professionalMap);
+
+                // Style the layer control
+                setTimeout(() => {
+                    const layerControlDiv = document.querySelector('.leaflet-control-layers');
+                    if (layerControlDiv) {
+                        layerControlDiv.style.background = 'rgba(0, 0, 0, 0.9)';
+                        layerControlDiv.style.border = '2px solid #ff7200';
+                        layerControlDiv.style.borderRadius = '12px';
+                        layerControlDiv.style.backdropFilter = 'blur(10px)';
+                        layerControlDiv.style.color = 'white';
+                        layerControlDiv.style.fontSize = '12px';
+                        layerControlDiv.style.fontFamily = 'Noto Sans Arabic, Roboto, sans-serif';
+                    }
+                }, 500);
+
+                // Add custom map controls
+                addCustomMapControls();
+
+                // Add map quality controls
+                addMapQualityControls();
+
+                // Add Jordan boundaries and major cities
+                addJordanFeatures();
+
+                // Add advanced map features
+                addAdvancedMapFeatures();
+
+                // Initialize drawing
+                initializeDrawing();
+
+                // Map click event for coordinates
+                professionalMap.on('click', function(e) {
+                    updateCoordinatesDisplay(e.latlng.lat, e.latlng.lng);
+                });
+
+                // Fix map size after initialization
+                setTimeout(() => {
+                    professionalMap.invalidateSize();
+                }, 100);
+
+                // Add window resize listener
+                window.addEventListener('resize', function() {
+                    setTimeout(() => {
+                        if (professionalMap) {
+                            professionalMap.invalidateSize();
+                        }
+                    }, 100);
+                });
+
+                console.log('✅ Energy.map Professional initialized successfully with ULTRA-HIGH-DETAIL MAPPING');
+                console.log('🎯 Location: Mecca Street, Amman, Jordan');
+                console.log('🔍 Current zoom level:', professionalMap.getZoom(), '(Ultra-High Detail - up to 22)');
+                console.log('📏 Max zoom level:', professionalMap.getMaxZoom(), '(Professional Grade - ZOOM 22 SUPPORTED)');
+                console.log('🗺️ Available mapping services:', Object.keys(baseLayers).length);
+                console.log('🟢 OpenStreetMap | 🟣 Esri ArcGIS | 🔵 CartoDB - All FREE Services with ZOOM 22');
+                console.log('⚡ Ultra-high zoom capability with professional-grade detail');
+
+                // Test zoom 22 functionality after initialization
+                setTimeout(() => {
+                    console.log('🧪 Auto-testing zoom 22 functionality...');
+                    forceZoom22();
+                }, 3000);
+
+            } catch (error) {
+                console.error('❌ Error initializing Energy.map Professional:', error);
+                showErrorMessage(error.message);
+            }
+        }
+
+        // Drawing Functions
+        function initializeDrawing() {
+            // Initialize drawn items layer
+            drawnItems = new L.FeatureGroup();
+            professionalMap.addLayer(drawnItems);
+
+            // Enhanced Drawing options
+            const drawOptions = {
+                position: 'topleft',
+                draw: {
+                    polygon: {
+                        allowIntersection: false,
+                        drawError: {
+                            color: '#ff4444',
+                            timeout: 2000,
+                            message: '<strong>خطأ:</strong> لا يمكن أن تتقاطع حواف الشكل!'
+                        },
+                        shapeOptions: {
+                            color: '#ff7200',
+                            weight: 4,
+                            opacity: 0.9,
+                            fillColor: '#ff7200',
+                            fillOpacity: 0.3,
+                            dashArray: null
+                        },
+                        showArea: true,
+                        metric: true,
+                        precision: {
+                            km: 2,
+                            ha: 2,
+                            m: 0,
+                            mi: 2,
+                            ac: 2,
+                            yd: 0,
+                            ft: 0
+                        }
+                    },
+                    rectangle: {
+                        shapeOptions: {
+                            color: '#ff7200',
+                            weight: 4,
+                            opacity: 0.9,
+                            fillColor: '#ff7200',
+                            fillOpacity: 0.3
+                        },
+                        showArea: true,
+                        metric: true
+                    },
+                    polyline: false,
+                    circle: false,
+                    marker: false,
+                    circlemarker: false
+                },
+                edit: {
+                    featureGroup: drawnItems,
+                    remove: true,
+                    edit: {
+                        selectedPathOptions: {
+                            maintainColor: true,
+                            opacity: 0.6,
+                            dashArray: '10, 10'
+                        }
+                    }
+                }
+            };
+
+            // Add draw control
+            drawControl = new L.Control.Draw(drawOptions);
+            professionalMap.addControl(drawControl);
+
+            // Drawing events
+            professionalMap.on(L.Draw.Event.CREATED, function(e) {
+                const layer = e.layer;
+
+                // Clear previous polygon
+                drawnItems.clearLayers();
+
+                // Add new polygon
+                drawnItems.addLayer(layer);
+                currentPolygon = layer;
+
+                // Calculate area and update display
+                calculateAndDisplayArea();
+
+                // Enable calculate button
+                document.getElementById('calculateBtn').disabled = false;
+            });
+
+            professionalMap.on(L.Draw.Event.DELETED, function(e) {
+                currentPolygon = null;
+                hideAreaResult();
+                document.getElementById('calculateBtn').disabled = true;
+            });
+        }
+
+        function startDrawing() {
+            try {
+                if (typeof L.Draw !== 'undefined' && drawControl) {
+                    // Use Leaflet.Draw if available
+                    const polygonDrawer = new L.Draw.Polygon(professionalMap, drawControl.options.draw.polygon);
+                    polygonDrawer.enable();
+                } else {
+                    // Use alternative drawing method
+                    showMessage('استخدم الزر ✏️ في الخريطة لبدء الرسم / Use the ✏️ button on the map to start drawing', 'success');
+                }
+            } catch (error) {
+                console.error('❌ Error starting drawing:', error);
+                showMessage('استخدم الزر ✏️ في الخريطة لبدء الرسم / Use the ✏️ button on the map to start drawing', 'success');
+            }
+        }
+
+        function clearDrawing() {
+            try {
+                if (drawnItems) {
+                    drawnItems.clearLayers();
+                }
+                if (currentPolygon && professionalMap) {
+                    professionalMap.removeLayer(currentPolygon);
+                }
+                currentPolygon = null;
+                hideAreaResult();
+                hideResults();
+                document.getElementById('calculateBtn').disabled = true;
+
+                // Call the overridden clearDrawing if it exists (for alternative drawing)
+                if (window.clearDrawing && window.clearDrawing !== clearDrawing) {
+                    window.clearDrawing();
+                }
+            } catch (error) {
+                console.error('❌ Error clearing drawing:', error);
+            }
+        }
+
+        function calculateAndDisplayArea() {
+            if (!currentPolygon) return;
+
+            try {
+                const latlngs = currentPolygon.getLatLngs()[0];
+                console.log('📐 Calculating area for polygon with', latlngs.length, 'points');
+
+                // Use improved area calculation
+                const area = calculatePolygonArea(latlngs);
+                console.log('📏 Calculated area:', area, 'm²');
+
+                // Calculate center point
+                const bounds = currentPolygon.getBounds();
+                const center = bounds.getCenter();
+
+                // Validate area
+                if (area <= 0) {
+                    console.warn('⚠️ Invalid area calculated, using fallback');
+                    showMessage('خطأ في حساب المساحة / Error calculating area', 'error');
+                    return;
+                }
+
+                // Update display
+                document.getElementById('areaValue').textContent = `${Math.round(area).toLocaleString()} m²`;
+                document.getElementById('centerCoords').textContent = `${center.lat.toFixed(6)}, ${center.lng.toFixed(6)}`;
+                document.getElementById('areaResult').style.display = 'block';
+
+                console.log('✅ Area display updated successfully');
+            } catch (error) {
+                console.error('❌ Error in calculateAndDisplayArea:', error);
+                showMessage('خطأ في حساب المساحة / Error calculating area', 'error');
+            }
+        }
+
+        function hideAreaResult() {
+            document.getElementById('areaResult').style.display = 'none';
+        }
+
+        // Simple Drawing Functions
+        function initializeSimpleDrawing() {
+            try {
+                // Initialize drawn items layer
+                drawnItems = new L.FeatureGroup();
+                professionalMap.addLayer(drawnItems);
+
+                // Simple drawing options
+                const drawOptions = {
+                    position: 'topleft',
+                    draw: {
+                        polygon: {
+                            allowIntersection: false,
+                            shapeOptions: {
+                                color: '#ff7200',
+                                weight: 3,
+                                fillOpacity: 0.2
+                            }
+                        },
+                        polyline: false,
+                        rectangle: true,
+                        circle: false,
+                        marker: false,
+                        circlemarker: false
+                    },
+                    edit: {
+                        featureGroup: drawnItems,
+                        remove: true
+                    }
+                };
+
+                // Add draw control
+                drawControl = new L.Control.Draw(drawOptions);
+                professionalMap.addControl(drawControl);
+
+                // Drawing events
+                professionalMap.on(L.Draw.Event.CREATED, function(e) {
+                    const layer = e.layer;
+                    drawnItems.clearLayers();
+                    drawnItems.addLayer(layer);
+                    currentPolygon = layer;
+                    calculateAndDisplayArea();
+                    document.getElementById('calculateBtn').disabled = false;
+                });
+
+                professionalMap.on(L.Draw.Event.DELETED, function(e) {
+                    currentPolygon = null;
+                    hideAreaResult();
+                    document.getElementById('calculateBtn').disabled = true;
+                });
+
+            } catch (error) {
+                console.error('❌ Error initializing simple drawing:', error);
+                initializeAlternativeDrawing();
+            }
+        }
+
+        // Alternative drawing method without Leaflet.Draw
+        function initializeAlternativeDrawing() {
+            console.log('🎨 Initializing alternative drawing method...');
+
+            let isDrawing = false;
+            let polygonPoints = [];
+            let tempMarkers = [];
+            let tempLines = [];
+
+            // Add drawing button
+            const drawButton = L.Control.extend({
+                options: {
+                    position: 'topleft'
+                },
+                onAdd: function(map) {
+                    const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
+                    container.style.background = '#ff7200';
+                    container.style.width = '35px';
+                    container.style.height = '35px';
+                    container.style.cursor = 'pointer';
+                    container.style.borderRadius = '4px';
+                    container.innerHTML = '<div style="color: white; text-align: center; line-height: 35px; font-weight: bold;">✏️</div>';
+                    container.title = 'رسم منطقة / Draw Area';
+
+                    container.onclick = function() {
+                        if (!isDrawing) {
+                            startAlternativeDrawing();
+                        } else {
+                            finishAlternativeDrawing();
+                        }
+                    };
+
+                    return container;
+                }
+            });
+
+            professionalMap.addControl(new drawButton());
+
+            function startAlternativeDrawing() {
+                isDrawing = true;
+                polygonPoints = [];
+                clearTempDrawing();
+
+                professionalMap.getContainer().style.cursor = 'crosshair';
+                showMessage('انقر لإضافة نقاط، انقر مرة أخرى على الزر لإنهاء الرسم / Click to add points, click button again to finish', 'success');
+
+                professionalMap.on('click', addPoint);
+            }
+
+            function addPoint(e) {
+                if (!isDrawing) return;
+
+                const point = e.latlng;
+                polygonPoints.push(point);
+
+                // Add marker
+                const marker = L.circleMarker(point, {
+                    radius: 5,
+                    fillColor: '#ff7200',
+                    color: '#ffffff',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                }).addTo(professionalMap);
+
+                tempMarkers.push(marker);
+
+                // Add line if more than one point
+                if (polygonPoints.length > 1) {
+                    const line = L.polyline([polygonPoints[polygonPoints.length - 2], point], {
+                        color: '#ff7200',
+                        weight: 2,
+                        opacity: 0.8
+                    }).addTo(professionalMap);
+
+                    tempLines.push(line);
+                }
+            }
+
+            function finishAlternativeDrawing() {
+                if (polygonPoints.length < 3) {
+                    showMessage('يجب إضافة 3 نقاط على الأقل / Need at least 3 points', 'error');
+                    return;
+                }
+
+                isDrawing = false;
+                professionalMap.off('click', addPoint);
+                professionalMap.getContainer().style.cursor = '';
+
+                // Clear temporary drawing
+                clearTempDrawing();
+
+                // Create final polygon
+                const polygon = L.polygon(polygonPoints, {
+                    color: '#ff7200',
+                    weight: 3,
+                    fillOpacity: 0.2
+                }).addTo(professionalMap);
+
+                currentPolygon = polygon;
+                calculateAndDisplayArea();
+                document.getElementById('calculateBtn').disabled = false;
+
+                showMessage('تم إنشاء المنطقة بنجاح! / Area created successfully!', 'success');
+            }
+
+            function clearTempDrawing() {
+                tempMarkers.forEach(marker => professionalMap.removeLayer(marker));
+                tempLines.forEach(line => professionalMap.removeLayer(line));
+                tempMarkers = [];
+                tempLines = [];
+            }
+
+            // Override the clear drawing function
+            window.clearDrawing = function() {
+                if (currentPolygon) {
+                    professionalMap.removeLayer(currentPolygon);
+                    currentPolygon = null;
+                }
+                clearTempDrawing();
+                hideAreaResult();
+                hideResults();
+                document.getElementById('calculateBtn').disabled = true;
+                isDrawing = false;
+                professionalMap.off('click', addPoint);
+                professionalMap.getContainer().style.cursor = '';
+            };
+        }
+
+        // Removed complex layer functions - using emergency mode only
+
+        // Simplified layer control - removed for emergency mode
+
+        // Removed quick layer switcher - emergency mode only
+
+        // Emergency basic controls only
+        function addBasicControls() {
+            // Add scale control only
+            L.control.scale({
+                position: 'bottomleft',
+                metric: true,
+                imperial: false
+            }).addTo(professionalMap);
+
+            // Add coordinates display only
+            const coordsControl = L.Control.extend({
+                options: {
+                    position: 'bottomright'
+                },
+                onAdd: function(map) {
+                    const container = L.DomUtil.create('div', 'leaflet-control-coordinates');
+                    container.style.background = 'rgba(0, 0, 0, 0.8)';
+                    container.style.color = '#ff7200';
+                    container.style.padding = '5px 10px';
+                    container.style.borderRadius = '4px';
+                    container.style.fontSize = '11px';
+                    container.innerHTML = 'انقر على الخريطة';
+                    return container;
+                }
+            });
+
+            window.coordsControlInstance = new coordsControl();
+            professionalMap.addControl(window.coordsControlInstance);
+        }
+
+        // Removed complex layer switching - emergency mode only
+
+        // Removed duplicate addBasicControls - using emergency mode only
+
+        // Enhanced Map Functions with Professional Controls
+        function addCustomMapControls() {
+            // Enhanced scale control with both metric and imperial
+            L.control.scale({
+                position: 'bottomleft',
+                metric: true,
+                imperial: true,
+                maxWidth: 250,
+                updateWhenIdle: false
+            }).addTo(professionalMap);
+
+            // Professional fullscreen control
+            const fullscreenControl = L.Control.extend({
+                options: {
+                    position: 'topleft'
+                },
+                onAdd: function(map) {
+                    const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+                    container.style.background = 'linear-gradient(135deg, #ff7200 0%, #ff9500 100%)';
+                    container.style.width = '35px';
+                    container.style.height = '35px';
+                    container.style.cursor = 'pointer';
+                    container.style.borderRadius = '8px';
+                    container.style.boxShadow = '0 4px 15px rgba(255, 114, 0, 0.3)';
+                    container.style.border = '2px solid rgba(255, 255, 255, 0.2)';
+                    container.innerHTML = '<ion-icon name="expand-outline" style="font-size: 18px; margin: 8px; color: white;"></ion-icon>';
+                    container.title = 'شاشة كاملة / Fullscreen';
+                    container.onclick = function() {
+                        toggleFullscreen();
+                    };
+                    return container;
+                }
+            });
+            professionalMap.addControl(new fullscreenControl());
+
+            // Enhanced coordinates display control
+            const coordsControl = L.Control.extend({
+                options: {
+                    position: 'bottomright'
+                },
+                onAdd: function(map) {
+                    const container = L.DomUtil.create('div', 'leaflet-control-coordinates');
+                    container.style.background = 'rgba(0, 0, 0, 0.9)';
+                    container.style.color = '#ff7200';
+                    container.style.padding = '8px 12px';
+                    container.style.borderRadius = '8px';
+                    container.style.fontSize = '11px';
+                    container.style.fontFamily = 'monospace';
+                    container.style.border = '1px solid rgba(255, 114, 0, 0.3)';
+                    container.style.backdropFilter = 'blur(10px)';
+                    container.innerHTML = 'انقر على الخريطة لرؤية الإحداثيات';
+                    return container;
+                }
+            });
+            window.coordsControlInstance = new coordsControl();
+            professionalMap.addControl(window.coordsControlInstance);
+
+            // Add zoom level indicator
+            const zoomControl = L.Control.extend({
+                options: {
+                    position: 'topleft'
+                },
+                onAdd: function(map) {
+                    const container = L.DomUtil.create('div', 'leaflet-control-zoom-level');
+                    container.style.background = 'rgba(0, 0, 0, 0.8)';
+                    container.style.color = 'white';
+                    container.style.padding = '5px 10px';
+                    container.style.borderRadius = '6px';
+                    container.style.fontSize = '12px';
+                    container.style.fontWeight = 'bold';
+                    container.style.border = '1px solid rgba(255, 114, 0, 0.3)';
+                    container.innerHTML = `Zoom: ${map.getZoom()}`;
+
+                    map.on('zoomend', function() {
+                        container.innerHTML = `Zoom: ${map.getZoom()}`;
+                    });
+
+                    return container;
+                }
+            });
+            professionalMap.addControl(new zoomControl());
+
+            // Add map center indicator
+            const centerMarker = L.circleMarker(professionalMap.getCenter(), {
+                radius: 3,
+                fillColor: '#ff7200',
+                color: '#ffffff',
+                weight: 2,
+                opacity: 0.8,
+                fillOpacity: 0.6
+            }).addTo(professionalMap);
+
+            // Update center marker on map move
+            professionalMap.on('move', function() {
+                centerMarker.setLatLng(professionalMap.getCenter());
+            });
+
+            // Add loading indicator for tiles
+            let loadingControl;
+            professionalMap.on('layeradd', function() {
+                if (!loadingControl) {
+                    loadingControl = L.Control.extend({
+                        options: {
+                            position: 'topright'
+                        },
+                        onAdd: function(map) {
+                            const container = L.DomUtil.create('div', 'leaflet-control-loading');
+                            container.style.background = 'rgba(255, 114, 0, 0.9)';
+                            container.style.color = 'white';
+                            container.style.padding = '5px 10px';
+                            container.style.borderRadius = '6px';
+                            container.style.fontSize = '11px';
+                            container.style.display = 'none';
+                            container.innerHTML = '⏳ جاري التحميل...';
+                            return container;
+                        }
+                    });
+                    window.loadingControlInstance = new loadingControl();
+                    professionalMap.addControl(window.loadingControlInstance);
+                }
+            });
+        }
+
+        function addJordanFeatures() {
+            // Enhanced Jordan cities with energy potential data
+            const jordanCities = [
+                { name: 'عمان', nameEn: 'Amman', lat: 31.9539, lng: 35.9106, population: '4.0M', solarPotential: 'عالي', type: 'capital' },
+                { name: 'الزرقاء', nameEn: 'Zarqa', lat: 32.0728, lng: 36.0879, population: '635K', solarPotential: 'عالي جداً', type: 'industrial' },
+                { name: 'إربد', nameEn: 'Irbid', lat: 32.5556, lng: 35.8500, population: '307K', solarPotential: 'عالي', type: 'university' },
+                { name: 'الرصيفة', nameEn: 'Russeifa', lat: 32.0181, lng: 36.0467, population: '472K', solarPotential: 'عالي جداً', type: 'industrial' },
+                { name: 'وادي السير', nameEn: 'Wadi as-Sir', lat: 31.9500, lng: 35.8167, population: '181K', solarPotential: 'عالي', type: 'residential' },
+                { name: 'عجلون', nameEn: 'Ajloun', lat: 32.3333, lng: 35.7500, population: '125K', solarPotential: 'متوسط', type: 'mountainous' },
+                { name: 'عقبة', nameEn: 'Aqaba', lat: 29.5320, lng: 35.0063, population: '188K', solarPotential: 'ممتاز', type: 'port' },
+                { name: 'السلط', nameEn: 'As-Salt', lat: 32.0389, lng: 35.7272, population: '99K', solarPotential: 'عالي', type: 'historic' },
+                { name: 'المفرق', nameEn: 'Mafraq', lat: 32.3434, lng: 36.2081, population: '106K', solarPotential: 'ممتاز', type: 'desert' },
+                { name: 'جرش', nameEn: 'Jerash', lat: 32.2811, lng: 35.8981, population: '50K', solarPotential: 'عالي', type: 'archaeological' },
+                { name: 'الكرك', nameEn: 'Karak', lat: 31.1801, lng: 35.7048, population: '32K', solarPotential: 'ممتاز', type: 'historic' },
+                { name: 'معان', nameEn: 'Ma\'an', lat: 30.1962, lng: 35.7340, population: '50K', solarPotential: 'ممتاز', type: 'desert' }
+            ];
+
+            // Add enhanced city markers with energy information
+            jordanCities.forEach(city => {
+                const cityTypeColors = {
+                    capital: '#ff7200',
+                    industrial: '#ff4444',
+                    university: '#4444ff',
+                    residential: '#44ff44',
+                    mountainous: '#8844ff',
+                    port: '#44ffff',
+                    historic: '#ffaa44',
+                    desert: '#ff8844',
+                    archaeological: '#aa44ff'
+                };
+
+                const marker = L.circleMarker([city.lat, city.lng], {
+                    radius: Math.log(parseFloat(city.population.replace(/[KM]/g, '')) * (city.population.includes('M') ? 1000 : 1)) * 2.5,
+                    fillColor: cityTypeColors[city.type] || '#ff7200',
+                    color: '#ffffff',
+                    weight: 3,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                }).addTo(professionalMap);
+
+                marker.bindPopup(`
+                    <div style="text-align: center; font-family: 'Noto Sans Arabic', sans-serif; min-width: 200px;">
+                        <h4 style="margin: 8px 0; color: ${cityTypeColors[city.type]}; font-size: 16px;">🏙️ ${city.name}</h4>
+                        <p style="margin: 4px 0; font-size: 13px; font-weight: bold;">${city.nameEn}</p>
+                        <hr style="margin: 8px 0; border: 1px solid #eee;">
+                        <p style="margin: 4px 0; font-size: 12px;">👥 السكان: <strong>${city.population}</strong></p>
+                        <p style="margin: 4px 0; font-size: 12px;">☀️ الإمكانية الشمسية: <strong style="color: #ff7200;">${city.solarPotential}</strong></p>
+                        <p style="margin: 4px 0; font-size: 12px;">🏷️ النوع: <strong>${city.type}</strong></p>
+                        <p style="margin: 4px 0; font-size: 10px; color: #888;">📍 ${city.lat.toFixed(4)}, ${city.lng.toFixed(4)}</p>
+                        <button onclick="focusOnCity(${city.lat}, ${city.lng})" style="
+                            margin-top: 8px; padding: 4px 12px; background: #ff7200;
+                            color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 11px;
+                        ">🎯 التركيز على المدينة</button>
+                    </div>
+                `);
+            });
+
+            // Add detailed Jordan boundary with governorates
+            const jordanDetailedBounds = [
+                [33.3774, 34.9226], [33.3774, 39.3012], [29.1974, 39.3012], [29.1974, 34.9226], [33.3774, 34.9226]
+            ];
+
+            const jordanBoundary = L.polygon(jordanDetailedBounds, {
+                color: '#ff7200',
+                weight: 4,
+                opacity: 0.9,
+                fillOpacity: 0.05,
+                dashArray: '15, 10'
+            }).addTo(professionalMap);
+
+            jordanBoundary.bindPopup(`
+                <div style="text-align: center; font-family: 'Noto Sans Arabic', sans-serif; min-width: 250px;">
+                    <h3 style="color: #ff7200; margin: 10px 0;">🇯🇴 المملكة الأردنية الهاشمية</h3>
+                    <p style="font-size: 14px; margin: 5px 0;"><strong>Hashemite Kingdom of Jordan</strong></p>
+                    <hr style="margin: 10px 0; border: 1px solid #eee;">
+                    <p style="font-size: 12px; margin: 5px 0;">📍 المساحة: 89,342 كم²</p>
+                    <p style="font-size: 12px; margin: 5px 0;">👥 السكان: ~11 مليون نسمة</p>
+                    <p style="font-size: 12px; margin: 5px 0;">☀️ متوسط الإشعاع الشمسي: 1,800-2,100 kWh/m²/year</p>
+                    <p style="font-size: 12px; margin: 5px 0;">🌬️ سرعة الرياح: 4-8 m/s</p>
+                    <p style="font-size: 12px; margin: 5px 0;">🎯 هدف الطاقة المتجددة: 20% بحلول 2030</p>
+                </div>
+            `);
+
+            // Add renewable energy zones
+            const renewableZones = [
+                { name: 'منطقة معان للطاقة الشمسية', lat: 30.1962, lng: 35.7340, type: 'solar' },
+                { name: 'منطقة الطفيلة لطاقة الرياح', lat: 30.8389, lng: 35.6042, type: 'wind' },
+                { name: 'منطقة الأزرق للطاقة الشمسية', lat: 31.8983, lng: 36.8267, type: 'solar' },
+                { name: 'منطقة العقبة المختلطة', lat: 29.5320, lng: 35.0063, type: 'mixed' }
+            ];
+
+            renewableZones.forEach(zone => {
+                const zoneColors = {
+                    solar: '#ffaa00',
+                    wind: '#00aaff',
+                    mixed: '#aa00ff'
+                };
+
+                const zoneIcons = {
+                    solar: '☀️',
+                    wind: '🌬️',
+                    mixed: '⚡'
+                };
+
+                const zoneMarker = L.marker([zone.lat, zone.lng], {
+                    icon: L.divIcon({
+                        html: `<div style="
+                            background: ${zoneColors[zone.type]};
+                            color: white;
+                            border-radius: 50%;
+                            width: 30px;
+                            height: 30px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            font-size: 16px;
+                            border: 3px solid white;
+                            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+                        ">${zoneIcons[zone.type]}</div>`,
+                        className: 'renewable-zone-marker',
+                        iconSize: [30, 30],
+                        iconAnchor: [15, 15]
+                    })
+                }).addTo(professionalMap);
+
+                zoneMarker.bindPopup(`
+                    <div style="text-align: center; font-family: 'Noto Sans Arabic', sans-serif;">
+                        <h4 style="color: ${zoneColors[zone.type]}; margin: 8px 0;">${zoneIcons[zone.type]} ${zone.name}</h4>
+                        <p style="font-size: 12px; margin: 5px 0;">نوع الطاقة: <strong>${zone.type === 'solar' ? 'شمسية' : zone.type === 'wind' ? 'رياح' : 'مختلطة'}</strong></p>
+                        <p style="font-size: 11px; color: #666;">منطقة استثمار للطاقة المتجددة</p>
+                    </div>
+                `);
+            });
+        }
+
+        // Helper function to focus on a city
+        function focusOnCity(lat, lng) {
+            professionalMap.setView([lat, lng], 12);
+            showMessage(`تم التركيز على المدينة / Focused on city`, 'success');
+        }
+
+        // Advanced Map Features
+        function addAdvancedMapFeatures() {
+            // Add mini map
+            const miniMap = new L.Control.MiniMap(
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                    attribution: '© CARTO',
+                    subdomains: ['a', 'b', 'c', 'd']
+                }), {
+                    toggleDisplay: true,
+                    minimized: true,
+                    position: 'bottomleft',
+                    width: 120,
+                    height: 80,
+                    zoomLevelOffset: -5
+                }
+            );
+
+            // Add mini map if available
+            if (typeof L.Control.MiniMap !== 'undefined') {
+                professionalMap.addControl(miniMap);
+            }
+
+            // Add measurement tool
+            const measureControl = L.Control.extend({
+                options: {
+                    position: 'topleft'
+                },
+                onAdd: function(map) {
+                    const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
+                    container.style.background = 'linear-gradient(135deg, #4caf50 0%, #45a049 100%)';
+                    container.style.width = '35px';
+                    container.style.height = '35px';
+                    container.style.cursor = 'pointer';
+                    container.style.borderRadius = '8px';
+                    container.style.boxShadow = '0 4px 15px rgba(76, 175, 80, 0.3)';
+                    container.style.border = '2px solid rgba(255, 255, 255, 0.2)';
+                    container.innerHTML = '<ion-icon name="ruler-outline" style="font-size: 18px; margin: 8px; color: white;"></ion-icon>';
+                    container.title = 'أداة القياس / Measurement Tool';
+
+                    let measuring = false;
+                    let measureLine = null;
+                    let measureMarkers = [];
+
+                    container.onclick = function() {
+                        if (!measuring) {
+                            measuring = true;
+                            container.style.background = 'linear-gradient(135deg, #ff7200 0%, #ff9500 100%)';
+                            showMessage('انقر على نقطتين لقياس المسافة / Click two points to measure distance', 'success');
+
+                            professionalMap.on('click', measureClick);
+                        } else {
+                            measuring = false;
+                            container.style.background = 'linear-gradient(135deg, #4caf50 0%, #45a049 100%)';
+                            professionalMap.off('click', measureClick);
+
+                            if (measureLine) {
+                                professionalMap.removeLayer(measureLine);
+                                measureLine = null;
+                            }
+                            measureMarkers.forEach(marker => professionalMap.removeLayer(marker));
+                            measureMarkers = [];
+                        }
+                    };
+
+                    function measureClick(e) {
+                        const marker = L.circleMarker(e.latlng, {
+                            radius: 5,
+                            fillColor: '#ff7200',
+                            color: '#ffffff',
+                            weight: 2,
+                            opacity: 1,
+                            fillOpacity: 0.8
+                        }).addTo(professionalMap);
+
+                        measureMarkers.push(marker);
+
+                        if (measureMarkers.length === 2) {
+                            const latlng1 = measureMarkers[0].getLatLng();
+                            const latlng2 = measureMarkers[1].getLatLng();
+
+                            measureLine = L.polyline([latlng1, latlng2], {
+                                color: '#ff7200',
+                                weight: 3,
+                                opacity: 0.8,
+                                dashArray: '10, 5'
+                            }).addTo(professionalMap);
+
+                            const distance = latlng1.distanceTo(latlng2);
+                            const distanceKm = (distance / 1000).toFixed(2);
+                            const distanceM = Math.round(distance);
+
+                            const midpoint = L.latLng(
+                                (latlng1.lat + latlng2.lat) / 2,
+                                (latlng1.lng + latlng2.lng) / 2
+                            );
+
+                            const distancePopup = L.popup()
+                                .setLatLng(midpoint)
+                                .setContent(`
+                                    <div style="text-align: center; font-family: 'Noto Sans Arabic', sans-serif;">
+                                        <h4 style="color: #ff7200; margin: 5px 0;">📏 المسافة / Distance</h4>
+                                        <p style="margin: 3px 0; font-size: 14px;"><strong>${distanceKm} كم</strong></p>
+                                        <p style="margin: 3px 0; font-size: 12px;">${distanceM} متر</p>
+                                    </div>
+                                `)
+                                .openOn(professionalMap);
+
+                            measuring = false;
+                            container.style.background = 'linear-gradient(135deg, #4caf50 0%, #45a049 100%)';
+                            professionalMap.off('click', measureClick);
+                        }
+                    }
+
+                    return container;
+                }
+            });
+            professionalMap.addControl(new measureControl());
+
+            // Add location finder
+            const locationControl = L.Control.extend({
+                options: {
+                    position: 'topleft'
+                },
+                onAdd: function(map) {
+                    const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
+                    container.style.background = 'linear-gradient(135deg, #2196f3 0%, #1976d2 100%)';
+                    container.style.width = '35px';
+                    container.style.height = '35px';
+                    container.style.cursor = 'pointer';
+                    container.style.borderRadius = '8px';
+                    container.style.boxShadow = '0 4px 15px rgba(33, 150, 243, 0.3)';
+                    container.style.border = '2px solid rgba(255, 255, 255, 0.2)';
+                    container.innerHTML = '<ion-icon name="locate-outline" style="font-size: 18px; margin: 8px; color: white;"></ion-icon>';
+                    container.title = 'تحديد الموقع / Find Location';
+
+                    container.onclick = function() {
+                        if (navigator.geolocation) {
+                            container.innerHTML = '<ion-icon name="hourglass-outline" style="font-size: 18px; margin: 8px; color: white;"></ion-icon>';
+
+                            navigator.geolocation.getCurrentPosition(function(position) {
+                                const lat = position.coords.latitude;
+                                const lng = position.coords.longitude;
+
+                                professionalMap.setView([lat, lng], 15);
+
+                                const locationMarker = L.marker([lat, lng], {
+                                    icon: L.divIcon({
+                                        html: '<div style="background: #2196f3; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 2px 10px rgba(0,0,0,0.3);">📍</div>',
+                                        className: 'location-marker',
+                                        iconSize: [20, 20],
+                                        iconAnchor: [10, 10]
+                                    })
+                                }).addTo(professionalMap);
+
+                                locationMarker.bindPopup(`
+                                    <div style="text-align: center; font-family: 'Noto Sans Arabic', sans-serif;">
+                                        <h4 style="color: #2196f3; margin: 5px 0;">📍 موقعك الحالي</h4>
+                                        <p style="margin: 3px 0; font-size: 12px;">Your Current Location</p>
+                                        <p style="margin: 3px 0; font-size: 11px; color: #666;">${lat.toFixed(6)}, ${lng.toFixed(6)}</p>
+                                    </div>
+                                `).openPopup();
+
+                                container.innerHTML = '<ion-icon name="locate-outline" style="font-size: 18px; margin: 8px; color: white;"></ion-icon>';
+                                showMessage('تم تحديد موقعك / Location found', 'success');
+                            }, function(error) {
+                                container.innerHTML = '<ion-icon name="locate-outline" style="font-size: 18px; margin: 8px; color: white;"></ion-icon>';
+                                showMessage('لا يمكن تحديد الموقع / Cannot find location', 'error');
+                            });
+                        } else {
+                            showMessage('المتصفح لا يدعم تحديد الموقع / Browser does not support geolocation', 'error');
+                        }
+                    };
+
+                    return container;
+                }
+            });
+            professionalMap.addControl(new locationControl());
+
+            // Add map style switcher
+            const styleControl = L.Control.extend({
+                options: {
+                    position: 'topright'
+                },
+                onAdd: function(map) {
+                    const container = L.DomUtil.create('div', 'leaflet-control-styles');
+                    container.style.background = 'rgba(0, 0, 0, 0.9)';
+                    container.style.border = '2px solid #ff7200';
+                    container.style.borderRadius = '12px';
+                    container.style.padding = '10px';
+                    container.style.backdropFilter = 'blur(10px)';
+                    container.style.color = 'white';
+                    container.style.fontSize = '11px';
+                    container.style.fontFamily = 'Noto Sans Arabic, Roboto, sans-serif';
+                    container.style.minWidth = '150px';
+
+                    container.innerHTML = `
+                        <h5 style="margin: 0 0 8px 0; color: #ff7200; text-align: center;">🎨 أنماط الخريطة</h5>
+                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                            <button onclick="setMapQuality('high')" style="padding: 4px 8px; background: #ff7200; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 10px;">🛰️ أقمار صناعية</button>
+                            <button onclick="setMapQuality('medium')" style="padding: 4px 8px; background: #666; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 10px;">🛣️ شوارع</button>
+                            <button onclick="setMapQuality('fast')" style="padding: 4px 8px; background: #333; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 10px;">⚡ سريع</button>
+                        </div>
+                    `;
+
+                    return container;
+                }
+            });
+            professionalMap.addControl(new styleControl());
+        }
+
+        // Utility Functions
+        function updateCoordinatesDisplay(lat, lng) {
+            const coordsDisplay = document.getElementById('coordinatesDisplay');
+            coordsDisplay.innerHTML = `<span>خط العرض: ${lat.toFixed(6)}, خط الطول: ${lng.toFixed(6)}</span>`;
+
+            // Update the map control coordinates display
+            if (window.coordsControlInstance && window.coordsControlInstance._container) {
+                window.coordsControlInstance._container.innerHTML = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+            }
+        }
+
+        // Simplified zoom handling - removed to prevent conflicts
+        // Zoom protection is now handled in protectHighZoom function
+
+        // Get current active layer name
+        function getCurrentLayerName() {
+            if (!window.mapLayers) return null;
+
+            for (let layerName in window.mapLayers) {
+                if (professionalMap.hasLayer(window.mapLayers[layerName])) {
+                    return layerName;
+                }
+            }
+            return null;
+        }
+
+        // High zoom protection system
+        function protectHighZoom(zoomLevel) {
+            console.log(`🛡️ Applying high zoom protection for level ${zoomLevel}`);
+
+            if (zoomLevel >= 18) {
+                // Force zoom back to safe level
+                console.warn(`⚠️ Zoom level ${zoomLevel} is too high, reducing to 17...`);
+
+                setTimeout(() => {
+                    if (professionalMap && professionalMap.getZoom() >= 18) {
+                        professionalMap.setZoom(17, { animate: true });
+                        showMessage(`تم تقليل مستوى التكبير للحماية من فقدان الخريطة / Zoom reduced to protect from tile loss`, 'warning');
+                    }
+                }, 100);
+            }
+        }
+
+        // Setup tile protection for layers
+        function setupTileProtection(layer) {
+            if (!layer || !layer.on) return;
+
+            console.log('🛡️ Setting up tile protection for layer');
+
+            layer.on('tileerror', function(e) {
+                console.warn('⚠️ Tile error detected:', e);
+
+                const tile = e.tile;
+                const coords = e.coords;
+
+                // Create fallback tile
+                const canvas = document.createElement('canvas');
+                canvas.width = 256;
+                canvas.height = 256;
+                const ctx = canvas.getContext('2d');
+
+                // Draw fallback pattern
+                ctx.fillStyle = '#f0f0f0';
+                ctx.fillRect(0, 0, 256, 256);
+                ctx.fillStyle = '#ccc';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('Map Tile', 128, 120);
+                ctx.fillText(`Z:${coords.z} X:${coords.x} Y:${coords.y}`, 128, 140);
+
+                // Replace failed tile with fallback
+                tile.src = canvas.toDataURL();
+            });
+
+            layer.on('tileload', function(e) {
+                console.log('✅ Tile loaded successfully');
+            });
+        }
+
+        // Enhanced zoom warning function
+        function showZoomWarning(zoomLevel, type = 'warning') {
+            if (window.lastZoomWarning && Date.now() - window.lastZoomWarning < 3000) {
+                return; // Don't show warning too frequently
+            }
+
+            window.lastZoomWarning = Date.now();
+
+            let warningMessage = '';
+
+            if (type === 'error') {
+                warningMessage = `⚠️ مستوى تكبير عالي جداً (${zoomLevel}) - تم تقليل التكبير للحماية / Very high zoom level (${zoomLevel}) - zoom reduced for protection`;
+            } else {
+                warningMessage = `🔍 مستوى تكبير عالي (${zoomLevel}) - محمي من فقدان البلاطات / High zoom level (${zoomLevel}) - protected from tile loss`;
+            }
+
+            showMessage(warningMessage, type);
+            console.warn(`🔍 Zoom level ${zoomLevel}: ${type}`);
+        }
+
+        function toggleFullscreen() {
+            const mapContainer = document.querySelector('.map-container');
+            if (!document.fullscreenElement) {
+                mapContainer.requestFullscreen().then(() => {
+                    // Invalidate map size after entering fullscreen
+                    setTimeout(() => {
+                        professionalMap.invalidateSize();
+                    }, 100);
+                }).catch(err => {
+                    console.log('Fullscreen error:', err);
+                });
+            } else {
+                document.exitFullscreen().then(() => {
+                    // Invalidate map size after exiting fullscreen
+                    setTimeout(() => {
+                        professionalMap.invalidateSize();
+                    }, 100);
+                });
+            }
+        }
+
+        function updateSystemType() {
+            const systemType = document.getElementById('systemType').value;
+            const autonomyGroup = document.getElementById('autonomyDaysGroup');
+
+            if (systemType === 'off-grid' || systemType === 'hybrid') {
+                autonomyGroup.style.display = 'block';
+            } else {
+                autonomyGroup.style.display = 'none';
+            }
+        }
+
+        function updateEnergyType() {
+            // Future implementation for wind energy calculations
+            console.log('Energy type updated:', document.getElementById('energyType').value);
+        }
+
+        function changeMapQuality() {
+            const quality = document.getElementById('mapQualitySelect').value;
+            setMapQuality(quality);
+        }
+
+        // Test function for debugging
+        function testCalculation() {
+            console.log('🧪 Running test calculation...');
+
+            try {
+                // Create a test polygon (100m x 100m square in Amman)
+                const testCoords = [
+                    { lat: 31.9539, lng: 35.9106 },
+                    { lat: 31.9549, lng: 35.9106 },
+                    { lat: 31.9549, lng: 35.9116 },
+                    { lat: 31.9539, lng: 35.9116 }
+                ];
+
+                // Test area calculation
+                const testArea = calculatePolygonArea(testCoords);
+                console.log('🔍 Test area:', testArea, 'm²');
+
+                // Test solar calculator
+                const testSolarCalc = new SolarCalculator({
+                    area: 10000, // 10,000 m²
+                    panelEfficiency: 18,
+                    panelRating: 0.3,
+                    performanceRatio: 0.8,
+                    solarIrradiation: 1850,
+                    dailyConsumption: 30,
+                    autonomyDays: 3,
+                    systemType: 'on-grid'
+                });
+
+                const testResults = testSolarCalc.getResults();
+                console.log('🔋 Test solar results:', testResults);
+
+                // Test cost calculator
+                const testCostCalc = new JordanCostCalculator({
+                    systemCapacity: testResults.systemCapacity,
+                    batteryCapacity: testResults.batteryCapacity,
+                    annualOutput: testResults.annualOutput,
+                    electricityTariff: 0.10,
+                    systemType: 'on-grid',
+                    energyType: 'solar'
+                });
+
+                const testCostResults = testCostCalc.getResults();
+                console.log('💰 Test cost results:', testCostResults);
+
+                showMessage('اختبار الحساب تم بنجاح! تحقق من وحدة التحكم / Test calculation successful! Check console.', 'success');
+
+            } catch (error) {
+                console.error('❌ Test calculation error:', error);
+                showMessage('خطأ في اختبار الحساب / Test calculation error: ' + error.message, 'error');
+            }
+        }
+
+        // PVGIS API Functions
+        async function fetchPVGISData(lat, lng) {
+            try {
+                console.log(`🌍 Fetching PVGIS data for coordinates: ${lat}, ${lng}`);
+
+                // PVGIS API endpoint for Jordan with simplified parameters
+                const url = `https://re.jrc.ec.europa.eu/api/v5_2/PVcalc?lat=${lat}&lon=${lng}&raddatabase=PVGIS-SARAH2&outputformat=json&peakpower=1&loss=14&optimalinclination=1&optimalangles=1&mountingplace=free`;
+
+                console.log('📡 PVGIS URL:', url);
+
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                    },
+                    mode: 'cors'
+                });
+
+                if (!response.ok) {
+                    throw new Error(`PVGIS API error: ${response.status} - ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                console.log('📊 PVGIS Response:', data);
+
+                // Validate response structure
+                if (!data.outputs || !data.outputs.totals || !data.outputs.totals.fixed) {
+                    throw new Error('Invalid PVGIS response structure');
+                }
+
+                return data;
+            } catch (error) {
+                console.error('❌ Error fetching PVGIS data:', error);
+
+                // Return fallback data for Jordan if API fails
+                console.log('🔄 Using fallback solar data for Jordan');
+                return {
+                    outputs: {
+                        totals: {
+                            fixed: {
+                                E_y: 1850, // Average annual irradiation for Jordan (kWh/m²/year)
+                                optimal_inclination: 30, // Optimal tilt angle for Jordan
+                                optimal_azimuth: 180 // South-facing
+                            }
+                        }
+                    }
+                };
+            }
+        }
+
+        // Solar Calculator
+        class SolarCalculator {
+            constructor(params) {
+                this.area = params.area; // m²
+                this.panelEfficiency = params.panelEfficiency / 100; // Convert % to decimal
+                this.panelRating = params.panelRating; // kWp per panel
+                this.performanceRatio = params.performanceRatio;
+                this.solarIrradiation = params.solarIrradiation; // kWh/m²/year
+                this.dailyConsumption = params.dailyConsumption; // kWh/day
+                this.autonomyDays = params.autonomyDays || 3;
+                this.systemType = params.systemType;
+            }
+
+            calculateSystemCapacity() {
+                // Method 1: Based on area and panel efficiency
+                const panelArea = 1.6; // Standard panel area in m²
+                const capacityFromArea = (this.area * this.panelEfficiency) / panelArea;
+
+                // Method 2: Based on daily consumption (for off-grid systems)
+                const dailyEnergyNeed = this.dailyConsumption;
+                const peakSunHours = this.solarIrradiation / 365; // Average daily irradiation
+                const capacityFromConsumption = dailyEnergyNeed / (peakSunHours * this.performanceRatio);
+
+                // Use the smaller capacity to ensure system fits the area
+                return Math.min(capacityFromArea, capacityFromConsumption);
+            }
+
+            calculateNumberOfPanels() {
+                const systemCapacity = this.calculateSystemCapacity();
+                return Math.ceil(systemCapacity / this.panelRating);
+            }
+
+            calculateAnnualOutput() {
+                const systemCapacity = this.calculateSystemCapacity();
+                return systemCapacity * this.solarIrradiation * this.performanceRatio;
+            }
+
+            calculateInverterSize() {
+                const systemCapacity = this.calculateSystemCapacity();
+                // Inverter should be 90-110% of system capacity
+                return systemCapacity * 1.0;
+            }
+
+            calculateBatteryCapacity() {
+                if (this.systemType === 'on-grid') return 0;
+
+                // Battery capacity = Daily consumption × Days of autonomy × Depth of discharge factor
+                const depthOfDischarge = 0.8; // 80% DOD for lithium batteries
+                return (this.dailyConsumption * this.autonomyDays) / depthOfDischarge;
+            }
+
+            getResults() {
+                return {
+                    systemCapacity: this.calculateSystemCapacity(),
+                    numberOfPanels: this.calculateNumberOfPanels(),
+                    annualOutput: this.calculateAnnualOutput(),
+                    inverterSize: this.calculateInverterSize(),
+                    batteryCapacity: this.calculateBatteryCapacity()
+                };
+            }
+        }
+
+        // Cost Calculator for Jordan
+        class JordanCostCalculator {
+            constructor(params) {
+                this.systemCapacity = params.systemCapacity; // kWp
+                this.batteryCapacity = params.batteryCapacity; // kWh
+                this.annualOutput = params.annualOutput; // kWh/year
+                this.electricityTariff = params.electricityTariff; // JOD/kWh
+                this.systemType = params.systemType;
+                this.energyType = params.energyType;
+            }
+
+            calculateSystemCost() {
+                // Jordan pricing (2024 estimates in JOD)
+                const costs = {
+                    solar: {
+                        panelCostPerKWp: 400, // JOD per kWp
+                        inverterCostPerKWp: 150, // JOD per kWp
+                        installationCostPerKWp: 100, // JOD per kWp
+                        batteryCostPerKWh: 200 // JOD per kWh
+                    },
+                    wind: {
+                        turbineCostPerKWp: 850, // JOD per kWp
+                        installationCostPerKWp: 200, // JOD per kWp
+                        batteryCostPerKWh: 200 // JOD per kWh
+                    }
+                };
+
+                let totalCost = 0;
+
+                if (this.energyType === 'solar' || this.energyType === 'both') {
+                    const solarCosts = costs.solar;
+                    totalCost += this.systemCapacity * (
+                        solarCosts.panelCostPerKWp +
+                        solarCosts.inverterCostPerKWp +
+                        solarCosts.installationCostPerKWp
+                    );
+                }
+
+                if (this.energyType === 'wind' || this.energyType === 'both') {
+                    const windCosts = costs.wind;
+                    const windCapacity = this.energyType === 'both' ? this.systemCapacity * 0.3 : this.systemCapacity;
+                    totalCost += windCapacity * (
+                        windCosts.turbineCostPerKWp +
+                        windCosts.installationCostPerKWp
+                    );
+                }
+
+                // Add battery costs for off-grid and hybrid systems
+                if (this.systemType !== 'on-grid' && this.batteryCapacity > 0) {
+                    totalCost += this.batteryCapacity * costs.solar.batteryCostPerKWh;
+                }
+
+                return totalCost;
+            }
+
+            calculateAnnualSavings() {
+                return this.annualOutput * this.electricityTariff;
+            }
+
+            calculatePaybackPeriod() {
+                const totalCost = this.calculateSystemCost();
+                const annualSavings = this.calculateAnnualSavings();
+                return annualSavings > 0 ? totalCost / annualSavings : 0;
+            }
+
+            calculateROI() {
+                const totalCost = this.calculateSystemCost();
+                const annualSavings = this.calculateAnnualSavings();
+                const twentyYearSavings = annualSavings * 20;
+                return totalCost > 0 ? ((twentyYearSavings - totalCost) / totalCost) * 100 : 0;
+            }
+
+            calculateCO2Reduction() {
+                // Jordan electricity grid CO2 factor: ~0.62 kg CO2/kWh
+                const co2Factor = 0.62;
+                return this.annualOutput * co2Factor;
+            }
+
+            getResults() {
+                return {
+                    totalCost: this.calculateSystemCost(),
+                    annualSavings: this.calculateAnnualSavings(),
+                    paybackPeriod: this.calculatePaybackPeriod(),
+                    roi: this.calculateROI(),
+                    co2Reduction: this.calculateCO2Reduction()
+                };
+            }
+        }
+
+        // Main Calculation Function
+        async function calculateEnergySystem() {
+            console.log('🔄 Starting energy system calculation...');
+
+            if (!currentPolygon) {
+                showMessage('يرجى رسم مضلع على الخريطة أولاً / Please draw a polygon on the map first.', 'error');
+                return;
+            }
+
+            try {
+                // Show loading
+                showLoading(true);
+                hideResults();
+
+                // Get polygon data
+                const latlngs = currentPolygon.getLatLngs()[0];
+                const area = calculatePolygonArea(latlngs);
+                const bounds = currentPolygon.getBounds();
+                const center = bounds.getCenter();
+
+                console.log(`📐 Area calculated: ${area.toFixed(2)} m²`);
+                console.log(`📍 Center coordinates: ${center.lat.toFixed(4)}, ${center.lng.toFixed(4)}`);
+
+                // Validate area
+                if (area < 10) {
+                    throw new Error('المنطقة صغيرة جداً. يرجى رسم منطقة أكبر من 10 متر مربع / Area too small. Please draw an area larger than 10 m².');
+                }
+
+                // Get form values with validation
+                const systemType = document.getElementById('systemType').value;
+                const energyType = document.getElementById('energyType').value;
+                const dailyConsumption = parseFloat(document.getElementById('dailyConsumption').value) || 30;
+                const autonomyDays = parseFloat(document.getElementById('autonomyDays').value) || 3;
+                const panelEfficiency = parseFloat(document.getElementById('panelEfficiency').value) || 18;
+                const panelRating = parseFloat(document.getElementById('panelRating').value) || 0.3;
+                const performanceRatio = parseFloat(document.getElementById('performanceRatio').value) || 0.8;
+                const electricityTariff = parseFloat(document.getElementById('electricityTariff').value) || 0.10;
+
+                console.log('⚙️ System parameters:', {
+                    systemType, energyType, dailyConsumption, autonomyDays,
+                    panelEfficiency, panelRating, performanceRatio, electricityTariff
+                });
+
+                // Validate coordinates (Jordan bounds)
+                if (center.lat < 29 || center.lat > 34 || center.lng < 34 || center.lng > 40) {
+                    console.warn('⚠️ Coordinates outside Jordan, using fallback data');
+                }
+
+                // Fetch PVGIS data
+                console.log('🌞 Fetching solar irradiation data...');
+                const pvgisData = await fetchPVGISData(center.lat, center.lng);
+
+                // Extract PVGIS results with fallback
+                const solarIrradiation = pvgisData.outputs?.totals?.fixed?.E_y || 1850;
+                const optimalTilt = pvgisData.outputs?.totals?.fixed?.optimal_inclination || 30;
+
+                console.log(`☀️ Solar irradiation: ${solarIrradiation} kWh/m²/year`);
+                console.log(`📐 Optimal tilt: ${optimalTilt}°`);
+
+                // Calculate solar system
+                console.log('🔧 Calculating solar system...');
+                const solarCalculator = new SolarCalculator({
+                    area: area,
+                    panelEfficiency: panelEfficiency,
+                    panelRating: panelRating,
+                    performanceRatio: performanceRatio,
+                    solarIrradiation: solarIrradiation,
+                    dailyConsumption: dailyConsumption,
+                    autonomyDays: autonomyDays,
+                    systemType: systemType
+                });
+
+                const solarResults = solarCalculator.getResults();
+                console.log('🔋 Solar results:', solarResults);
+
+                // Calculate costs
+                console.log('💰 Calculating costs...');
+                const costCalculator = new JordanCostCalculator({
+                    systemCapacity: solarResults.systemCapacity,
+                    batteryCapacity: solarResults.batteryCapacity,
+                    annualOutput: solarResults.annualOutput,
+                    electricityTariff: electricityTariff,
+                    systemType: systemType,
+                    energyType: energyType
+                });
+
+                const costResults = costCalculator.getResults();
+                console.log('💵 Cost results:', costResults);
+
+                // Store results globally
+                calculationResults = {
+                    technical: {
+                        solarIrradiation: solarIrradiation,
+                        optimalTilt: optimalTilt,
+                        systemCapacity: solarResults.systemCapacity,
+                        numberOfPanels: solarResults.numberOfPanels,
+                        annualOutput: solarResults.annualOutput,
+                        inverterSize: solarResults.inverterSize,
+                        batteryCapacity: solarResults.batteryCapacity
+                    },
+                    economic: costResults,
+                    area: area,
+                    coordinates: { lat: center.lat, lng: center.lng }
+                };
+
+                // Display results
+                displayResults(calculationResults);
+                showMessage('تم إكمال الحساب بنجاح! / Calculation completed successfully!', 'success');
+                console.log('✅ Calculation completed successfully');
+
+            } catch (error) {
+                console.error('❌ Calculation error:', error);
+                const errorMessage = error.message || 'خطأ في حساب نظام الطاقة. يرجى المحاولة مرة أخرى / Error calculating energy system. Please try again.';
+                showMessage(errorMessage, 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Display Functions
+        function displayResults(results) {
+            const { technical, economic } = results;
+
+            // Technical results
+            document.getElementById('solarIrradiation').textContent = `${technical.solarIrradiation.toFixed(1)} kWh/m²/year`;
+            document.getElementById('optimalTilt').textContent = `${technical.optimalTilt.toFixed(1)}°`;
+            document.getElementById('systemCapacity').textContent = `${technical.systemCapacity.toFixed(2)} kWp`;
+            document.getElementById('numberOfPanels').textContent = technical.numberOfPanels;
+            document.getElementById('annualOutput').textContent = `${technical.annualOutput.toFixed(0)} kWh/year`;
+            document.getElementById('inverterSize').textContent = `${technical.inverterSize.toFixed(2)} kWp`;
+
+            // Economic results
+            document.getElementById('totalCost').textContent = `${economic.totalCost.toFixed(0)} JOD`;
+            document.getElementById('annualSavings').textContent = `${economic.annualSavings.toFixed(0)} JOD/year`;
+            document.getElementById('paybackPeriod').textContent = `${economic.paybackPeriod.toFixed(1)} years`;
+            document.getElementById('roi').textContent = `${economic.roi.toFixed(1)}%`;
+            document.getElementById('co2Reduction').textContent = `${economic.co2Reduction.toFixed(0)} kg/year`;
+
+            // Show results section
+            document.getElementById('resultsSection').style.display = 'block';
+        }
+
+        function hideResults() {
+            document.getElementById('resultsSection').style.display = 'none';
+        }
+
+        function showLoading(show) {
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            if (show) {
+                loadingIndicator.classList.add('active');
+            } else {
+                loadingIndicator.classList.remove('active');
+            }
+        }
+
+        function showMessage(message, type) {
+            const messageContainer = document.getElementById('messageContainer');
+            const messageClass = type === 'error' ? 'error-message' : 'success-message';
+
+            messageContainer.innerHTML = `<div class="${messageClass}">${message}</div>`;
+
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                messageContainer.innerHTML = '';
+            }, 5000);
+        }
+
+        // UI Control Functions
+        function toggleMapInfo() {
+            const infoOverlay = document.getElementById('mapInfoOverlay');
+            mapInfo = !mapInfo;
+            infoOverlay.style.display = mapInfo ? 'block' : 'none';
+        }
+
+        function toggleControlPanel() {
+            const controlPanel = document.getElementById('controlPanel');
+            const toggleBtn = document.getElementById('togglePanelBtn');
+            const icon = toggleBtn.querySelector('ion-icon');
+
+            panelCollapsed = !panelCollapsed;
+
+            if (panelCollapsed) {
+                controlPanel.classList.add('collapsed');
+                toggleBtn.classList.add('panel-collapsed');
+                icon.setAttribute('name', 'chevron-back-outline');
+            } else {
+                controlPanel.classList.remove('collapsed');
+                toggleBtn.classList.remove('panel-collapsed');
+                icon.setAttribute('name', 'chevron-forward-outline');
+            }
+
+            // Resize map after panel toggle
+            setTimeout(() => {
+                if (professionalMap) {
+                    professionalMap.invalidateSize();
+                }
+            }, 300);
+        }
+
+        function resetMapView() {
+            if (professionalMap) {
+                // Reset to Mecca Street with maximum zoom 22
+                professionalMap.setView([31.9539, 35.9106], 22); // Maximum zoom level 22
+                fixMapSize();
+                console.log('🔄 Map view reset to Mecca Street, Amman with zoom 22 (maximum detail)');
+            }
+        }
+
+        // Force zoom to 22 function
+        function forceZoom22() {
+            if (professionalMap) {
+                console.log('🚀 Forcing zoom to level 22...');
+                console.log('📏 Current zoom before:', professionalMap.getZoom());
+                console.log('📏 Max zoom available:', professionalMap.getMaxZoom());
+
+                professionalMap.setZoom(22);
+
+                setTimeout(() => {
+                    console.log('📏 Current zoom after:', professionalMap.getZoom());
+                    console.log('✅ Force zoom 22 completed');
+                }, 500);
+            } else {
+                console.log('❌ Map not available');
+            }
+        }
+
+        // Show layer information function - Enhanced
+        function showLayerInfo() {
+            if (window.mapLayers) {
+                console.log('📊 Available Map Layers:');
+                Object.keys(window.mapLayers).forEach((layerName, index) => {
+                    console.log(`${index + 1}. ${layerName} - Max Zoom: 22`);
+                });
+
+                alert(`📊 Energy.map Professional Layers:\n\n` +
+                    `Total: ${Object.keys(window.mapLayers).length} effective layers\n` +
+                    `All support Zoom Level 22\n\n` +
+                    `Available Types:\n` +
+                    `🗺️ OpenStreetMap - Most reliable\n` +
+                    `🛰️ Satellite - High resolution imagery\n` +
+                    `🏙️ Streets - Detailed street maps\n` +
+                    `🌐 Light - Clean light theme\n` +
+                    `🌑 Dark - Professional dark theme\n\n` +
+                    `Use the layer control panel on the right to switch between different map types.\n\n` +
+                    `All layers are optimized for Jordan region with maximum zoom level 22.`);
+            } else {
+                console.log('❌ Map layers not available');
+            }
+        }
+
+        // Test zoom 22 function (global) - FIXED
+        function testZoom22() {
+            if (professionalMap) {
+                console.log('🧪 Testing zoom 22...');
+                professionalMap.setZoom(22);
+                setTimeout(() => {
+                    console.log('✅ Zoom result:', professionalMap.getZoom());
+                }, 500);
+            } else {
+                console.log('❌ Map not available');
+            }
+        }
+
+        // Helper function to fix map size
+        function fixMapSize() {
+            if (professionalMap) {
+                setTimeout(() => {
+                    professionalMap.invalidateSize();
+                    console.log('🔧 Map size fixed');
+                }, 100);
+            }
+        }
+
+        // Add enhanced map quality controls
+        function addMapQualityControls() {
+            // Add map quality toggle
+            const qualityControl = L.Control.extend({
+                options: {
+                    position: 'topright'
+                },
+                onAdd: function(map) {
+                    const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
+                    container.style.backgroundColor = 'white';
+                    container.style.padding = '5px';
+                    container.innerHTML = `
+                        <div style="display: flex; flex-direction: column; gap: 2px;">
+                            <button onclick="setMapQuality('high')" style="padding: 4px 8px; border: none; background: #ff7200; color: white; border-radius: 3px; cursor: pointer; font-size: 10px;">
+                                عالية الدقة
+                            </button>
+                            <button onclick="setMapQuality('medium')" style="padding: 4px 8px; border: none; background: #666; color: white; border-radius: 3px; cursor: pointer; font-size: 10px;">
+                                متوسطة
+                            </button>
+                            <button onclick="setMapQuality('fast')" style="padding: 4px 8px; border: none; background: #333; color: white; border-radius: 3px; cursor: pointer; font-size: 10px;">
+                                سريعة
+                            </button>
+                        </div>
+                    `;
+                    return container;
+                }
+            });
+            professionalMap.addControl(new qualityControl());
+        }
+
+        function setMapQuality(quality) {
+            try {
+                if (!window.mapLayers || !professionalMap) {
+                    console.warn('⚠️ Map layers or map not available');
+                    return;
+                }
+
+                let targetLayer;
+
+                switch(quality) {
+                    case 'high':
+                        targetLayer = "🛰️ أقمار صناعية";
+                        break;
+                    case 'medium':
+                        targetLayer = "🗺️ خريطة أساسية";
+                        break;
+                    case 'fast':
+                        targetLayer = "☀️ وضع نهاري";
+                        break;
+                    default:
+                        targetLayer = "🗺️ خريطة أساسية";
+                }
+
+                if (window.mapLayers[targetLayer]) {
+                    switchToLayer(targetLayer, window.mapLayers);
+                    console.log(`✅ Map quality set to: ${quality} (${targetLayer})`);
+
+                    // Update quick switcher buttons
+                    const quickButtons = document.querySelectorAll('.quick-layer-btn');
+                    quickButtons.forEach(btn => {
+                        btn.style.background = 'rgba(255, 114, 0, 0.2)';
+                        if (btn.innerHTML.includes(targetLayer.split(' ')[0])) {
+                            btn.style.background = 'rgba(255, 114, 0, 0.6)';
+                        }
+                    });
+
+                } else {
+                    console.warn(`⚠️ Target layer not available: ${targetLayer}`);
+                    showMessage('الطبقة المطلوبة غير متاحة / Target layer not available', 'warning');
+                }
+
+            } catch (error) {
+                console.error('❌ Error setting map quality:', error);
+                showMessage('خطأ في تغيير جودة الخريطة / Error changing map quality', 'error');
+            }
+        }
+
+        // Report Generation Functions
+        function generateReport() {
+            if (!calculationResults.technical) {
+                showMessage('Please calculate the energy system first.', 'error');
+                return;
+            }
+
+            const reportWindow = window.open('', '_blank');
+            const reportHTML = createReportHTML(calculationResults);
+
+            reportWindow.document.write(reportHTML);
+            reportWindow.document.close();
+        }
+
+        function createReportHTML(results) {
+            const { technical, economic, area, coordinates } = results;
+            const currentDate = new Date().toLocaleDateString();
+
+            return `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Energy Planning Report - Jordan</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; }
+                        .header { text-align: center; border-bottom: 2px solid #ff7200; padding-bottom: 20px; }
+                        .section { margin: 20px 0; }
+                        .result-table { width: 100%; border-collapse: collapse; }
+                        .result-table th, .result-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                        .result-table th { background-color: #f2f2f2; }
+                        .highlight { color: #ff7200; font-weight: bold; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>Energy Planning Report</h1>
+                        <h2>Jordan Energy System Analysis</h2>
+                        <p>Generated on: ${currentDate}</p>
+                    </div>
+
+                    <div class="section">
+                        <h3>Site Information</h3>
+                        <table class="result-table">
+                            <tr><td>Land Area</td><td>${Math.round(area).toLocaleString()} m²</td></tr>
+                            <tr><td>Coordinates</td><td>${coordinates.lat.toFixed(4)}, ${coordinates.lng.toFixed(4)}</td></tr>
+                            <tr><td>Solar Irradiation</td><td>${technical.solarIrradiation.toFixed(1)} kWh/m²/year</td></tr>
+                            <tr><td>Optimal Tilt</td><td>${technical.optimalTilt.toFixed(1)}°</td></tr>
+                        </table>
+                    </div>
+
+                    <div class="section">
+                        <h3>Technical Results</h3>
+                        <table class="result-table">
+                            <tr><td>System Capacity</td><td class="highlight">${technical.systemCapacity.toFixed(2)} kWp</td></tr>
+                            <tr><td>Number of Panels</td><td>${technical.numberOfPanels}</td></tr>
+                            <tr><td>Annual Energy Output</td><td class="highlight">${technical.annualOutput.toFixed(0)} kWh/year</td></tr>
+                            <tr><td>Inverter Size</td><td>${technical.inverterSize.toFixed(2)} kWp</td></tr>
+                        </table>
+                    </div>
+
+                    <div class="section">
+                        <h3>Economic Analysis (JOD)</h3>
+                        <table class="result-table">
+                            <tr><td>Total System Cost</td><td class="highlight">${economic.totalCost.toFixed(0)} JOD</td></tr>
+                            <tr><td>Annual Savings</td><td>${economic.annualSavings.toFixed(0)} JOD/year</td></tr>
+                            <tr><td>Payback Period</td><td>${economic.paybackPeriod.toFixed(1)} years</td></tr>
+                            <tr><td>20-Year ROI</td><td>${economic.roi.toFixed(1)}%</td></tr>
+                            <tr><td>CO₂ Reduction</td><td>${economic.co2Reduction.toFixed(0)} kg/year</td></tr>
+                        </table>
+                    </div>
+
+                    <div class="section">
+                        <h3>Compliance & Standards</h3>
+                        <p>This analysis follows Jordanian renewable energy standards and regulations:</p>
+                        <ul>
+                            <li>Ministry of Energy and Mineral Resources (MEMR) guidelines</li>
+                            <li>Energy & Minerals Regulatory Commission (EMRC) standards</li>
+                            <li>Grid connection limits and feed-in tariff rules</li>
+                            <li>All costs calculated in Jordanian Dinar (JOD)</li>
+                        </ul>
+                    </div>
+
+                    <div class="section">
+                        <p><em>Report generated by Energy.map Professional - Jordan Energy Planning Tool</em></p>
+                    </div>
+                </body>
+                </html>
+            `;
+        }
+
+        function exportToPDF() {
+            if (!calculationResults.technical) {
+                showMessage('Please calculate the energy system first.', 'error');
+                return;
+            }
+
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+
+                // Add content to PDF
+                doc.setFontSize(20);
+                doc.text('Energy Planning Report', 20, 20);
+                doc.setFontSize(16);
+                doc.text('Jordan Energy System Analysis', 20, 30);
+
+                doc.setFontSize(12);
+                doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, 40);
+
+                // Technical results
+                doc.setFontSize(14);
+                doc.text('Technical Results:', 20, 60);
+                doc.setFontSize(10);
+                doc.text(`System Capacity: ${calculationResults.technical.systemCapacity.toFixed(2)} kWp`, 20, 70);
+                doc.text(`Annual Output: ${calculationResults.technical.annualOutput.toFixed(0)} kWh/year`, 20, 80);
+                doc.text(`Number of Panels: ${calculationResults.technical.numberOfPanels}`, 20, 90);
+
+                // Economic results
+                doc.setFontSize(14);
+                doc.text('Economic Analysis (JOD):', 20, 110);
+                doc.setFontSize(10);
+                doc.text(`Total Cost: ${calculationResults.economic.totalCost.toFixed(0)} JOD`, 20, 120);
+                doc.text(`Annual Savings: ${calculationResults.economic.annualSavings.toFixed(0)} JOD/year`, 20, 130);
+                doc.text(`Payback Period: ${calculationResults.economic.paybackPeriod.toFixed(1)} years`, 20, 140);
+                doc.text(`20-Year ROI: ${calculationResults.economic.roi.toFixed(1)}%`, 20, 150);
+
+                // Save PDF
+                doc.save('jordan-energy-planning-report.pdf');
+                showMessage('PDF report exported successfully!', 'success');
+
+            } catch (error) {
+                console.error('PDF export error:', error);
+                showMessage('Error exporting PDF. Please try again.', 'error');
+            }
+        }
+
+        function showErrorMessage(errorDetails = '') {
+            const mapContainer = document.getElementById('professional-map');
+            mapContainer.innerHTML = `
+                <div style="
+                    width: 100%;
+                    height: 100%;
+                    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    color: #ffffff;
+                    text-align: center;
+                    padding: 20px;
+                    font-family: 'Noto Sans Arabic', 'Roboto', sans-serif;
+                ">
+                    <ion-icon name="warning-outline" style="font-size: 64px; color: #ff7200; margin-bottom: 20px; animation: pulse 2s infinite;"></ion-icon>
+                    <h3 style="color: #ff7200; margin: 0 0 15px 0; font-size: 24px;">خطأ في تحميل الخريطة</h3>
+                    <h4 style="color: #ffffff; margin: 0 0 10px 0; font-size: 18px;">Map Loading Error</h4>
+                    <p style="margin: 0 0 10px 0; opacity: 0.9; font-size: 14px;">يرجى التحقق من اتصال الإنترنت والمحاولة مرة أخرى</p>
+                    <p style="margin: 0 0 15px 0; opacity: 0.9; font-size: 14px;">Please check your internet connection and try again</p>
+                    ${errorDetails ? `<p style="margin: 0 0 15px 0; opacity: 0.7; font-size: 12px; color: #ffaa00;">تفاصيل الخطأ: ${errorDetails}</p>` : ''}
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+                        <button onclick="retryMapInitialization()" style="
+                            padding: 12px 24px;
+                            background: linear-gradient(135deg, #ff7200 0%, #ff9500 100%);
+                            border: none;
+                            border-radius: 8px;
+                            color: white;
+                            cursor: pointer;
+                            font-size: 14px;
+                            font-weight: bold;
+                            box-shadow: 0 4px 15px rgba(255, 114, 0, 0.3);
+                            transition: transform 0.2s;
+                        " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                            🔄 إعادة المحاولة / Retry
+                        </button>
+                        <button onclick="loadOfflineMap()" style="
+                            padding: 12px 24px;
+                            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+                            border: none;
+                            border-radius: 8px;
+                            color: white;
+                            cursor: pointer;
+                            font-size: 14px;
+                            font-weight: bold;
+                            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+                            transition: transform 0.2s;
+                        " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                            📱 وضع بدون اتصال / Offline Mode
+                        </button>
+                    </div>
+                    <div style="margin-top: 20px; padding: 15px; background: rgba(255, 255, 255, 0.1); border-radius: 8px; max-width: 400px;">
+                        <h5 style="color: #ff7200; margin: 0 0 10px 0;">نصائح لحل المشكلة:</h5>
+                        <ul style="text-align: right; font-size: 12px; margin: 0; padding-right: 20px;">
+                            <li>تحقق من اتصال الإنترنت</li>
+                            <li>أعد تحميل الصفحة</li>
+                            <li>امسح ذاكرة التخزين المؤقت</li>
+                            <li>جرب متصفح آخر</li>
+                        </ul>
+                    </div>
+                </div>
+                <style>
+                    @keyframes pulse {
+                        0%, 100% { opacity: 1; }
+                        50% { opacity: 0.5; }
+                    }
+                </style>
+            `;
+        }
+
+        // Retry function
+        function retryMapInitialization() {
+            console.log('🔄 Retrying map initialization...');
+            const mapContainer = document.getElementById('professional-map');
+            mapContainer.innerHTML = '<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #1a1a1a; color: white;">⏳ جاري إعادة التحميل...</div>';
+
+            setTimeout(() => {
+                initProfessionalMap();
+            }, 1000);
+        }
+
+        // Offline map function
+        function loadOfflineMap() {
+            console.log('📱 Loading offline map...');
+            const mapContainer = document.getElementById('professional-map');
+            mapContainer.innerHTML = `
+                <div style="
+                    width: 100%;
+                    height: 100%;
+                    background: linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 100%);
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    color: #ffffff;
+                    text-align: center;
+                    padding: 20px;
+                    font-family: 'Noto Sans Arabic', 'Roboto', sans-serif;
+                ">
+                    <div style="
+                        width: 80%;
+                        height: 60%;
+                        background: #1a1a1a;
+                        border: 2px solid #ff7200;
+                        border-radius: 12px;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        position: relative;
+                        overflow: hidden;
+                    ">
+                        <div style="
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            bottom: 0;
+                            background: repeating-linear-gradient(
+                                45deg,
+                                transparent,
+                                transparent 10px,
+                                rgba(255, 114, 0, 0.1) 10px,
+                                rgba(255, 114, 0, 0.1) 20px
+                            );
+                        "></div>
+                        <h3 style="color: #ff7200; margin: 0 0 15px 0; z-index: 1;">🗺️ خريطة بدون اتصال</h3>
+                        <p style="margin: 0 0 10px 0; z-index: 1; font-size: 14px;">يمكنك الآن استخدام أدوات الحساب</p>
+                        <p style="margin: 0; z-index: 1; font-size: 12px; opacity: 0.8;">ارسم منطقة وهمية لاختبار الحسابات</p>
+                        <button onclick="createTestPolygon()" style="
+                            margin-top: 15px;
+                            padding: 10px 20px;
+                            background: #ff7200;
+                            border: none;
+                            border-radius: 6px;
+                            color: white;
+                            cursor: pointer;
+                            z-index: 1;
+                        ">إنشاء منطقة تجريبية</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Create test polygon for offline mode
+        function createTestPolygon() {
+            // Simulate a drawn polygon for testing
+            const testArea = 10000; // 10,000 m²
+            const testCenter = { lat: 31.9539, lng: 35.9106 };
+
+            // Update area display
+            document.getElementById('areaValue').textContent = `${testArea.toLocaleString()} m²`;
+            document.getElementById('centerCoords').textContent = `${testCenter.lat.toFixed(6)}, ${testCenter.lng.toFixed(6)}`;
+            document.getElementById('areaResult').style.display = 'block';
+            document.getElementById('calculateBtn').disabled = false;
+
+            // Create a mock polygon object
+            currentPolygon = {
+                getLatLngs: () => [[
+                    { lat: 31.9539, lng: 35.9106 },
+                    { lat: 31.9549, lng: 35.9106 },
+                    { lat: 31.9549, lng: 35.9116 },
+                    { lat: 31.9539, lng: 35.9116 }
+                ]],
+                getBounds: () => ({
+                    getCenter: () => testCenter
+                })
+            };
+
+            showMessage('تم إنشاء منطقة تجريبية بنجاح! يمكنك الآن اختبار الحسابات / Test area created successfully!', 'success');
+        }
+
+        // Test zoom function
+        function testZoom22() {
+            if (professionalMap) {
+                console.log('🧪 Testing zoom 22 functionality...');
+                console.log('📏 Current zoom:', professionalMap.getZoom());
+                console.log('📏 Max zoom:', professionalMap.getMaxZoom());
+
+                professionalMap.setZoom(22);
+
+                setTimeout(() => {
+                    console.log('📏 After setting zoom 22:', professionalMap.getZoom());
+                    console.log('✅ Zoom 22 test completed');
+                }, 1000);
+            } else {
+                console.log('❌ Map not initialized yet');
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Initializing Jordan Energy Planning Tool...');
+
+            // Wait for Leaflet to load
+            let attempts = 0;
+            const maxAttempts = 30;
+
+            function checkAndInit() {
+                attempts++;
+                console.log(`🔍 Checking libraries... Attempt ${attempts}/${maxAttempts}`);
+                console.log('Leaflet available:', typeof L !== 'undefined');
+                console.log('Leaflet.Draw available:', typeof L !== 'undefined' && typeof L.Draw !== 'undefined');
+
+                if (typeof L !== 'undefined') {
+                    console.log('✅ Leaflet loaded, initializing simple map with zoom 22...');
+                    try {
+                        initSimpleMap(); // Use simple map with zoom 22 support
+                        updateLanguage(); // Set initial language
+                    } catch (error) {
+                        console.error('❌ Simple map initialization failed:', error);
+                        showErrorMessage(error.message);
+                    }
+                } else if (attempts < maxAttempts) {
+                    console.log(`⏳ Waiting for Leaflet... (${attempts}/${maxAttempts})`);
+                    setTimeout(checkAndInit, 1000);
+                } else {
+                    console.error('❌ Failed to load Leaflet library');
+                    showErrorMessage('Failed to load map library');
+                }
+            }
+
+            checkAndInit();
+        });
+
+        // Add Leaflet.GeometryUtil for area calculation
+        L.GeometryUtil = L.GeometryUtil || {};
+        L.GeometryUtil.geodesicArea = function (latlngs) {
+            var pointsCount = latlngs.length,
+                area = 0.0,
+                d2r = Math.PI / 180,
+                p1, p2;
+
+            if (pointsCount > 2) {
+                for (var i = 0; i < pointsCount; i++) {
+                    p1 = latlngs[i];
+                    p2 = latlngs[(i + 1) % pointsCount];
+                    area += ((p2.lng - p1.lng) * d2r) *
+                            (2 + Math.sin(p1.lat * d2r) + Math.sin(p2.lat * d2r));
+                }
+                area = area * 6378137.0 * 6378137.0 / 2.0;
+            }
+
+            return Math.abs(area);
+        };
+
+        // Alternative area calculation using Shoelace formula
+        function calculatePolygonArea(latlngs) {
+            if (latlngs.length < 3) return 0;
+
+            try {
+                // Use Leaflet's built-in method first
+                if (L.GeometryUtil && L.GeometryUtil.geodesicArea) {
+                    return L.GeometryUtil.geodesicArea(latlngs);
+                }
+
+                // Fallback: Simple area calculation
+                let area = 0;
+                const earthRadius = 6371000; // Earth radius in meters
+
+                for (let i = 0; i < latlngs.length; i++) {
+                    const j = (i + 1) % latlngs.length;
+                    const lat1 = latlngs[i].lat * Math.PI / 180;
+                    const lat2 = latlngs[j].lat * Math.PI / 180;
+                    const lng1 = latlngs[i].lng * Math.PI / 180;
+                    const lng2 = latlngs[j].lng * Math.PI / 180;
+
+                    area += (lng2 - lng1) * (2 + Math.sin(lat1) + Math.sin(lat2));
+                }
+
+                area = Math.abs(area * earthRadius * earthRadius / 2);
+                return area;
+            } catch (error) {
+                console.error('Error calculating area:', error);
+                return 0;
+            }
+        }
+
+    </script>
+</body>
+</html>

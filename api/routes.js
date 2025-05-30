@@ -1,31 +1,20 @@
 import express from 'express';
-import {
-    chatController,
-    saveConversationController,
-    getConversationsController,
-    contactController,
-    registerController,
-    loginController
-} from './controllers.js';
-
+import authRoutes from './routes/authRoutes.js';
+import chatRoutes from './routes/chatRoutes.js';
+import { contactController } from './controllers.js';
+import { notFoundMiddleware, authErrorMiddleware, validationErrorMiddleware, errorHandlerMiddleware } from './middleware/errorMiddleware.js';
 const router = express.Router();
 
-// مسار الدردشة مع الذكاء الاصطناعي
-router.post('/chat', chatController);
-
-// مسار لحفظ المحادثات
-router.post('/save-conversation', saveConversationController);
-
-// مسار لاسترجاع محادثات المستخدم
-router.get('/conversations/:userId', getConversationsController);
+// استخدام مسارات الوحدات
+router.use('/auth', authRoutes);
+router.use('/chat', chatRoutes);
 
 // مسار لحفظ بيانات نموذج الاتصال
 router.post('/contact', contactController);
 
-// مسار للتسجيل
-router.post('/register', registerController);
-
-// مسار لتسجيل الدخول
-router.post('/login', loginController);
-
+// وسائط معالجة الأخطاء
+router.use(notFoundMiddleware);
+router.use(authErrorMiddleware);
+router.use(validationErrorMiddleware);
+router.use(errorHandlerMiddleware);
 export default router;

@@ -2,6 +2,59 @@ const Chat = require('../models/Chat');
 const aiService = require('../services/aiService');
 const calculationService = require('../services/calculationService');
 
+// @desc    Send message to public chat (no database required)
+// @route   POST /api/chat/public
+// @access  Public
+const sendPublicMessage = async (req, res) => {
+  try {
+    const { message } = req.body;
+
+    // Validate message
+    if (!message || typeof message !== 'string') {
+      return res.status(400).json({
+        message: 'Please add a valid message'
+      });
+    }
+
+    // Limit message length for security
+    if (message.length > 1000) {
+      return res.status(400).json({
+        message: 'Message is too long. Maximum length is 1000 characters.'
+      });
+    }
+
+    console.log('Public chat message received:', message);
+
+    let aiResponse;
+
+    try {
+      // Get AI response without database dependency
+      aiResponse = await aiService.getResponse(message, []);
+    } catch (aiError) {
+      console.error('AI Service error:', aiError);
+      // Detect if message is in Arabic for error response
+      const isArabic = /[\u0600-\u06FF]/.test(message);
+      aiResponse = isArabic
+        ? "عذراً، واجهت خطأ أثناء معالجة طلبك. يرجى المحاولة مرة أخرى لاحقاً."
+        : "I'm sorry, I encountered an error processing your request. Please try again later.";
+    }
+
+    // Return response without saving to database
+    res.status(200).json({
+      success: true,
+      message: aiResponse,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('Send public message error:', error);
+    res.status(500).json({
+      message: 'Server error while processing message',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
 // @desc    Create new chat
 // @route   POST /api/chat
 // @access  Private
@@ -119,14 +172,20 @@ const sendMessage = async (req, res) => {
           messageType.subType,
           messageType.params
         );
-        aiResponse = formatCalculationResponse(result, messageType.subType);
+        // Detect if message is in Arabic
+        const isArabic = /[\u0600-\u06FF]/.test(message);
+        aiResponse = formatCalculationResponse(result, messageType.subType, isArabic);
       } else {
         // Get AI response
         aiResponse = await aiService.getResponse(message, chat.messages);
       }
     } catch (aiError) {
       console.error('AI Service error:', aiError);
-      aiResponse = "I'm sorry, I encountered an error processing your request. Please try again later.";
+      // Detect if message is in Arabic for error response
+      const isArabic = /[\u0600-\u06FF]/.test(message);
+      aiResponse = isArabic
+        ? "عذراً، واجهت خطأ أثناء معالجة طلبك. يرجى المحاولة مرة أخرى لاحقاً."
+        : "I'm sorry, I encountered an error processing your request. Please try again later.";
     }
 
     // Add AI response to chat
@@ -155,21 +214,28 @@ const deleteChat = async (req, res) => {
     const chat = await Chat.findById(req.params.id);
 
     if (!chat) {
-      res.status(404);
-      throw new Error('Chat not found');
+      return res.status(404).json({ message: 'Chat not found' });
     }
 
     // Make sure the logged in user matches the chat user
     if (chat.user.toString() !== req.user._id.toString()) {
-      res.status(401);
-      throw new Error('User not authorized');
+      return res.status(401).json({ message: 'User not authorized' });
     }
 
-    await chat.remove();
+    // Use findByIdAndDelete instead of deprecated remove()
+    await Chat.findByIdAndDelete(req.params.id);
 
-    res.status(200).json({ id: req.params.id });
+    res.status(200).json({
+      success: true,
+      message: 'Chat deleted successfully',
+      id: req.params.id
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Delete chat error:', error);
+    res.status(500).json({
+      message: 'Server error while deleting chat',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
 
@@ -229,11 +295,37 @@ const analyzeMessage = (message) => {
     }
   }
 
-  // Extract capacity
+  // Extract capacity - improved regex to handle Arabic and English numbers
   let capacity = 100; // Default
-  const capacityMatch = lowerMessage.match(/(\d+)\s*(kw|كيلوواط|kilowatt)/i);
+
+  // First try to match number with kW units
+  const capacityMatch = lowerMessage.match(/(\d+)\s*(kw|كيلوواط|kilowatt|كيلو واط)/i);
+
   if (capacityMatch) {
     capacity = parseInt(capacityMatch[1], 10);
+  } else {
+    // Try to extract any number from the message as capacity
+    // Look for patterns like "بقدرة 200" or "capacity 200"
+    const numberMatch = lowerMessage.match(/(?:بقدرة|capacity|قدرة|power)\s*(\d+)|(\d+)\s*(?:kw|كيلوواط|kilowatt)/i);
+
+    if (numberMatch) {
+      const extractedNumber = parseInt(numberMatch[1] || numberMatch[2], 10);
+      // Only use if it's a reasonable capacity (between 1 and 10000 kW)
+      if (extractedNumber >= 1 && extractedNumber <= 10000) {
+        capacity = extractedNumber;
+      }
+    } else {
+      // Last resort: extract any number from the message
+      const anyNumberMatch = lowerMessage.match(/(\d+)/);
+
+      if (anyNumberMatch) {
+        const extractedNumber = parseInt(anyNumberMatch[1], 10);
+        // Only use if it's a reasonable capacity (between 1 and 10000 kW)
+        if (extractedNumber >= 1 && extractedNumber <= 10000) {
+          capacity = extractedNumber;
+        }
+      }
+    }
   }
 
   // Extract location
@@ -272,9 +364,12 @@ const analyzeMessage = (message) => {
 };
 
 // Helper function to format calculation response
-const formatCalculationResponse = (result, type) => {
+const formatCalculationResponse = (result, type, isArabic = true) => {
   // Format numbers with 2 decimal places
   const formatNumber = (num) => {
+    if (num === null || num === undefined || isNaN(num)) {
+      return '0.00';
+    }
     return parseFloat(num).toLocaleString(undefined, {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
@@ -282,22 +377,32 @@ const formatCalculationResponse = (result, type) => {
   };
 
   // Get project type in readable format
-  const getProjectTypeText = (projectType) => {
+  const getProjectTypeText = (projectType, isArabic) => {
     const types = {
-      'solar': 'solar energy',
-      'wind': 'wind energy',
-      'hydro': 'hydroelectric',
-      'geothermal': 'geothermal energy',
-      'biomass': 'biomass energy',
-      'other': 'energy'
+      'solar': isArabic ? 'الطاقة الشمسية' : 'solar energy',
+      'wind': isArabic ? 'طاقة الرياح' : 'wind energy',
+      'hydro': isArabic ? 'الطاقة المائية' : 'hydroelectric',
+      'geothermal': isArabic ? 'الطاقة الحرارية الأرضية' : 'geothermal energy',
+      'biomass': isArabic ? 'طاقة الكتلة الحيوية' : 'biomass energy',
+      'other': isArabic ? 'الطاقة' : 'energy'
     };
-    return types[projectType] || 'energy';
+    return types[projectType] || (isArabic ? 'الطاقة' : 'energy');
   };
 
   // Format responses based on calculation type
   switch (type) {
     case 'cost':
-      return `Based on my calculations for a ${result.costPerKw ? formatNumber(result.costPerKw) + ' $/kW' : ''} ${getProjectTypeText(result.projectType)} project with a capacity of ${formatNumber(result.capacity)} kW, the estimated total cost would be $${formatNumber(result.cost)}.
+      if (isArabic) {
+        return `بناءً على حساباتي لمشروع ${getProjectTypeText(result.projectType, true)} بقدرة ${formatNumber(result.capacity)} كيلوواط، التكلفة الإجمالية المقدرة هي ${formatNumber(result.cost)} دولار.
+
+هذا يشمل:
+• تكلفة المعدات: ${formatNumber(result.equipmentCost)} دولار
+• تكلفة التركيب: ${formatNumber(result.installationCost)} دولار
+• معامل التركيب: ${formatNumber(result.installationFactor)} (حسب الموقع)
+
+تكلفة الكيلوواط الواحد تقريباً ${formatNumber(result.cost / result.capacity)} دولار.`;
+      } else {
+        return `Based on my calculations for a ${result.costPerKw ? formatNumber(result.costPerKw) + ' $/kW' : ''} ${getProjectTypeText(result.projectType, false)} project with a capacity of ${formatNumber(result.capacity)} kW, the estimated total cost would be $${formatNumber(result.cost)}.
 
 This includes:
 • Equipment costs: $${formatNumber(result.equipmentCost)}
@@ -305,9 +410,20 @@ This includes:
 • Installation factor: ${formatNumber(result.installationFactor)}x (based on location)
 
 The cost per kilowatt is approximately $${formatNumber(result.cost / result.capacity)}.`;
+      }
 
     case 'energy':
-      return `For a ${formatNumber(result.capacity)} kW ${getProjectTypeText(result.projectType)} project, the estimated annual energy production would be ${formatNumber(result.annualProduction)} kWh.
+      if (isArabic) {
+        return `لمشروع ${getProjectTypeText(result.projectType, true)} بقدرة ${formatNumber(result.capacity)} كيلوواط، الإنتاج السنوي المقدر للطاقة هو ${formatNumber(result.annualProduction)} كيلوواط ساعة.
+
+هذا يعتمد على:
+• معامل القدرة: ${formatNumber(result.capacityFactor * 100)}%
+• ساعات التشغيل سنوياً: ${formatNumber(result.hoursPerYear)} ساعة
+• عدد المنازل المكافئة: حوالي ${result.homesEquivalent} منزل متوسط
+
+إنتاجية الطاقة تقريباً ${formatNumber(result.annualProduction / result.capacity)} كيلوواط ساعة لكل كيلوواط مركب سنوياً.`;
+      } else {
+        return `For a ${formatNumber(result.capacity)} kW ${getProjectTypeText(result.projectType, false)} project, the estimated annual energy production would be ${formatNumber(result.annualProduction)} kWh.
 
 This is based on:
 • Capacity factor: ${formatNumber(result.capacityFactor * 100)}%
@@ -315,9 +431,20 @@ This is based on:
 • Equivalent homes powered: approximately ${result.homesEquivalent} average households
 
 The energy yield is approximately ${formatNumber(result.annualProduction / result.capacity)} kWh per kW of installed capacity per year.`;
+      }
 
     case 'roi':
-      return `For a ${formatNumber(result.capacity)} kW ${getProjectTypeText(result.projectType)} project with a total cost of $${formatNumber(result.totalCost)}, the estimated return on investment (ROI) period is ${formatNumber(result.roiYears)} years.
+      if (isArabic) {
+        return `لمشروع ${getProjectTypeText(result.projectType, true)} بقدرة ${formatNumber(result.capacity)} كيلوواط وتكلفة إجمالية ${formatNumber(result.totalCost)} دولار، فترة استرداد الاستثمار المقدرة هي ${formatNumber(result.roiYears)} سنة.
+
+هذا يعتمد على:
+• الإنتاج السنوي للطاقة: ${formatNumber(result.annualProduction)} كيلوواط ساعة
+• سعر الكهرباء: ${formatNumber(result.electricityPrice)} دولار لكل كيلوواط ساعة
+• الوفورات/الإيرادات السنوية: ${formatNumber(result.annualSavings)} دولار
+
+بعد فترة الاسترداد، سيستمر المشروع في توليد حوالي ${formatNumber(result.annualSavings)} دولار من الوفورات أو الإيرادات سنوياً.`;
+      } else {
+        return `For a ${formatNumber(result.capacity)} kW ${getProjectTypeText(result.projectType, false)} project with a total cost of $${formatNumber(result.totalCost)}, the estimated return on investment (ROI) period is ${formatNumber(result.roiYears)} years.
 
 This is based on:
 • Annual energy production: ${formatNumber(result.annualProduction)} kWh
@@ -325,9 +452,14 @@ This is based on:
 • Annual savings/revenue: $${formatNumber(result.annualSavings)}
 
 After the ROI period, the project will continue to generate approximately $${formatNumber(result.annualSavings)} in savings or revenue per year.`;
+      }
 
     default:
-      return 'I couldn\'t perform that calculation. Please provide more details about the type of calculation you need, the project type, capacity, and location.';
+      if (isArabic) {
+        return 'لم أتمكن من إجراء هذا الحساب. يرجى تقديم المزيد من التفاصيل حول نوع الحساب المطلوب ونوع المشروع والقدرة والموقع.';
+      } else {
+        return 'I couldn\'t perform that calculation. Please provide more details about the type of calculation you need, the project type, capacity, and location.';
+      }
   }
 };
 
@@ -336,5 +468,6 @@ module.exports = {
   getChats,
   getChat,
   sendMessage,
+  sendPublicMessage,
   deleteChat,
 };

@@ -2,14 +2,15 @@
  * ملف JavaScript الرئيسي للموقع
  */
 
-// تكوين API - Backend حقيقي مع Google Gemini AI
+// تكوين API - Backend حقيقي مع Groq AI
 const API_CONFIG = {
-    // Backend مع Google Gemini AI
+    // Backend مع Groq AI (Llama 3.1)
     BASE_URL: window.location.hostname === 'localhost'
         ? "http://localhost:5000/api"
         : "https://energy-ai-backend-gemini-i30n5wt6k-mohammad-basims-projects.vercel.app/api",
     ENDPOINTS: {
-        CHAT: "/chat",
+        CHAT: "/chat/public",
+        CHAT_PRIVATE: "/chat",
         LOGIN: "/auth/login",
         REGISTER: "/auth/register",
         CONTACT: "/contact",
@@ -50,6 +51,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // تهيئة الأنظمة الجديدة
     initializeWebsite();
+
+    // تهيئة نظام اللغة (سيتم تحميله من language-system.js)
+    initLanguageSupport();
+
+    // تهيئة نظام المصادقة
+    initAuthSystem();
 
     // إضافة مستمع لأحداث التاريخ (زر العودة في المتصفح)
     window.addEventListener('popstate', function(e) {
@@ -361,6 +368,114 @@ function initContactForm() {
     }
 }
 
+/**
+ * تهيئة دعم نظام اللغة
+ */
+function initLanguageSupport() {
+    // التأكد من أن نظام اللغة محمل
+    if (typeof window.languageSystem !== 'undefined') {
+        console.log('Language system loaded successfully');
+
+        // الاستماع لأحداث تغيير اللغة
+        document.addEventListener('languageChanged', function(e) {
+            const newLanguage = e.detail.language;
+            console.log('Language changed to:', newLanguage);
+
+            // تحديث placeholder للبحث
+            updateSearchPlaceholder(newLanguage);
+
+            // تحديث placeholder للدردشة
+            updateChatPlaceholder(newLanguage);
+        });
+    } else {
+        console.log('Language system not loaded yet, will retry...');
+        // إعادة المحاولة بعد فترة قصيرة
+        setTimeout(initLanguageSupport, 100);
+    }
+}
+
+/**
+ * تحديث placeholder لحقل البحث
+ */
+function updateSearchPlaceholder(language) {
+    const searchInput = document.querySelector('.srch');
+    if (searchInput && window.languageSystem) {
+        const placeholder = language === 'ar' ? 'اكتب للبحث' : 'Type to search';
+        searchInput.placeholder = placeholder;
+    }
+}
+
+/**
+ * تحديث placeholder لحقل الدردشة
+ */
+function updateChatPlaceholder(language) {
+    const chatInput = document.getElementById('userInput');
+    if (chatInput && window.languageSystem) {
+        const placeholder = language === 'ar' ? 'اكتب رسالتك هنا...' : 'Type your message here...';
+        chatInput.placeholder = placeholder;
+    }
+}
+
+/**
+ * تهيئة نظام المصادقة
+ */
+function initAuthSystem() {
+    // التأكد من أن نظام المصادقة محمل
+    if (typeof window.authSystem !== 'undefined') {
+        console.log('Auth system loaded successfully');
+
+        // ربط زر Join Us بنظام المصادقة
+        const joinBtn = document.getElementById('joinBtn');
+        if (joinBtn) {
+            joinBtn.addEventListener('click', function() {
+                if (window.authSystem.isLoggedIn) {
+                    // إذا كان مسجل دخول، إظهار لوحة التحكم
+                    window.authSystem.showDashboard();
+                } else {
+                    // إذا لم يكن مسجل دخول، إظهار نافذة تسجيل الدخول
+                    window.authSystem.showAuthModal();
+                }
+            });
+        }
+
+        // الاستماع لأحداث تغيير حالة المصادقة
+        document.addEventListener('authStateChanged', function(e) {
+            updateJoinButton(e.detail.isLoggedIn, e.detail.user);
+        });
+
+        // تحديث الزر بناءً على الحالة الحالية
+        if (window.authSystem.isLoggedIn) {
+            updateJoinButton(true, window.authSystem.currentUser);
+        }
+
+    } else {
+        console.log('Auth system not loaded yet, will retry...');
+        // إعادة المحاولة بعد فترة قصيرة
+        setTimeout(initAuthSystem, 100);
+    }
+}
+
+/**
+ * تحديث زر Join Us
+ */
+function updateJoinButton(isLoggedIn, user) {
+    const joinBtn = document.getElementById('joinBtn');
+    if (joinBtn && window.languageSystem) {
+        const currentLang = window.languageSystem.getCurrentLanguage();
+
+        if (isLoggedIn && user) {
+            // إظهار اسم المستخدم أو "Dashboard"
+            const displayName = user.name || (currentLang === 'ar' ? 'لوحة التحكم' : 'Dashboard');
+            joinBtn.textContent = displayName;
+            joinBtn.title = currentLang === 'ar' ? 'انقر لفتح لوحة التحكم' : 'Click to open dashboard';
+        } else {
+            // إظهار "Join Us"
+            joinBtn.textContent = currentLang === 'ar' ? 'انضم إلينا' : 'Join Us';
+            joinBtn.title = currentLang === 'ar' ? 'انقر للانضمام أو تسجيل الدخول' : 'Click to join or login';
+        }
+    }
+}
+
 // =====================
 // وظائف واجهة المستخدم
 // =====================
@@ -587,33 +702,40 @@ function sendChatMessage() {
 function sendMessageToAPI(message) {
     return new Promise((resolve, reject) => {
         const data = JSON.stringify({
-            messages: [
-                {
-                    role: 'user',
-                    content: message
-                }
-            ],
-            model: 'gpt-4o',
-            max_tokens: 150,
-            temperature: 0.7
+            message: message,
+            userId: currentUser?.id || 'anonymous',
+            timestamp: new Date().toISOString()
         });
 
         fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.CHAT}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': localStorage.getItem('auth_token') ? `Bearer ${localStorage.getItem('auth_token')}` : ''
+                'Authorization': localStorage.getItem('auth-token') ? `Bearer ${localStorage.getItem('auth-token')}` : ''
             },
             body: data
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
-            const botResponse = data.choices?.[0]?.message?.content || "لا يوجد رد من الذكاء الاصطناعي.";
-            resolve(botResponse);
+            if (data.success && data.response) {
+                resolve(data.response);
+            } else {
+                resolve(data.message || "عذراً، لم أتمكن من فهم طلبك. يرجى المحاولة مرة أخرى.");
+            }
         })
         .catch(error => {
-            console.error('Error:', error);
-            reject(error);
+            console.error('API Error:', error);
+            // Provide fallback response based on message language
+            const isArabic = /[\u0600-\u06FF]/.test(message);
+            const fallbackResponse = isArabic
+                ? "عذراً، الخدمة غير متاحة حالياً. يرجى المحاولة لاحقاً."
+                : "Sorry, the service is currently unavailable. Please try again later.";
+            resolve(fallbackResponse);
         });
     });
 }
@@ -708,3 +830,105 @@ function initializeWebsite() {
     console.log('- Auth System: Ready');
     console.log('- Naya Assistant: Ready');
 }
+
+/**
+ * إزالة أزرار إمكانية الوصول المحددة فقط
+ */
+function removeAccessibilityFeatures() {
+    // البحث عن الأزرار المحددة فقط وإزالتها
+    const allButtons = document.querySelectorAll('button');
+
+    allButtons.forEach(button => {
+        const text = button.textContent?.toLowerCase() || '';
+        const ariaLabel = button.getAttribute('aria-label')?.toLowerCase() || '';
+
+        // إزالة الأزرار المحددة فقط
+        if (text.includes('high contrast') || text.includes('large text') ||
+            text.includes('screen reader') || text.includes('تباين عالي') ||
+            text.includes('نص كبير') || text.includes('قارئ الشاشة') ||
+            ariaLabel.includes('high contrast') || ariaLabel.includes('large text') ||
+            ariaLabel.includes('screen reader')) {
+
+            button.remove();
+            console.log('🗑️ Removed accessibility button:', button.textContent);
+        }
+    });
+
+    console.log('✅ Specific accessibility buttons removed');
+}
+
+/**
+ * مراقب بسيط لإزالة أزرار إمكانية الوصول المحددة
+ */
+function setupAccessibilityRemovalObserver() {
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            mutation.addedNodes.forEach((node) => {
+                if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'BUTTON') {
+                    const text = node.textContent?.toLowerCase() || '';
+                    const ariaLabel = node.getAttribute('aria-label')?.toLowerCase() || '';
+
+                    // إزالة الأزرار المحددة فقط
+                    if (text.includes('high contrast') || text.includes('large text') ||
+                        text.includes('screen reader') || text.includes('تباين عالي') ||
+                        text.includes('نص كبير') || text.includes('قارئ الشاشة') ||
+                        ariaLabel.includes('high contrast') || ariaLabel.includes('large text') ||
+                        ariaLabel.includes('screen reader')) {
+
+                        node.remove();
+                        console.log('🚫 Blocked accessibility button:', text);
+                    }
+                }
+            });
+        });
+    });
+
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+
+    console.log('👁️ Simple accessibility button observer started');
+}
+
+// تهيئة الصفحة عند التحميل
+document.addEventListener('DOMContentLoaded', function() {
+    // إزالة ميزات إمكانية الوصول أولاً
+    removeAccessibilityFeatures();
+
+    // تفعيل مراقب إزالة عناصر إمكانية الوصول
+    setupAccessibilityRemovalObserver();
+
+    // تهيئة باقي الأنظمة
+    initTheme();
+    initSmoothScrolling();
+    initChatInterface();
+    initLanguageSystem();
+    initAuthSystem();
+    initPWA();
+    initNayaAssistant();
+    initGroqSettings();
+    initializeWebsite();
+
+    console.log('🚀 Energy.AI initialized successfully');
+});
+
+// إزالة أزرار إمكانية الوصول المحددة فور تحميل الصفحة
+removeAccessibilityFeatures();
+
+// فحص بسيط كل 3 ثوان لإزالة الأزرار المحددة فقط
+setInterval(() => {
+    const allButtons = document.querySelectorAll('button');
+    allButtons.forEach(button => {
+        const text = button.textContent?.toLowerCase() || '';
+
+        // إزالة الأزرار المحددة فقط
+        if (text.includes('high contrast') || text.includes('large text') ||
+            text.includes('screen reader') || text.includes('تباين عالي') ||
+            text.includes('نص كبير') || text.includes('قارئ الشاشة')) {
+
+            button.remove();
+            console.log('🚫 Removed accessibility button:', text);
+        }
+    });
+}, 3000); // فحص كل 3 ثوان

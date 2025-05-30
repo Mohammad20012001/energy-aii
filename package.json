@@ -11,15 +11,22 @@
     "install-backend": "cd backend && npm install",
     "deploy-backend": "cd backend && vercel --prod",
     "build": "echo 'Frontend build completed'",
-    "test": "echo 'No tests specified'"
+    "test": "jest",
+    "lint": "eslint ."
   },
   "dependencies": {
     "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
     "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
     "judini": "^2.0.5",
     "mongodb": "4.1"
   },
   "devDependencies": {
+    "@jest/globals": "^30.0.0-beta.3",
+    "eslint": "^8.56.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^30.0.0-beta.3",
     "judini": "^2.0.5",
     "vercel": "^32.0.0"
   },

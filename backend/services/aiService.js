@@ -1,10 +1,18 @@
-const { Configuration, OpenAIApi } = require('openai');
+// Groq AI Configuration
+const axios = require('axios');
 
-// Configure OpenAI API
-const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-const openai = new OpenAIApi(configuration);
+// تكوين Groq AI
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
+const GROQ_MODEL = process.env.GROQ_MODEL || 'llama-3.1-70b-versatile';
+const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
+
+// التحقق من توفر مفتاح Groq API
+if (GROQ_API_KEY) {
+  console.log('✅ Groq AI initialized successfully');
+  console.log(`🤖 Using model: ${GROQ_MODEL}`);
+} else {
+  console.log('❌ Groq API key not found - AI features will be limited');
+}
 
 // استيراد خدمة التخزين المؤقت
 const cacheService = require('./cacheService');
@@ -47,17 +55,17 @@ const createCacheKey = (message, history) => {
 };
 
 /**
- * Get AI response for a message
+ * Get AI response for a message using Groq API
  * @param {string} message - User message
  * @param {Array} history - Chat history
  * @returns {Promise<string>} - AI response
  */
 const getResponse = async (message, history) => {
   try {
-    // Validate API key
-    if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'your_actual_openai_api_key') {
-      console.error('Missing or invalid OpenAI API key');
-      return 'Service is currently unavailable. Please contact the administrator.';
+    // التحقق من توفر Groq AI
+    if (!GROQ_API_KEY) {
+      console.error('Groq AI not available');
+      return 'خدمة الذكاء الاصطناعي غير متوفرة حالياً. يرجى المحاولة لاحقاً.';
     }
 
     // Sanitize user input
@@ -75,66 +83,112 @@ const getResponse = async (message, history) => {
     // Limit history to prevent token overflow
     const limitedHistory = history.slice(-10);
 
-    // Format chat history for OpenAI API
-    const formattedHistory = limitedHistory.map((msg) => ({
-      role: msg.sender === 'user' ? 'user' : 'assistant',
-      content: msg.sender === 'user' ? sanitizeInput(msg.content) : msg.content,
-    }));
+    // تكوين السياق للذكاء الاصطناعي
+    const systemContext = `أنت مساعد ذكي متخصص في هندسة الطاقة والطاقة المتجددة.
+    يمكنك المساعدة في:
+    - حسابات مشاريع الطاقة الشمسية وتقدير التكاليف
+    - متطلبات الطاقة للمباني والمنشآت
+    - أنظمة الطاقة المتجددة (شمسية، رياح، مائية، حرارية أرضية)
+    - كفاءة الطاقة وتوفير الاستهلاك
+    - التحليل الفني والاقتصادي لمشاريع الطاقة
 
-    // Add system message with context about energy engineering
+    قواعد مهمة:
+    - اجب دائماً باللغة العربية إذا كان السؤال بالعربية
+    - اجب دائماً باللغة الإنجليزية إذا كان السؤال بالإنجليزية
+    - إذا طُلب منك إجراء حسابات، قدم شرحاً مفصلاً مع النتائج باللغة المناسبة
+    - استخدم الأرقام العربية عند الرد بالعربية
+    - قدم معلومات دقيقة ومفيدة
+    - إذا لم تعرف الإجابة، قل ذلك بدلاً من اختلاق المعلومات`;
+
+    // تكوين تاريخ المحادثة
+    let conversationHistory = '';
+    if (limitedHistory.length > 0) {
+      conversationHistory = '\n\nتاريخ المحادثة:\n';
+      limitedHistory.forEach((msg, index) => {
+        const role = msg.sender === 'user' ? 'المستخدم' : 'المساعد';
+        conversationHistory += `${role}: ${msg.content}\n`;
+      });
+    }
+
+    // تحضير الرسائل لـ Groq API
     const messages = [
       {
         role: 'system',
-        content: `You are an AI assistant specialized in energy engineering.
-        You can help with calculations related to energy projects, cost estimation,
-        energy requirements, and other energy-related topics.
-        You have knowledge about solar, wind, hydro, geothermal, and biomass energy systems.
-        Provide accurate and helpful information to users' queries.
-        If asked about calculations, provide detailed explanations along with the results.
-        Always respond in the same language as the user's query.
-        If you don't know the answer, say so instead of making up information.`,
-      },
-      ...formattedHistory,
-      { role: 'user', content: sanitizedMessage },
+        content: systemContext
+      }
     ];
 
-    // Call OpenAI API with timeout
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+    // إضافة تاريخ المحادثة
+    if (history && history.length > 0) {
+      history.slice(-10).forEach(item => { // آخر 10 رسائل فقط
+        if (item.user) {
+          messages.push({ role: 'user', content: item.user });
+        }
+        if (item.assistant) {
+          messages.push({ role: 'assistant', content: item.assistant });
+        }
+      });
+    }
+
+    // إضافة الرسالة الحالية
+    messages.push({
+      role: 'user',
+      content: sanitizedMessage
+    });
 
     try {
-      console.time('OpenAI API call');
-      const response = await openai.createChatCompletion({
-        model: 'gpt-3.5-turbo',
-        messages,
+      console.time('Groq API call');
+
+      // استدعاء Groq API
+      const response = await axios.post(GROQ_API_URL, {
+        model: GROQ_MODEL,
+        messages: messages,
         temperature: 0.7,
-        max_tokens: 500,
-        presence_penalty: 0.1,
-        frequency_penalty: 0.1,
-      }, { signal: controller.signal });
-      console.timeEnd('OpenAI API call');
+        max_tokens: 2048,
+        top_p: 0.9,
+        stream: false
+      }, {
+        headers: {
+          'Authorization': `Bearer ${GROQ_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        timeout: 30000 // 30 ثانية timeout
+      });
 
-      clearTimeout(timeoutId);
+      console.timeEnd('Groq API call');
 
-      const aiResponse = response.data.choices[0].message.content;
+      const aiResponse = response.data?.choices?.[0]?.message?.content;
+
+      if (!aiResponse || aiResponse.trim() === '') {
+        return 'عذراً، لم أتمكن من إنتاج رد مناسب. يرجى إعادة صياغة سؤالك.';
+      }
 
       // تخزين الرد في التخزين المؤقت
-      // استخدام مدة تخزين مؤقت أطول للأسئلة العامة وأقصر للأسئلة المحددة
       const isGeneralQuestion = sanitizedMessage.length < 50;
       const cacheDuration = isGeneralQuestion ? 86400 : 3600; // 24 ساعة للأسئلة العامة، ساعة واحدة للأسئلة المحددة
 
       await cacheService.set(`ai_response:${cacheKey}`, aiResponse, cacheDuration);
 
       return aiResponse;
-    } catch (abortError) {
-      if (abortError.name === 'AbortError') {
-        return 'Request timed out. Please try again with a simpler query.';
+
+    } catch (apiError) {
+      console.error('Groq API error:', apiError.response?.data || apiError.message);
+
+      // معالجة أخطاء API المختلفة
+      if (apiError.response?.status === 429) {
+        return 'تم تجاوز الحد المسموح من الطلبات. يرجى المحاولة لاحقاً.';
+      } else if (apiError.response?.status === 400) {
+        return 'عذراً، لا يمكنني الإجابة على هذا السؤال. يرجى إعادة صياغته.';
+      } else if (apiError.code === 'ECONNABORTED') {
+        return 'انتهت مهلة الاتصال. يرجى المحاولة مرة أخرى.';
+      } else {
+        return 'حدث خطأ أثناء معالجة طلبك. يرجى المحاولة مرة أخرى.';
       }
-      throw abortError;
     }
+
   } catch (error) {
     console.error('Error getting AI response:', error);
-    return 'Sorry, I encountered an error while processing your request. Please try again later.';
+    return 'عذراً، واجهت خطأ أثناء معالجة طلبك. يرجى المحاولة لاحقاً.';
   }
 };
 

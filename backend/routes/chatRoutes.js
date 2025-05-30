@@ -5,9 +5,13 @@ const {
   getChats,
   getChat,
   sendMessage,
+  sendPublicMessage,
   deleteChat,
 } = require('../controllers/chatController');
 const { protect } = require('../middleware/authMiddleware');
+
+// Public chat endpoint for anonymous users
+router.post('/public', sendPublicMessage);
 
 router.route('/')
   .get(protect, getChats)

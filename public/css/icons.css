@@ -1,0 +1,340 @@
+/* ===== ENERGY.AI ICONS SYSTEM ===== */
+
+/* أيقونات الموقع الأساسية */
+.site-logo {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #ff7200 0%, #ff9500 100%);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(255, 114, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.site-logo::before {
+    content: "⚡";
+    font-size: 20px;
+    color: white;
+    font-weight: bold;
+}
+
+.site-logo:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(255, 114, 0, 0.4);
+}
+
+/* أيقونات الميزات */
+.feature-icon-wrapper {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #ff7200 0%, #ff9500 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 114, 0, 0.2);
+}
+
+.feature-icon-wrapper ion-icon {
+    font-size: 28px;
+    color: white;
+}
+
+.feature-icon-wrapper:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(255, 114, 0, 0.3);
+}
+
+/* أيقونات الخدمات */
+.service-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #ff7200 0%, #ff9500 100%);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 20px rgba(255, 114, 0, 0.2);
+}
+
+.service-icon ion-icon {
+    font-size: 36px;
+    color: white;
+}
+
+.service-icon:hover {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 10px 30px rgba(255, 114, 0, 0.4);
+}
+
+/* أيقونات الشات */
+.avatar-icon-wrapper {
+    width: 35px;
+    height: 35px;
+    background: linear-gradient(135deg, #ff7200 0%, #ff9500 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 10px rgba(255, 114, 0, 0.3);
+}
+
+.avatar-icon-wrapper ion-icon {
+    font-size: 18px;
+    color: white;
+}
+
+/* أيقونات التحكم في الشات */
+.chat-control-btn {
+    width: 30px;
+    height: 30px;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-left: 5px;
+}
+
+.chat-control-btn:hover {
+    background: rgba(255, 114, 0, 0.2);
+    transform: scale(1.1);
+}
+
+.chat-control-btn ion-icon {
+    font-size: 16px;
+    color: white;
+}
+
+/* أيقونات الفوتر */
+.footer-brand-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #ff7200 0%, #ff9500 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 15px rgba(255, 114, 0, 0.3);
+}
+
+.footer-brand-icon::before {
+    content: "⚡";
+    font-size: 24px;
+    color: white;
+    font-weight: bold;
+}
+
+/* أيقونات وسائل التواصل الاجتماعي */
+.social-icons a {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 114, 0, 0.1);
+    border: 2px solid rgba(255, 114, 0, 0.3);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 5px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.social-icons a:hover {
+    background: #ff7200;
+    border-color: #ff7200;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(255, 114, 0, 0.4);
+}
+
+.social-icons a ion-icon {
+    font-size: 18px;
+    color: #ff7200;
+    transition: color 0.3s ease;
+}
+
+.social-icons a:hover ion-icon {
+    color: white;
+}
+
+/* أيقونات معلومات الاتصال */
+.info-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: rgba(255, 114, 0, 0.05);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.info-item:hover {
+    background: rgba(255, 114, 0, 0.1);
+    transform: translateX(5px);
+}
+
+.info-item ion-icon {
+    font-size: 20px;
+    color: #ff7200;
+    margin-right: 10px;
+    min-width: 20px;
+}
+
+/* أيقونات الأزرار */
+.chat-icon-btn {
+    background: none;
+    border: none;
+    padding: 8px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chat-icon-btn:hover {
+    background: rgba(255, 114, 0, 0.1);
+    transform: scale(1.1);
+}
+
+.chat-icon-btn ion-icon {
+    font-size: 18px;
+    color: #ff7200;
+}
+
+/* أيقونات الإرسال */
+.chat-send-btn {
+    background: linear-gradient(135deg, #ff7200 0%, #ff9500 100%);
+    border: none;
+    padding: 10px 15px;
+    border-radius: 20px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 500;
+}
+
+.chat-send-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(255, 114, 0, 0.3);
+}
+
+.chat-send-btn ion-icon {
+    font-size: 16px;
+}
+
+/* تأثيرات الأيقونات المتحركة */
+@keyframes iconPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.icon-pulse {
+    animation: iconPulse 2s infinite;
+}
+
+@keyframes iconRotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.icon-rotate {
+    animation: iconRotate 2s linear infinite;
+}
+
+/* أيقونات الحالة */
+.status-icon {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.status-icon.online {
+    background: #4caf50;
+    box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+}
+
+.status-icon.offline {
+    background: #f44336;
+}
+
+.status-icon.busy {
+    background: #ff9800;
+}
+
+/* أيقونات التحميل */
+.loading-icon {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 114, 0, 0.3);
+    border-top: 2px solid #ff7200;
+    border-radius: 50%;
+    animation: iconRotate 1s linear infinite;
+}
+
+/* استجابة الأيقونات للشاشات المختلفة */
+@media (max-width: 768px) {
+    .site-logo {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .site-logo::before {
+        font-size: 18px;
+    }
+    
+    .feature-icon-wrapper {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .feature-icon-wrapper ion-icon {
+        font-size: 24px;
+    }
+    
+    .service-icon {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .service-icon ion-icon {
+        font-size: 32px;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer-brand-icon {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .footer-brand-icon::before {
+        font-size: 20px;
+    }
+    
+    .social-icons a {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .social-icons a ion-icon {
+        font-size: 16px;
+    }
+}

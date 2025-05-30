@@ -1,0 +1,49 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://keen-faun-988c1a.netlify.app/sitemap.xml
+
+# Allow all major search engines
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+User-agent: YandexBot
+Allow: /
+
+# Disallow sensitive areas
+Disallow: /admin/
+Disallow: /api/
+Disallow: /private/
+Disallow: /.git/
+Disallow: /node_modules/
+Disallow: /logs/
+Disallow: /temp/
+Disallow: /cache/
+
+# Allow important files
+Allow: /public/
+Allow: /css/
+Allow: /js/
+Allow: /images/
+Allow: /fonts/
+Allow: /manifest.json
+Allow: /sw.js
+
+# Crawl delay (optional)
+Crawl-delay: 1
+
+# Host preference
+Host: https://keen-faun-988c1a.netlify.app

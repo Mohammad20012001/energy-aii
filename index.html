@@ -3,34 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Energy.AI - الذكاء الاصطناعي لحلول الطاقة المستدامة">
-    <meta name="keywords" content="energy, AI, artificial intelligence, sustainable energy, طاقة, ذكاء اصطناعي">
-    <title>ENERGY.AI</title>
+    <meta name="description" content="Energy.AI - Smart Energy Solutions with AI-powered optimization">
+    <meta name="keywords" content="energy, AI, smart solutions, renewable energy, optimization">
+    <meta name="author" content="Energy.AI">
+    <title>Energy.AI - Smart Energy Solutions</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="192x192" href="public/images/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="public/images/icon-512x512.png">
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- CSS Files -->
     <link rel="stylesheet" href="public/css/styles.css">
-    <link rel="stylesheet" href="public/css/naya.css">
-    <link rel="stylesheet" href="public/css/language.css">
+    <link rel="stylesheet" href="public/css/icons.css">
     <link rel="stylesheet" href="public/css/auth.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="public/css/enhanced-map-animations.css">
+    <link rel="stylesheet" href="public/css/groq-settings.css">
+    <link rel="stylesheet" href="public/css/chat.css">
+    <link rel="stylesheet" href="public/css/pwa.css">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-
     <div class="main">
-        <div class="navbar">
+        <div class="navbar" id="navigation" role="navigation" aria-label="Main navigation">
             <div class="icon">
+                <div class="site-logo"></div>
                 <h2 class="logo">Energy.Ai</h2>
             </div>
 
             <div class="menu">
-                <ul>
-                    <li><a href="#home">HOME</a></li>
-                    <li><a href="#about">ABOUT</a></li>
-                    <li><a href="#service" id="serviceLink">SERVICE</a></li>
-                    <li><a href="#design">DESIGN</a></li>
-                    <li><a href="#contact">CONTACT</a></li>
+                <ul role="menubar">
+                    <li role="none"><a href="#home" role="menuitem" data-en="home" data-ar="الرئيسية">HOME</a></li>
+                    <li role="none"><a href="#about" role="menuitem" data-en="about" data-ar="حولنا">ABOUT</a></li>
+                    <li role="none"><a href="#service" id="serviceLink" role="menuitem" data-en="services" data-ar="الخدمات">SERVICES</a></li>
+                    <li role="none"><a href="#design" role="menuitem" data-en="design" data-ar="التصميم">DESIGN</a></li>
+                    <li role="none"><a href="#contact" role="menuitem" data-en="contact" data-ar="اتصل بنا">CONTACT</a></li>
                 </ul>
             </div>
+
             <div class="theme-switch-wrapper">
                 <label class="theme-switch" for="checkbox">
                     <input type="checkbox" id="checkbox" />
@@ -38,46 +61,72 @@
                 </label>
             </div>
 
+            <div class="language-switch-wrapper">
+                <button class="language-toggle" id="languageToggle">
+                    <ion-icon name="language-outline"></ion-icon>
+                    <span class="lang-text">EN</span>
+                </button>
+            </div>
+
             <div class="search">
-                <input class="srch" type="search" name="search" placeholder="Type to search" aria-label="Search">
-                <button class="btn">Search</button>
+                <input class="srch" type="search" name="search" placeholder="Type to search" aria-label="Search" data-en="Type to search" data-ar="اكتب للبحث">
+                <button class="btn" data-en="Search" data-ar="بحث">Search</button>
             </div>
 
         </div>
         <div class="content" id="home">
-            <h1>Web Design & <br><span>Development</span> <br>Energy</h1>
-            <p class="par">AI is the spark igniting a new era of energy innovation<br> powering tomorrow with<br>intelligent solutions today</p>
+            <main id="main-content" role="main">
+                <h1>Web Design & <br><span>Development</span> <br>Energy</h1>
+                <p class="par">AI is the spark igniting a new era of energy innovation<br> powering tomorrow with<br>intelligent solutions today</p>
 
-            <button class="cn" id="joinBtn">Login/Dashboard</button>
+            <button class="cn" id="joinBtn" data-en="join-us" data-ar="انضم إلينا">Join Us</button>
 
             <!-- AI Chat Interface -->
             <div class="ai-chat-container" id="aiChatContainer">
                 <div class="chat-header">
-                    <h3>Energy.AI Assistant</h3>
+                    <h3 data-en="Energy.AI Assistant" data-ar="مساعد Energy.AI">Energy.AI Assistant</h3>
                     <div class="chat-controls">
-                        <button class="minimize-btn" id="minimizeChatBtn">-</button>
-                        <button class="close-btn" id="closeChatBtn">×</button>
+                        <button class="minimize-btn chat-control-btn" id="minimizeChatBtn">
+                            <ion-icon name="remove-outline"></ion-icon>
+                        </button>
+                        <button class="close-btn chat-control-btn" id="closeChatBtn">
+                            <ion-icon name="close-outline"></ion-icon>
+                        </button>
                     </div>
                 </div>
                 <div class="chat-messages" id="chatMessages">
                     <div class="message bot">
                         <div class="avatar">
-                            <ion-icon name="analytics-outline"></ion-icon>
+                            <div class="avatar-icon-wrapper">
+                                <ion-icon name="analytics-outline"></ion-icon>
+                            </div>
                         </div>
-                        <div class="message-content">مرحبا انا ENERGY.AI</div>
+                        <div class="message-content" data-en="Hello, I'm Energy.AI Assistant" data-ar="مرحبا انا ENERGY.AI">Hello, I'm Energy.AI Assistant</div>
                     </div>
                 </div>
                 <div class="suggested-questions">
-                    <button class="question-btn">كيف يمكن للذكاء الاصطناعي تحسين كفاءة الطاقة؟</button>
-                    <button class="question-btn">ما هي الطاقة المتجددة؟</button>
-                    <button class="question-btn">كيف أقلل من فاتورة الكهرباء؟</button>
+                    <button class="question-btn" data-en="How can AI improve energy efficiency?" data-ar="كيف يمكن للذكاء الاصطناعي تحسين كفاءة الطاقة؟">How can AI improve energy efficiency?</button>
+                    <button class="question-btn" data-en="What is renewable energy?" data-ar="ما هي الطاقة المتجددة؟">What is renewable energy?</button>
+                    <button class="question-btn" data-en="How to reduce electricity bills?" data-ar="كيف أقلل من فاتورة الكهرباء؟">How to reduce electricity bills?</button>
                 </div>
                 <div class="chat-input">
-                    <input type="text" id="userInput" placeholder="اكتب رسالتك هنا..." aria-label="Message input">
-                    <button id="sendAttachmentBtn" aria-label="Send attachment">
+                    <div class="chat-provider-selector">
+                        <select id="aiProviderSelect" class="provider-select">
+                            <option value="groq">Groq AI (افتراضي)</option>
+                            <option value="gemini">Google Gemini</option>
+                        </select>
+                        <button id="groqSettingsBtn" class="settings-btn" title="إعدادات Groq">
+                            <ion-icon name="settings-outline"></ion-icon>
+                        </button>
+                    </div>
+                    <input type="text" id="userInput" placeholder="Type your message here..." aria-label="Message input" data-en="Type your message here..." data-ar="اكتب رسالتك هنا...">
+                    <button id="sendAttachmentBtn" class="chat-icon-btn" aria-label="Send attachment">
                         <ion-icon name="attach-outline"></ion-icon>
                     </button>
-                    <button id="sendMessageBtn">إرسال</button>
+                    <button id="sendMessageBtn" class="chat-send-btn">
+                        <ion-icon name="send-outline"></ion-icon>
+                        <span data-en="Send" data-ar="إرسال">Send</span>
+                    </button>
                 </div>
                 <div class="typing-indicator" id="typingIndicator">
                     <span></span>
@@ -88,176 +137,168 @@
         </div>
 
         <div id="about" class="section about-section">
-            <h2>About Energy.AI</h2>
+            <h2 data-en="About Energy.AI" data-ar="حول Energy.AI">About Energy.AI</h2>
             <div class="about-content">
-                <p>Energy.AI is at the forefront of combining artificial intelligence with energy solutions to create a sustainable future. Our innovative approaches help businesses and individuals optimize their energy usage, reduce costs, and minimize environmental impact.</p>
+                <p data-en="Energy.AI is at the forefront of combining artificial intelligence with energy solutions to create a sustainable future. Our innovative approaches help businesses and individuals optimize their energy usage, reduce costs, and minimize environmental impact." data-ar="Energy.AI في المقدمة لدمج الذكاء الاصطناعي مع حلول الطاقة لخلق مستقبل مستدام. نهجنا المبتكر يساعد الشركات والأفراد على تحسين استخدام الطاقة وتقليل التكاليف وتقليل التأثير البيئي.">Energy.AI is at the forefront of combining artificial intelligence with energy solutions to create a sustainable future. Our innovative approaches help businesses and individuals optimize their energy usage, reduce costs, and minimize environmental impact.</p>
                 <div class="features">
                     <div class="feature">
-                        <ion-icon name="flash-outline"></ion-icon>
-                        <h3>Smart Energy Management</h3>
-                        <p>AI-powered solutions to optimize energy consumption in real-time.</p>
+                        <div class="feature-icon-wrapper">
+                            <ion-icon name="flash-outline"></ion-icon>
+                        </div>
+                        <h3 data-en="Smart Energy Management" data-ar="إدارة الطاقة الذكية">Smart Energy Management</h3>
+                        <p data-en="AI-powered solutions to optimize energy consumption in real-time." data-ar="حلول مدعومة بالذكاء الاصطناعي لتحسين استهلاك الطاقة في الوقت الفعلي.">AI-powered solutions to optimize energy consumption in real-time.</p>
                     </div>
                     <div class="feature">
-                        <ion-icon name="leaf-outline"></ion-icon>
-                        <h3>Sustainable Solutions</h3>
-                        <p>Eco-friendly approaches to energy production and distribution.</p>
+                        <div class="feature-icon-wrapper">
+                            <ion-icon name="leaf-outline"></ion-icon>
+                        </div>
+                        <h3 data-en="Sustainable Solutions" data-ar="حلول مستدامة">Sustainable Solutions</h3>
+                        <p data-en="Eco-friendly approaches to energy production and distribution." data-ar="نهج صديق للبيئة لإنتاج وتوزيع الطاقة.">Eco-friendly approaches to energy production and distribution.</p>
                     </div>
                     <div class="feature">
-                        <ion-icon name="analytics-outline"></ion-icon>
-                        <h3>Data-Driven Insights</h3>
-                        <p>Comprehensive analytics to make informed energy decisions.</p>
+                        <div class="feature-icon-wrapper">
+                            <ion-icon name="analytics-outline"></ion-icon>
+                        </div>
+                        <h3 data-en="Data-Driven Insights" data-ar="رؤى مدفوعة بالبيانات">Data-Driven Insights</h3>
+                        <p data-en="Comprehensive analytics to make informed energy decisions." data-ar="تحليلات شاملة لاتخاذ قرارات طاقة مدروسة.">Comprehensive analytics to make informed energy decisions.</p>
                     </div>
                 </div>
             </div>
         </div>
 
         <div id="service" class="section service-section">
-            <h2>Our Services</h2>
+            <h2 data-en="Our Services" data-ar="خدماتنا">Our Services</h2>
             <div class="service-content">
                 <div class="service-cards">
                     <div class="service-card">
                         <div class="service-icon">
                             <ion-icon name="bulb-outline"></ion-icon>
                         </div>
-                        <h3>Energy Optimization</h3>
-                        <p>Our AI algorithms analyze your energy consumption patterns and suggest optimizations to reduce waste and cost.</p>
+                        <h3 data-en="Energy Optimization" data-ar="تحسين الطاقة">Energy Optimization</h3>
+                        <p data-en="Our AI algorithms analyze your energy consumption patterns and suggest optimizations to reduce waste and cost." data-ar="خوارزميات الذكاء الاصطناعي لدينا تحلل أنماط استهلاك الطاقة وتقترح تحسينات لتقليل الهدر والتكلفة.">Our AI algorithms analyze your energy consumption patterns and suggest optimizations to reduce waste and cost.</p>
                     </div>
                     <div class="service-card">
                         <div class="service-icon">
                             <ion-icon name="trending-up-outline"></ion-icon>
                         </div>
-                        <h3>Predictive Maintenance</h3>
-                        <p>Prevent equipment failures before they happen with our predictive maintenance solutions powered by machine learning.</p>
+                        <h3 data-en="Predictive Maintenance" data-ar="الصيانة التنبؤية">Predictive Maintenance</h3>
+                        <p data-en="Prevent equipment failures before they happen with our predictive maintenance solutions powered by machine learning." data-ar="منع أعطال المعدات قبل حدوثها بحلول الصيانة التنبؤية المدعومة بالتعلم الآلي.">Prevent equipment failures before they happen with our predictive maintenance solutions powered by machine learning.</p>
                     </div>
                     <div class="service-card">
                         <div class="service-icon">
                             <ion-icon name="shield-outline"></ion-icon>
                         </div>
-                        <h3>Energy Security</h3>
-                        <p>Protect your energy infrastructure with advanced threat detection and response systems.</p>
+                        <h3 data-en="Energy Security" data-ar="أمان الطاقة">Energy Security</h3>
+                        <p data-en="Protect your energy infrastructure with advanced threat detection and response systems." data-ar="احم البنية التحتية للطاقة بأنظمة كشف واستجابة متقدمة للتهديدات.">Protect your energy infrastructure with advanced threat detection and response systems.</p>
                     </div>
                     <div class="service-card">
                         <div class="service-icon">
                             <ion-icon name="cloud-outline"></ion-icon>
                         </div>
-                        <h3>Cloud Energy Management</h3>
-                        <p>Access your energy data and controls from anywhere with our secure cloud-based platform.</p>
+                        <h3 data-en="Cloud Energy Management" data-ar="إدارة الطاقة السحابية">Cloud Energy Management</h3>
+                        <p data-en="Access your energy data and controls from anywhere with our secure cloud-based platform." data-ar="الوصول إلى بيانات الطاقة والتحكم من أي مكان بمنصتنا السحابية الآمنة.">Access your energy data and controls from anywhere with our secure cloud-based platform.</p>
                     </div>
                 </div>
             </div>
         </div>
 
         <div id="design" class="section design-section">
-            <h2>Our Design Approach</h2>
+            <h2 data-en="Our Design Approach" data-ar="نهج التصميم لدينا">Our Design Approach</h2>
             <div class="design-gallery">
                 <div class="design-card">
-                    <div class="design-image"></div>
-                    <h3>Smart Home Integration</h3>
-                    <p>Seamless connection between your energy systems and smart home devices.</p>
-                </div>
-                <div class="design-card">
-                    <a href="api-test.html" class="design-image-link" title="API Testing Interface">
-                        <div class="design-image">
-                            <div class="api-tester-icon">
-                                <img src="public/images/api-icon.svg" alt="API Testing" class="api-icon">
-                            </div>
-                            <div class="design-image-overlay"></div>
-                        </div>
-                    </a>
-                    <h3>Renewable Focus</h3>
-                    <p>Designs that prioritize renewable energy sources and sustainability.</p>
-                </div>
-                <div class="design-card">
-                    <div class="design-image"></div>
-                    <h3>User Experience</h3>
-                    <p>Intuitive interfaces that make energy management simple and accessible.</p>
+                    <div class="design-image">
+                        <ion-icon name="home-outline"></ion-icon>
+                    </div>
+                    <h3 data-en="Smart Home Integration" data-ar="تكامل المنزل الذكي">Smart Home Integration</h3>
+                    <p data-en="Seamless connection between your energy systems and smart home devices." data-ar="اتصال سلس بين أنظمة الطاقة وأجهزة المنزل الذكية.">Seamless connection between your energy systems and smart home devices.</p>
                 </div>
             </div>
         </div>
 
         <div id="contact" class="section contact-section">
-            <h2>Contact Us</h2>
-            <div class="contact-container">
-                <div class="contact-form">
-                    <div class="form-group">
-                        <label for="contact-name">Name</label>
-                        <input type="text" id="contact-name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="contact-email">Email</label>
-                        <input type="email" id="contact-email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="contact-message">Message</label>
-                        <textarea id="contact-message" rows="5" required></textarea>
-                    </div>
-                    <button class="submit-btn" id="contactSubmitBtn">Send Message</button>
-                    <div id="contactFormStatus" class="form-status"></div>
-                </div>
+            <h2 data-en="Contact Us" data-ar="اتصل بنا">Contact Us</h2>
+            <div class="contact-content">
                 <div class="contact-info">
-                    <div class="info-item">
-                        <ion-icon name="location-outline"></ion-icon>
-                        <p>Jordan_Amman</p>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <ion-icon name="location-outline"></ion-icon>
+                        </div>
+                        <div class="contact-details">
+                            <h3 data-en="Address" data-ar="العنوان">Address</h3>
+                            <p data-en="123 Energy Street, Tech City, TC 12345" data-ar="123 شارع الطاقة، مدينة التكنولوجيا، TC 12345">123 Energy Street, Tech City, TC 12345</p>
+                        </div>
                     </div>
-                    <div class="info-item">
-                        <ion-icon name="mail-outline"></ion-icon>
-                        <p>mohammadabulehyeh96@energyai.com</p>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <ion-icon name="call-outline"></ion-icon>
+                        </div>
+                        <div class="contact-details">
+                            <h3 data-en="Phone" data-ar="الهاتف">Phone</h3>
+                            <p>+1 (555) 123-4567</p>
+                        </div>
                     </div>
-                    <div class="info-item">
-                        <ion-icon name="call-outline"></ion-icon>
-                        <p>+962791556430</p>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <ion-icon name="mail-outline"></ion-icon>
+                        </div>
+                        <div class="contact-details">
+                            <h3 data-en="Email" data-ar="البريد الإلكتروني">Email</h3>
+                            <p>info@energy-ai.com</p>
+                        </div>
                     </div>
+                </div>
+                <div class="contact-form">
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <input type="text" id="name" name="name" placeholder="Your Name" required data-en="Your Name" data-ar="اسمك">
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="email" name="email" placeholder="Your Email" required data-en="Your Email" data-ar="بريدك الإلكتروني">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="subject" name="subject" placeholder="Subject" required data-en="Subject" data-ar="الموضوع">
+                        </div>
+                        <div class="form-group">
+                            <textarea id="message" name="message" placeholder="Your Message" required data-en="Your Message" data-ar="رسالتك"></textarea>
+                        </div>
+                        <button type="submit" class="submit-btn" data-en="Send Message" data-ar="إرسال الرسالة">Send Message</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <footer class="footer">
-        <div class="footer-content">
+    <!-- Scripts -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
-            <div class="footer-logo">
-                <h2>Energy.Ai</h2>
-                <p>Powering the future with intelligent solutions</p>
-            </div>
-            <div class="footer-links">
-                <h3>Links</h3>
-                <ul>
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#service" id="footerServiceLink">Services</a></li>
-                    <li><a href="#design">Design</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-            </div>
-            <div class="footer-social">
-                <h3>Follow Us</h3>
-                <div class="social-icons">
-                    <a href="#" aria-label="Facebook"><ion-icon name="logo-facebook"></ion-icon></a>
-                    <a href="#" aria-label="Instagram"><ion-icon name="logo-instagram"></ion-icon></a>
-                    <a href="#" aria-label="Twitter"><ion-icon name="logo-twitter"></ion-icon></a>
-                </div>
-            </div>
-            <div class="footer-newsletter">
-                <h3>Newsletter</h3>
-                <p>Stay updated with our latest news</p>
-                <div class="newsletter-form">
-                    <input type="email" placeholder="Your Email Address" aria-label="Email for newsletter">
-                    <button aria-label="Subscribe">
-                        <ion-icon name="paper-plane-outline"></ion-icon>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 Energy.AI. All Rights Reserved.</p>
-        </div>
-    </footer>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
 
-    <script src="https://unpkg.com/ionicons@5.4.0/dist/ionicons.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.js"></script>
-    <script src="public/js/language-system.js"></script>
-    <script src="public/js/auth-system.js"></script>
-    <script src="public/js/naya-assistant.js"></script>
+    <!-- Main JavaScript Files -->
     <script src="public/js/main.js"></script>
+    <script src="public/js/auth.js"></script>
+    <script src="public/js/chat.js"></script>
+    <script src="public/js/language.js"></script>
+    <script src="public/js/naya.js"></script>
+    <script src="public/js/pwa.js"></script>
+    <script src="public/js/groq-settings.js"></script>
+    <script src="public/js/admin.js"></script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(function(registration) {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    }, function(err) {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+    </script>
 </body>
 </html>
